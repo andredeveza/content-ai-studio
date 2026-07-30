@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#EDEDEB}
+  body{font-family:'Space Grotesk',sans-serif;color:#0A0A0A;-webkit-font-smoothing:antialiased}
+  a{color:#0A0A0A;text-decoration:none;border-bottom:1px solid #C7C7C3}
+  a:hover{border-bottom-color:#0A0A0A}
+</style>
+</helmet>
+
+<div data-app style="--c-paper:#FAFAFA; --c-ink:#080808; --c-accent:#BFBFBF; background:#EDEDEB; min-height:100vh; padding:0 0 120px 0">
+
+  <div style="max-width:1180px; margin:0 auto; padding:72px 32px 0 32px">
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:36px">
+      <svg viewBox="0 0 220 168" style="width:26px"><polygon points="12,140 106,22 106,140" fill="#7A7A7A"></polygon><polygon points="114,140 114,22 208,140" fill="#0A0A0A"></polygon></svg>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:#9A9A95">// saída do estúdio · 3 temas · 1 template</div>
+    </div>
+    <h1 style="margin:0 0 14px 0; font-size:52px; line-height:1.04; letter-spacing:-.035em; font-weight:700; max-width:760px; text-wrap:pretty">O que o usuário recebe depois de digitar o tema</h1>
+    <p style="margin:0 0 20px 0; font-size:17px; line-height:1.6; color:#585853; max-width:660px; text-wrap:pretty">Três temas reais, cada um entregue como carrossel completo: estrutura, copy por slide, legenda, hashtags e CTA. Mesmo template, mesmo brand kit — o operador só revisa e agenda.</p>
+    <div style="display:flex; flex-wrap:wrap; gap:8px; padding-bottom:44px; border-bottom:1px solid #DEDEDA">
+      <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#585853; border:1px solid #DEDEDA; border-radius:999px; padding:7px 13px">3 temas · 20 slides</span>
+      <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#585853; border:1px solid #DEDEDA; border-radius:999px; padding:7px 13px">tempo por tema ~90s</span>
+      <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#585853; border:1px solid #DEDEDA; border-radius:999px; padding:7px 13px">revisão humana ~4min</span>
+      <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#585853; border:1px solid #DEDEDA; border-radius:999px; padding:7px 13px">@ad.comunicacao</span>
+    </div>
+  </div>
+
+  <sc-for list="{{ exemplos }}" as="ex" hint-placeholder-count="0">
+    <section style="max-width:1180px; margin:0 auto; padding:56px 32px 0 32px">
+      <div style="display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin-bottom:6px">
+        <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.16em; color:#9A9A95">{{ ex.num }}</div>
+        <h2 style="margin:0; font-size:30px; line-height:1.1; letter-spacing:-.03em; font-weight:700">{{ ex.tema }}</h2>
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#9A9A95; margin-bottom:26px">{{ ex.meta }}</div>
+
+      <div style="display:flex; flex-wrap:wrap; gap:14px; margin-bottom:24px">
+        <sc-for list="{{ ex.slides }}" as="s" hint-placeholder-count="0">
+          <div>
+            <div style="width:252px; height:315px; overflow:hidden; border-radius:7px; background:var(--c-ink); box-shadow:0 8px 24px rgba(0,0,0,.10)">
+              <div style="width:1080px; height:1350px; transform:scale(0.2333); transform-origin:top left; position:relative; overflow:hidden; background:var(--c-ink)">
+                <sc-if value="{{ s.isFull }}" hint-placeholder-val="{{ false }}">
+                  <sc-if value="{{ s.hasImg }}" hint-placeholder-val="{{ false }}">
+                    <img data-photo="{{ s.img }}" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover" />
+                  </sc-if>
+                  <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.42) 45%, rgba(0,0,0,0.94) 100%)"></div>
+                </sc-if>
+                <sc-if value="{{ s.isGallery }}" hint-placeholder-val="{{ false }}">
+                  <div style="position:absolute; left:48px; top:706px; width:970px; height:474px; border-radius:60px; overflow:hidden; box-shadow:inset 0 0 0 1px var(--c-paper)">
+                    <sc-if value="{{ s.hasImg }}" hint-placeholder-val="{{ false }}">
+                      <img data-photo="{{ s.img }}" alt="" style="width:100%; height:100%; object-fit:cover" />
+                    </sc-if>
+                  </div>
+                </sc-if>
+
+                <div style="position:absolute; left:49px; top:31px; width:983px; display:flex; justify-content:space-between; font-weight:700; font-size:18px; line-height:1; letter-spacing:.14em; color:var(--c-paper); text-transform:uppercase">
+                  <span>@ad.comunicacao</span><span>{{ ex.label }}</span>
+                </div>
+                <div style="position:absolute; left:48px; top:{{ s.titleTop }}; width:{{ s.titleWidth }}; font-weight:700; font-size:{{ s.titleSize }}; line-height:0.95; letter-spacing:-.05em; color:{{ s.titleColor }}">{{ s.title }}</div>
+                <div style="position:absolute; left:48px; top:{{ s.bodyTop }}; width:{{ s.bodyWidth }}; font-weight:400; font-size:40px; line-height:1.3; color:var(--c-paper)">{{ s.body }}</div>
+                <div style="position:absolute; left:49px; top:1246px; width:983px; height:58px; border-radius:32px; box-shadow:inset 0 0 0 1px var(--c-paper); display:flex; align-items:center; justify-content:space-between; padding:16px 25px">
+                  <div style="width:22px; height:22px; background:var(--c-paper); border-radius:3px; transform:rotate(45deg)"></div>
+                  <div style="display:flex; gap:20px; align-items:center; font-weight:700; font-size:18px; line-height:1; letter-spacing:.14em; color:var(--c-paper)"><span>{{ s.footer }}</span><span>/</span><span style="font-size:22px">→</span></div>
+                </div>
+              </div>
+            </div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#9A9A95; margin-top:7px">{{ s.n }} · {{ s.variant }}</div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px,1fr)); gap:14px">
+        <div style="background:#FFFFFF; border:1px solid #DEDEDA; border-radius:12px; padding:22px">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#9A9A95; margin-bottom:12px">legenda</div>
+          <div style="font-size:15px; line-height:1.6; white-space:pre-line; text-wrap:pretty">{{ ex.caption }}</div>
+          <div style="font-size:14.5px; line-height:1.7; color:#5A6E8C; margin-top:14px">{{ ex.hashtags }}</div>
+        </div>
+        <div style="background:#FFFFFF; border:1px solid #DEDEDA; border-radius:12px; padding:22px; display:grid; gap:16px; align-content:start">
+          <div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#9A9A95; margin-bottom:8px">cta</div>
+            <div style="font-size:15px; line-height:1.5">{{ ex.cta }}</div>
+          </div>
+          <div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#9A9A95; margin-bottom:8px">prompts de imagem</div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:11.5px; line-height:1.8; color:#585853; white-space:pre-line">{{ ex.prompts }}</div>
+          </div>
+          <div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#9A9A95; margin-bottom:8px">publicação sugerida</div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:11.5px; color:#585853">{{ ex.agenda }}</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </sc-for>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1240,&quot;height&quot;:900}}">
+function photo(seed) {
+  return "https://picsum.photos/seed/" + encodeURIComponent(seed) + "/864/1080";
+}
+
+const EXEMPLOS = [
+  {
+    num: "01",
+    tema: "Como Anunciar no Meta Ads em 2026",
+    label: "meta ads 2026",
+    meta: "objetivo: autoridade · 7 slides · template editorial 4:5 · tom técnico e direto",
+    slides: [
+      { variant: "capa", title: "Como anunciar no Meta Ads em 2026", body: "O que mudou e o que ainda funciona" },
+      { variant: "texto", title: "O criativo virou a segmentação", body: "Público amplo + automação viraram padrão. Quem ainda ganha campanha ganha no criativo, não no filtro de interesse." },
+      { variant: "texto", title: "01 · Estrutura", body: "Uma campanha, um conjunto amplo, 5 a 8 criativos. Menos conjuntos significa mais dados por conjunto e saída mais rápida do aprendizado." },
+      { variant: "galeria", title: "02 · Criativo", body: "Três ângulos por três formatos. Variedade dá ao sistema o que testar — orçamento a mais não substitui repertório." },
+      { variant: "texto", title: "03 · Sinal", body: "API de Conversões e eventos offline conectados. Sem sinal limpo, nenhuma automação entrega: ela otimiza para o dado errado." },
+      { variant: "texto", title: "04 · Leitura", body: "Decida por custo por resultado em 7 dias. CTR do dia é ruído — desligar criativo cedo é o erro mais caro da operação." },
+      { variant: "fecho", title: "Quer isso rodando na sua conta?", body: "Auditoria gratuita de estrutura e criativo" },
+    ],
+    caption: "Meta Ads em 2026 não premia quem sabe segmentar — premia quem sabe produzir.\n\nA automação assumiu a entrega. O que sobrou para o anunciante é estrutura enxuta, repertório de criativo e sinal de conversão limpo. Este carrossel resume os 4 pontos que mudam o resultado de uma conta em 30 dias.\n\nSalve para usar na próxima montagem de campanha.",
+    hashtags: "#metaads #tráfegopago #gestordetráfego #marketingdigital #performance #anúnciosonline #publicidade2026",
+    cta: "Auditoria gratuita de estrutura e criativo — link na bio.",
+    prompts: "capa: mesa de trabalho escura, luz lateral, foco em tela\ns04: equipe revisando material impresso, sem texto legível\nfecho: ambiente de escritório em silhueta",
+    agenda: "terça, 09:00 · Instagram + LinkedIn",
+  },
+  {
+    num: "02",
+    tema: "Quanto Custa o Lead do Alto Padrão?",
+    label: "custo por lead",
+    meta: "objetivo: quebrar objeção · 7 slides · template editorial 4:5 · tom consultivo",
+    slides: [
+      { variant: "capa", title: "Quanto custa o lead do alto padrão?", body: "A resposta honesta, com faixa e critério" },
+      { variant: "texto", title: "A faixa real", body: "De R$ 45 a R$ 180 por lead, dependendo de praça, ticket e nível de qualificação exigido no formulário." },
+      { variant: "texto", title: "Mas a faixa não decide nada", body: "Lead barato com agenda vazia custa mais caro que lead de R$ 180 que visita o imóvel na mesma semana." },
+      { variant: "galeria", title: "O que encarece", body: "Público restrito demais, criativo genérico, oferta sem prova visual e formulário curto que aceita qualquer contato." },
+      { variant: "texto", title: "O que barateia", body: "Oferta específica, imagem que mostra o produto de verdade e pré-qualificação dentro do próprio anúncio." },
+      { variant: "texto", title: "A conta que importa", body: "Custo por visita agendada e custo por proposta. Custo por lead é indicador de meio, não de resultado." },
+      { variant: "fecho", title: "Vamos calcular o seu", body: "Diagnóstico com os números da sua conta" },
+    ],
+    caption: "\u201cQuanto custa um lead de alto padrão?\u201d — a pergunta que abre toda reunião comercial.\n\nA faixa existe (R$ 45 a R$ 180), mas ela não decide nada sozinha. O que decide é quanto custa a visita agendada e a proposta enviada. Neste carrossel: o que encarece, o que barateia e qual conta olhar.\n\nComente ORÇAMENTO que eu te mando o modelo de planilha.",
+    hashtags: "#altopadrão #mercadoimobiliário #custoporlead #tráfegoparaimobiliárias #cpl #vendasdeluxo #marketingimobiliário",
+    cta: "Diagnóstico com os números da sua conta — comente ORÇAMENTO.",
+    prompts: "capa: fachada contemporânea ao anoitecer, luz interna acesa\ns04: interior amplo com luz natural, sem pessoas\nfecho: detalhe arquitetônico em contraluz",
+    agenda: "quinta, 09:00 · Instagram + Threads",
+  },
+  {
+    num: "03",
+    tema: "Tráfego, Engajamento ou Venda?",
+    label: "escolha do objetivo",
+    meta: "objetivo: educar · 6 slides · template editorial 4:5 · tom didático",
+    slides: [
+      { variant: "capa", title: "Tráfego, engajamento ou venda?", body: "A escolha que define o custo da sua campanha" },
+      { variant: "texto", title: "Tráfego", body: "Entrega cliques, não compradores. Use para testar criativo e distribuir conteúdo — nunca para bater meta de receita." },
+      { variant: "texto", title: "Engajamento", body: "Aquece público e produz prova social. Excelente como camada de apoio, péssimo como objetivo final." },
+      { variant: "texto", title: "Vendas", body: "É onde o pixel aprende quem compra. Deve ser o padrão de qualquer conta com meta comercial, mesmo no começo." },
+      { variant: "galeria", title: "Regra prática", body: "70% do orçamento em conversão, 20% em engajamento, 10% em teste de criativo. Revise a cada 30 dias." },
+      { variant: "fecho", title: "Está distribuindo errado?", body: "Mando a divisão ideal para o seu momento" },
+    ],
+    caption: "Escolher o objetivo errado é o jeito mais rápido de queimar verba no Meta Ads.\n\nTráfego serve para teste. Engajamento serve para aquecer. Venda é onde o algoritmo aprende quem compra de você. A distribuição que uso: 70 / 20 / 10.\n\nSalve e compare com a sua conta agora.",
+    hashtags: "#metaads #objetivodecampanha #tráfegopago #gestordetráfego #performance #marketingdigital",
+    cta: "Mando a divisão ideal para o seu momento — chama no direct.",
+    prompts: "capa: bifurcação de corredor, luz dura\ns05: quadro branco com diagrama desfocado\nfecho: pessoa de costas diante de painel",
+    agenda: "sábado, 10:00 · Instagram",
+  },
+];
+
+class Component extends DCLogic {
+  bindPhotos() {
+    document.querySelectorAll("img[data-photo]").forEach(el => {
+      const u = el.getAttribute("data-photo");
+      if (u && u.indexOf("{{") === -1 && el.getAttribute("src") !== u) el.setAttribute("src", u);
+    });
+  }
+  componentDidMount() { this.bindPhotos(); }
+  componentDidUpdate() { this.bindPhotos(); }
+  renderVals() {
+    return {
+      exemplos: EXEMPLOS.map(ex => ({
+        num: ex.num,
+        tema: ex.tema,
+        label: ex.label,
+        meta: ex.meta,
+        caption: ex.caption,
+        hashtags: ex.hashtags,
+        cta: ex.cta,
+        prompts: ex.prompts,
+        agenda: ex.agenda,
+        slides: ex.slides.map((s, i) => {
+          const isCover = s.variant === "capa" || s.variant === "fecho";
+          const last = i === ex.slides.length - 1;
+          return {
+            n: String(i + 1).padStart(2, "0"),
+            variant: s.variant,
+            title: s.title,
+            body: s.body,
+            isFull: isCover,
+            isGallery: s.variant === "galeria",
+            hasImg: isCover || s.variant === "galeria",
+            img: photo("ad-" + ex.num + "-" + i),
+            titleTop: isCover ? "700px" : "200px",
+            titleSize: isCover ? "112px" : "96px",
+            titleWidth: isCover ? "900px" : "860px",
+            titleColor: isCover ? "var(--c-paper)" : "var(--c-accent)",
+            bodyTop: isCover ? "1110px" : s.variant === "galeria" ? "420px" : "620px",
+            bodyWidth: s.variant === "galeria" ? "900px" : "790px",
+            footer: last ? "SALVE ESTE POST" : "ARRASTE PARA O LADO",
+          };
+        }),
+      })),
+    };
+  }
+}
+</script>
+</body>
+</html>

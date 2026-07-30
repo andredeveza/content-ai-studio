@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&family=Archivo:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin:0; padding:0; background:#0A0B0D; }
+  body { font-family:'IBM Plex Sans', Helvetica, sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:oklch(0.80 0.11 178); text-decoration:none; }
+  a:hover { color:oklch(0.88 0.09 178); }
+</style>
+</helmet>
+
+<div data-root style="background:#0A0B0D; color:#E9EAEC; min-height:100vh; padding:0 0 140px 0; --c-paper:#F5F5F5; --c-ink:#1E1E1E; --c-accent:#E63946; --f-display:Helvetica, 'Helvetica Neue', Arial, sans-serif; --f-ui:Helvetica, 'Helvetica Neue', Arial, sans-serif">
+
+  <div style="max-width:1180px; margin:0 auto; padding:96px 48px 0 48px">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:48px">
+      <div style="width:10px; height:10px; border-radius:2px; background:oklch(0.80 0.11 178)"></div>
+      <div style="font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#7C828C">Template · carousel-1080x1350 · v1 · derivado do blueprint</div>
+    </div>
+    <h1 style="margin:0 0 24px 0; font-size:64px; line-height:1.04; letter-spacing:-0.035em; font-weight:600; max-width:900px">Layout Blueprint → Template</h1>
+    <p style="margin:0 0 20px 0; font-size:19px; line-height:1.6; color:#9AA0A9; max-width:740px; text-wrap:pretty">Do arquivo do Figma extraí apenas estrutura: grid, margens, hierarquia, proporções, áreas de mídia e composição. Nada de cor, fonte, logo, imagem ou texto originais. O que está abaixo é o <em style="font-style:normal; color:#C6CBD3">molde</em> — a aparência vem do Brand Kit.</p>
+    <div style="display:flex; flex-wrap:wrap; gap:10px; padding-bottom:56px; border-bottom:1px solid #1C1E23">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#B8BDC5; border:1px solid #26292F; border-radius:999px; padding:7px 14px">1080 × 1350 · 4:5</span>
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#B8BDC5; border:1px solid #26292F; border-radius:999px; padding:7px 14px">10 variantes</span>
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#B8BDC5; border:1px solid #26292F; border-radius:999px; padding:7px 14px">margem 48 · safe 983</span>
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#B8BDC5; border:1px solid #26292F; border-radius:999px; padding:7px 14px">Brand Kit trocável</span>
+    </div>
+  </div>
+
+  <!-- ESPECIFICAÇÃO -->
+  <section style="max-width:1180px; margin:0 auto; padding:72px 48px 0 48px">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.16em; color:oklch(0.80 0.11 178); margin-bottom:16px">A — SISTEMA DE COMPOSIÇÃO</div>
+    <h2 style="margin:0 0 32px 0; font-size:34px; line-height:1.12; letter-spacing:-0.025em; font-weight:600">O que o molde guarda</h2>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(230px,1fr)); gap:12px">
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:12px; padding:20px">
+        <div style="font-size:14px; font-weight:600; margin-bottom:10px">Grid & margens</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; line-height:1.75; color:#8B919B">canvas 1080×1350<br>margem lateral 48<br>safe area 983<br>header y=31 h=26<br>footer y=1246 h=58</div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:12px; padding:20px">
+        <div style="font-size:14px; font-weight:600; margin-bottom:10px">Escala tipográfica</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; line-height:1.75; color:#8B919B">hero 150 / .97 / -.06em<br>display 129.5 / .79–.97<br>lead 48 / 1.25<br>body 40–41 / 1.25–1.4<br>note 36 / 1.2<br>micro 18 / .14em</div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:12px; padding:20px">
+        <div style="font-size:14px; font-weight:600; margin-bottom:10px">Áreas de mídia</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; line-height:1.75; color:#8B919B">card 970×474 · r60<br>card alto 970×585<br>full-bleed 1080×1350<br>gap vertical 73.9<br>stroke 1px</div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:12px; padding:20px">
+        <div style="font-size:14px; font-weight:600; margin-bottom:10px">Slots</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; line-height:1.75; color:#8B919B">header.handle<br>header.label<br>media[1..2]<br>title · lead · body<br>footer.cta</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VARIANTES -->
+  <section style="max-width:1180px; margin:0 auto; padding:88px 48px 0 48px">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.16em; color:oklch(0.80 0.11 178); margin-bottom:16px">B — VARIANTES</div>
+    <h2 style="margin:0 0 12px 0; font-size:34px; line-height:1.12; letter-spacing:-0.025em; font-weight:600">Dez composições, um molde</h2>
+    <p style="margin:0 0 36px 0; font-size:16px; line-height:1.6; color:#9AA0A9; max-width:680px">Cores, fonte e textos abaixo são <em style="font-style:normal; color:#C6CBD3">placeholders do Brand Kit de demonstração</em>. Troque o kit nos Tweaks e a estrutura permanece idêntica.</p>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fill, 346px); gap:28px 24px; justify-content:start">
+
+      <!-- 01 CAPA -->
+      <div>
+        <div style="width:346px; height:432px; overflow:hidden; border-radius:10px; border:1px solid #1F2228">
+          <div style="width:1080px; height:1350px; transform:scale(0.32); transform-origin:top left; position:relative; overflow:hidden; background:var(--c-ink)">
+            <div data-slot="media.full" style="position:absolute; left:0; top:0; width:1080px; height:1350px; background:repeating-linear-gradient(135deg, rgba(160,160,160,0.22) 0 14px, rgba(160,160,160,0.07) 14px 28px); display:flex; align-items:center; justify-content:center">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:26px; letter-spacing:0.1em; color:rgba(245,245,245,0.55)">MEDIA FULL-BLEED 1080×1350</span>
+            </div>
+            <div style="position:absolute; left:0; top:0; width:1080px; height:1350px; background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.92) 100%)"></div>
+            <div data-slot="title" style="position:absolute; left:48px; top:746px; width:837px; font-family:var(--f-display); font-weight:700; font-size:129.52px; line-height:0.97; letter-spacing:-0.06em; color:var(--c-accent)">Seu título entra aqui</div>
+            <div data-slot="lead" style="position:absolute; left:48px; top:1121px; width:983px; font-family:var(--f-ui); font-weight:700; font-size:40px; line-height:0.905; letter-spacing:-0.973px; color:var(--c-paper)">Assinatura ou subtítulo</div>
+            <div style="position:absolute; left:49px; top:31px; width:983px; display:flex; justify-content:space-between; font-family:var(--f-ui); font-weight:700; font-size:18px; line-height:1; letter-spacing:0.14em; color:var(--c-paper); text-transform:uppercase">
+              <span data-slot="header.handle">@handle_do_cliente</span>
+              <span data-slot="header.label">nome do projeto</span>
+            </div>
+            <div style="position:absolute; left:49px; top:1246px; width:983px; height:58px; box-sizing:border-box; border-radius:32px; box-shadow:inset 0 0 0 1px var(--c-paper); display:flex; align-items:center; justify-content:space-between; padding:16px 25px">
+              <div style="width:22px; height:22px; background:var(--c-paper); border-radius:3px; transform:rotate(45deg)"></div>
+              <div style="display:flex; gap:22px; align-items:center; font-family:var(--f-ui); font-weight:700; font-size:18px; line-height:1; letter-spacing:0.14em; color:var(--c-paper)"><span data-slot="footer.cta">ARRASTE PARA O LADO</span><span>/</span><span style="font-size:22px">→</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:10px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:0.08em; color:#6E747E">01 · CAPA — media.full + title + lead</div>
+      </div>
+
+      <!-- 02 TEXTO DUPLO -->
+      <div>
+        <div style="width:346px; height:432px; overflow:hidden; border-radius:10px; border:1px solid #1F2228">
+          <div style="width:1080px; height:1350px; transform:scale(0.32); transform-origin:top left; position:relative; overflow:hidden; background:var(--c-ink)">
+            <div data-slot="title" style="position:absolute; left:48px; top:220px; width:797px; font-family:var(--f-display); font-weight:700; font-size:129.52px; line-height:0.79; letter-spacing:-0.02em; color:var(--c-accent)">Título longo de duas ou três linhas</div>
+            <div data-slot="body" style="position:absolute; left:48px; top:640px; width:578px; font-family:var(--f-ui); font-weight:400; font-size:40px; line-height:1.4; color:var(--c-paper)">Parágrafo de apoio com o desenvolvimento da ideia do slide. Ocupa a metade inferior do bloco de texto e respeita a mesma coluna do título.</div>
+            <div style="position:absolute; left:49px; top:31px; width:983px; display:flex; justify-content:space-between; font-family:var(--f-ui); font-weight:700; font-size:18px; line-height:1; letter-spacing:0.14em; color:var(--c-paper); text-transform:uppercase">
+              <span>@handle_do_cliente</span><span>nome do projeto</span>
+            </div>
+            <div style="position:absolute; left:49px; top:1246px; width:983px; height:58px; box-sizing:border-box; border-radius:32px; box-shadow:inset 0 0 0 1px var(--c-paper); display:flex; align-items:center; justify-content:space-between; padding:16px 25px">
+              <div style="width:22px; height:22px; background:var(--c-paper); border-radius:3px; transform:rotate(45deg)"></div>
+              <div style="display:flex; gap:22px; align-items:center; font-family:var(--f-ui); font-weight:700; font-size:18px; line-height:1; letter-spacing:0.14em; color:var(--c-paper)"><span>ARRASTE PARA O LADO</span><span>/</span><span style="font-size:22px">→</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:10px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:0.08em; color:#6E747E">02 · TEXTO — title + body</div>
+      </div>
+
+      <!-- 03 GALERIA -->
+      <div>
+        <div style="width:346px; height:432px; overflow:hidden; border-radius:10px; border:1px solid #1F2228">
+          <div style="width:1080px; height:1350px; transform:scale(0.32); transform-origin:top left; position:relative; overflow:hidden; background:var(--c-ink)">
+            <div data-slot="media.1" style="position:absolute; left:48px; top:158px; width:970px; height:474px; border-radius:60px; box-shadow:inset 0 0 0 1px var(--c-paper); background:repeating-linear-gradient(135deg, rgba(160,160,160,0.22) 0 14px, rgba(160,160,160,0.07) 14px 28px); display:flex; align-items:center; justify-content:center">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:24px; letter-spacing:0.1em; color:rgba(245,245,245,0.55)">MEDIA 970×474</span>
+            </div>
+            <div data-slot="media.2" style="position:absolute; left:48px; top:706px; width:970px; height:474px; border-radius:60px; box-shadow:inset 0 0 0 1px var(--c-paper); background:repeating-linear-gradient(135deg, rgba(160,160,160,0.22) 0 14px, rgba(160,160,160,0.07) 14px 28px); display:flex; align-items:center; justify-content:center">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:24px; letter-spacing:0.1em; color:rgba(245,245,245,0.55)">MEDIA 970×474</span>
+            </div>
+            <div style="position:absolute; left:49px; top:31px; width:983px; display:flex; justify-content:space-between; font-family:var(--f-ui); font-weight:700; font-size:18px; line-height:1; letter-spacing:0.14em; color:var(--c-paper); text-transform:uppercase">
+              <span>@handle_do_cliente</span><span>nome do projeto</span>
+            </div>
+            <div style="position:absolute; left:49px; top:1246px; width:983px; height:58px; box-sizing:border-box; border-radius:32px; box-shadow:inset 0 0 0 1px var(--c-paper); display:flex; align-items:center; justify-content:space-between; padding:16px 25px">
+              <div style="width:22px; height:22px; background:var(--c-paper); border-radius:3px; transform:rotate(45deg)"></div>
+              <div style="display:flex; gap:22px; align-items:center; font-family:var(--f-ui); font-weight:700; font-size:18px; line-height:1; letter-spacing:0.14em; color:var(--c-paper)"><span>ARRASTE PARA O LADO</span><span>/</span><span style="font-size:22px">→</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:10px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:0.08em; color:#6E747E">03 · GALERIA — media.1 + media.2</div>
+      </div>
+
+      <!-- 04 INVERTIDO -->
+      <div>
+        <div style="width:346px; height:432px; overflow:hidden; border-radius:10px; border:1px solid #1F2228">
+          <div style="width:1080px; height:1350px; transform:scale(0.32); transform-origin:top left; position:relative; overflow:hidden; background:var(--c-paper)">
+            <div data-slot="title" style="position:absolute; left:48px; top:219px; width:837px; font-family:var(--f-display); font-weight:700; font-size:129.52px; line-height:0.97; letter-spacing:-0.06em; color:var(--c-ink)">Título em fundo claro</div>
+            <div data-slot="body" style="position:absolute; left:48px; top:532px; width:698px; font-family:var(--f-ui); font-weight:400; font-size:41px; line-height:1.25; color:var(--c-ink)">Parágrafo curto de apoio, com no máximo três linhas nesta variante.</div>
+            <div data-slot="media.1" style="position:absolute; left:55px; top:731px; width:970px; height:474px; border-radius:60px; box-shadow:inset 0 0 0 1px rgba(30,30,30,0.25); background:repeating-linear-gradient(135deg, rgba(30,30,30,0.14) 0 14px, rgba(30,30,30,0.04) 14px 28px); display:flex; align-items:center; justify-content:center">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:24px; letter-spacing:0.1em; color:rgba(30,30,30,0.5)">MEDIA 970×474</span>
+            </div>
+            <div style="position:absolute; left:49px; top:31px; width:983px; display:flex; justify-content:space-between; font-family:var(--f-ui); font-weight:700; font-size:18px; line-height:1; letter-spacing:0.14em; color:var(--c-accent); text-transform:uppercase">
+              <span>@handle_do_cliente</span><span>nome do projeto</span>
+            </div>
+            <div style="position:absolute; left:49px; top:1246px; width:983px; height:58px; box-sizing:border-box; border-radius:32px; box-shadow:inset 0 0 0 1px var(--c-accent); display:flex; align-items:center; justify-content:space-between; padding:16px 25px">
+              <div style="width:22px; height:22px; background:var(--c-accent); border-radius:3px; transform:rotate(45deg)"></div>
+              <div style="display:flex; gap:22px; align-items:center; font-family:var(--f-ui); font-weight:700; font-size:18px; line-height:1; letter-spacing:0.14em; color:var(--c-accent)"><span>ARRASTE PARA O LADO</span><span>/</span><span style="font-size:22px">→</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:10px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:0.08em; color:#6E747E">04 · INVERTIDO — title + body + media.1</div>
+      </div>
+
+      <!-- 05 FULL-BLEED + BLOCO -->
+      <div>
+        <div style="width:346px; height:432px; overflow:hidden; border-radius:10px; border:1px solid #1F2228">
+          <div style="width:1080px; height:1350px; transform:scale(0.32); transform-origin:top left; position:relative; overflow:hidden; background:var(--c-ink)">
+            <div data-slot="media.full" style="position:absolute; left:0; top:0; width:1080px; height:1350px; background:repeating-linear-gradient(135deg, rgba(160,160,160,0.22) 0 14px, rgba(160,160,160,0.07) 14px 28px); display:flex; align-items:flex-start; justify-content:center; padding-top:180px; box-sizing:border-box">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:26px; letter-spacing:0.1em; color:rgba(245,245,245,0.55)">MEDIA FULL-BLEED</span>
+            </div>
+            <div style="position:absolute; left:0; top:0; width:1080px; height:1350px; background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.92) 100%)"></div>
+            <div data-slot="hero" style="position:absolute; left:48px; top:523px; width:760px; font-family:var(--f-display); font-weight:400; font-size:150px; line-height:0.97; letter-spacing:-0.06em; color:var(--c-paper)">Pergunta?</div>
+            <div data-slot="lead" style="position:absolute; left:48px; top:795px; width:703px; font-family:var(--f-ui); font-weight:700; font-size:48px; line-height:1.25; color:var(--c-paper)">Resposta em destaque, com peso alto e três a cinco linhas dentro da coluna estreita.</div>
+            <div style="position:absolute; left:49px; top:31px; width:983px; display:flex; justify-content:space-between; font-family:var(--f-ui); font-weight:700; font-size:18px; line-height:1; letter-spacing:0.14em; color:var(--c-paper); text-transform:uppercase">
+              <span>@handle_do_cliente</span><span>nome do projeto</span>
+            </div>
+            <div style="position:absolute; left:49px; top:1246px; width:983px; height:58px; box-sizing:border-box; border-radius:32px; box-shadow:inset 0 0 0 1px var(--c-paper); display:flex; align-items:center; justify-content:space-between; padding:16px 25px">
+              <div style="width:22px; height:22px; background:var(--c-paper); border-radius:3px; transform:rotate(45deg)"></div>
+              <div style="display:flex; gap:22px; align-items:center; font-family:var(--f-ui); font-weight:700; font-size:18px; line-height:1; letter-spacing:0.14em; color:var(--c-paper)"><span>ARRASTE PARA O LADO</span><span>/</span><span style="font-size:22px">→</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:10px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:0.08em; color:#6E747E">05 · DESTAQUE — media.full + hero + lead</div>
+      </div>
+
+      <!-- 06 TÍTULO GRANDE -->
+      <div>
+        <div style="width:346px; height:432px; overflow:hidden; border-radius:10px; border:1px solid #1F2228">
+          <div style="width:1080px; height:1350px; transform:scale(0.32); transform-origin:top left; position:relative; overflow:hidden; background:var(--c-ink)">
+            <div data-slot="title" style="position:absolute; left:49px; top:177px; width:889px; font-family:var(--f-display); font-weight:400; font-size:129.52px; line-height:0.875; letter-spacing:-0.06em; color:var(--c-accent)">Título de quatro linhas ocupando o topo</div>
+            <div data-slot="body" style="position:absolute; left:49px; top:743px; width:712px; font-family:var(--f-ui); font-weight:400; font-size:48px; line-height:1.25; color:var(--c-paper)">Bloco de texto ancorado na base, separado do título por respiro generoso.</div>
+            <div style="position:absolute; left:49px; top:31px; width:983px; display:flex; justify-content:space-between; font-family:var(--f-ui); font-weight:700; font-size:18px; line-height:1; letter-spacing:0.14em; color:var(--c-paper); text-transform:uppercase">
+              <span>@handle_do_cliente</span><span>nome do projeto</span>
+            </div>
+            <div style="position:absolute; left:49px; top:1246px; width:983px; height:58px; box-sizing:border-box; border-radius:32px; box-shadow:inset 0 0 0 1px var(--c-paper); display:flex; align-items:center; justify-content:space-between; padding:16px 25px">
+              <div style="width:22px; height:22px; background:var(--c-paper); border-radius:3px; transform:rotate(45deg)"></div>
+              <div style="display:flex; gap:22px; align-items:center; font-family:var(--f-ui); font-weight:700; font-size:18px; line-height:1; letter-spacing:0.14em; color:var(--c-paper)"><span>ARRASTE PARA O LADO</span><span>/</span><span style="font-size:22px">→</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:10px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:0.08em; color:#6E747E">06 · MANCHETE — title + body</div>
+      </div>
+
+      <!-- 07 FULL MEDIA -->
+      <div>
+        <div style="width:346px; height:432px; overflow:hidden; border-radius:10px; border:1px solid #1F2228">
+          <div style="width:1080px; height:1350px; transform:scale(0.32); transform-origin:top left; position:relative; overflow:hidden; background:var(--c-ink)">
+            <div data-slot="media.full" style="position:absolute; left:0; top:0; width:1080px; height:1350px; background:repeating-linear-gradient(135deg, rgba(160,160,160,0.22) 0 14px, rgba(160,160,160,0.07) 14px 28px); display:flex; align-items:center; justify-content:center">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:26px; letter-spacing:0.1em; color:rgba(245,245,245,0.55)">MEDIA FULL-BLEED</span>
+            </div>
+            <div style="position:absolute; left:49px; top:31px; width:983px; display:flex; justify-content:space-between; font-family:var(--f-ui); font-weight:700; font-size:18px; line-height:1; letter-spacing:0.14em; color:var(--c-paper); text-transform:uppercase">
+              <span>@handle_do_cliente</span><span>nome do projeto</span>
+            </div>
+            <div style="position:absolute; left:49px; top:1246px; width:983px; height:58px; box-sizing:border-box; border-radius:32px; box-shadow:inset 0 0 0 1px var(--c-paper); display:flex; align-items:center; justify-content:space-between; padding:16px 25px">
+              <div style="width:22px; height:22px; background:var(--c-paper); border-radius:3px; transform:rotate(45deg)"></div>
+              <div style="display:flex; gap:22px; align-items:center; font-family:var(--f-ui); font-weight:700; font-size:18px; line-height:1; letter-spacing:0.14em; color:var(--c-paper)"><span>ARRASTE PARA O LADO</span><span>/</span><span style="font-size:22px">→</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:10px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:0.08em; color:#6E747E">07 · RESPIRO — media.full</div>
+      </div>
+
+      <!-- 08 MANCHETE CLARA -->
+      <div>
+        <div style="width:346px; height:432px; overflow:hidden; border-radius:10px; border:1px solid #1F2228">
+          <div style="width:1080px; height:1350px; transform:scale(0.32); transform-origin:top left; position:relative; overflow:hidden; background:var(--c-paper)">
+            <div data-slot="title" style="position:absolute; left:49px; top:177px; width:889px; font-family:var(--f-display); font-weight:400; font-size:129.52px; line-height:0.875; letter-spacing:-0.06em; color:var(--c-accent)">Mesma estrutura, kit invertido</div>
+            <div data-slot="body" style="position:absolute; left:49px; top:743px; width:712px; font-family:var(--f-ui); font-weight:400; font-size:48px; line-height:1.25; color:var(--c-ink)">A variante 06 com o fundo trocado — nenhuma medida muda, só o Brand Kit.</div>
+            <div style="position:absolute; left:49px; top:31px; width:983px; display:flex; justify-content:space-between; font-family:var(--f-ui); font-weight:700; font-size:18px; line-height:1; letter-spacing:0.14em; color:var(--c-accent); text-transform:uppercase">
+              <span>@handle_do_cliente</span><span>nome do projeto</span>
+            </div>
+            <div style="position:absolute; left:49px; top:1246px; width:983px; height:58px; box-sizing:border-box; border-radius:32px; box-shadow:inset 0 0 0 1px var(--c-accent); display:flex; align-items:center; justify-content:space-between; padding:16px 25px">
+              <div style="width:22px; height:22px; background:var(--c-accent); border-radius:3px; transform:rotate(45deg)"></div>
+              <div style="display:flex; gap:22px; align-items:center; font-family:var(--f-ui); font-weight:700; font-size:18px; line-height:1; letter-spacing:0.14em; color:var(--c-accent)"><span>ARRASTE PARA O LADO</span><span>/</span><span style="font-size:22px">→</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:10px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:0.08em; color:#6E747E">08 · MANCHETE clara — title + body</div>
+      </div>
+
+      <!-- 09 GALERIA ALTA -->
+      <div>
+        <div style="width:346px; height:432px; overflow:hidden; border-radius:10px; border:1px solid #1F2228">
+          <div style="width:1080px; height:1350px; transform:scale(0.32); transform-origin:top left; position:relative; overflow:hidden; background:var(--c-ink)">
+            <div data-slot="media.1" style="position:absolute; left:48px; top:137px; width:970px; height:474px; border-radius:60px; box-shadow:inset 0 0 0 1px var(--c-paper); background:repeating-linear-gradient(135deg, rgba(160,160,160,0.22) 0 14px, rgba(160,160,160,0.07) 14px 28px); display:flex; align-items:center; justify-content:center">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:24px; letter-spacing:0.1em; color:rgba(245,245,245,0.55)">MEDIA 970×474</span>
+            </div>
+            <div data-slot="media.2" style="position:absolute; left:48px; top:692px; width:970px; height:474px; border-radius:60px; box-shadow:inset 0 0 0 1px var(--c-paper); background:repeating-linear-gradient(135deg, rgba(160,160,160,0.22) 0 14px, rgba(160,160,160,0.07) 14px 28px); display:flex; align-items:center; justify-content:center">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:24px; letter-spacing:0.1em; color:rgba(245,245,245,0.55)">MEDIA 970×474</span>
+            </div>
+            <div style="position:absolute; left:49px; top:31px; width:983px; display:flex; justify-content:space-between; font-family:var(--f-ui); font-weight:700; font-size:18px; line-height:1; letter-spacing:0.14em; color:var(--c-paper); text-transform:uppercase">
+              <span>@handle_do_cliente</span><span>nome do projeto</span>
+            </div>
+            <div style="position:absolute; left:49px; top:1246px; width:983px; height:58px; box-sizing:border-box; border-radius:32px; box-shadow:inset 0 0 0 1px var(--c-paper); display:flex; align-items:center; justify-content:space-between; padding:16px 25px">
+              <div style="width:22px; height:22px; background:var(--c-paper); border-radius:3px; transform:rotate(45deg)"></div>
+              <div style="display:flex; gap:22px; align-items:center; font-family:var(--f-ui); font-weight:700; font-size:18px; line-height:1; letter-spacing:0.14em; color:var(--c-paper)"><span>ARRASTE PARA O LADO</span><span>/</span><span style="font-size:22px">→</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:10px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:0.08em; color:#6E747E">09 · GALERIA alta — media.1 + media.2</div>
+      </div>
+
+      <!-- 10 FECHAMENTO -->
+      <div>
+        <div style="width:346px; height:432px; overflow:hidden; border-radius:10px; border:1px solid #1F2228">
+          <div style="width:1080px; height:1350px; transform:scale(0.32); transform-origin:top left; position:relative; overflow:hidden; background:var(--c-ink)">
+            <div data-slot="media.1" style="position:absolute; left:55px; top:125px; width:970px; height:585px; border-radius:60px; box-shadow:inset 0 0 0 1px var(--c-paper); background:repeating-linear-gradient(135deg, rgba(160,160,160,0.22) 0 14px, rgba(160,160,160,0.07) 14px 28px); display:flex; align-items:center; justify-content:center">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:24px; letter-spacing:0.1em; color:rgba(245,245,245,0.55)">MEDIA 970×585</span>
+            </div>
+            <div data-slot="hero" style="position:absolute; left:48px; top:801px; width:760px; font-family:var(--f-display); font-weight:400; font-size:150px; line-height:0.97; letter-spacing:-0.06em; color:var(--c-accent)">E aí?</div>
+            <div data-slot="cta" style="position:absolute; left:55px; top:1002px; width:776px; font-family:var(--f-ui); font-weight:500; font-size:36px; line-height:1.2; letter-spacing:0.329px; color:var(--c-paper)">Texto de CTA do cliente: o que fazer agora, para onde ir, como falar com a marca.</div>
+            <div style="position:absolute; left:49px; top:31px; width:983px; display:flex; justify-content:space-between; font-family:var(--f-ui); font-weight:700; font-size:18px; line-height:1; letter-spacing:0.14em; color:var(--c-paper); text-transform:uppercase">
+              <span>@handle_do_cliente</span><span>nome do projeto</span>
+            </div>
+            <div style="position:absolute; left:49px; top:1246px; width:983px; height:58px; box-sizing:border-box; border-radius:32px; box-shadow:inset 0 0 0 1px var(--c-paper); display:flex; align-items:center; justify-content:space-between; padding:16px 25px">
+              <div style="width:22px; height:22px; background:var(--c-paper); border-radius:3px; transform:rotate(45deg)"></div>
+              <div style="display:flex; gap:22px; align-items:center; font-family:var(--f-ui); font-weight:700; font-size:18px; line-height:1; letter-spacing:0.14em; color:var(--c-paper)"><span>SALVE ESTE POST</span><span>/</span><span style="font-size:22px">→</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:10px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:0.08em; color:#6E747E">10 · FECHAMENTO — media.1 + hero + cta</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CONTRATO -->
+  <section style="max-width:1180px; margin:0 auto; padding:96px 48px 0 48px">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.16em; color:oklch(0.80 0.11 178); margin-bottom:16px">C — CONTRATO</div>
+    <h2 style="margin:0 0 32px 0; font-size:34px; line-height:1.12; letter-spacing:-0.025em; font-weight:600">Template JSON · o molde persistido</h2>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(360px, 1fr)); gap:16px; align-items:start">
+      <div style="background:#0E1013; border:1px solid #1F2228; border-radius:14px; padding:22px; font-family:'IBM Plex Mono',monospace; font-size:12.5px; line-height:1.7; color:#C6CBD3; white-space:pre; overflow:auto">{
+  "id": "carousel-editorial-4x5",
+  "canvas": { "w": 1080, "h": 1350 },
+  "safeArea": { "x": 48, "w": 983 },
+  "chrome": {
+    "header": { "y": 31, "h": 26, "slots": ["handle","label"] },
+    "footer": { "y": 1246, "h": 58, "r": 32, "slots": ["mark","cta","arrow"] }
+  },
+  "scale": {
+    "hero":    { "size": 150,    "lh": 0.97, "ls": "-0.06em" },
+    "display": { "size": 129.52, "lh": 0.87, "ls": "-0.06em" },
+    "lead":    { "size": 48,     "lh": 1.25 },
+    "body":    { "size": 40,     "lh": 1.40 },
+    "note":    { "size": 36,     "lh": 1.20 },
+    "micro":   { "size": 18,     "lh": 1.00, "ls": "0.14em" }
+  },
+  "media": { "card": [970,474], "tall": [970,585], "r": 60, "gap": 73.9 },
+  "variants": [
+    "cover","text","gallery","inverted","spotlight",
+    "headline","breather","headline-light","gallery-tall","closing"
+  ]
+}</div>
+      <div style="display:grid; gap:12px">
+        <div style="background:#111317; border:1px solid #1F2228; border-radius:14px; padding:22px">
+          <div style="font-size:15px; font-weight:600; margin-bottom:10px">O Brand Kit injeta</div>
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; line-height:1.8; color:#8B919B">--c-paper · --c-ink · --c-accent<br>--f-display · --f-ui<br>logo · marca do footer<br>estilo de imagem · raio</div>
+        </div>
+        <div style="background:#111317; border:1px solid #1F2228; border-radius:14px; padding:22px">
+          <div style="font-size:15px; font-weight:600; margin-bottom:10px">Regras de reflow</div>
+          <div style="font-size:13.5px; line-height:1.65; color:#8B919B">Título acima de 4 linhas cai um degrau na escala (150 → 129.5 → 96). Body acima da altura do slot corta em novo slide da mesma variante. Áreas de mídia nunca deformam: <span style="font-family:'IBM Plex Mono',monospace; color:#C6CBD3">cover</span> + foco central.</div>
+        </div>
+        <div style="background:#111317; border:1px solid #1F2228; border-radius:14px; padding:22px">
+          <div style="font-size:15px; font-weight:600; margin-bottom:10px">Não herdado do Figma</div>
+          <div style="font-size:13.5px; line-height:1.65; color:#8B919B">Cores, fontes, textos, imagens, grão, ícones e marca do arquivo original ficaram fora por definição — o molde carrega só geometria e hierarquia.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;corPapel&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#F5F5F5&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#F5F5F5&quot;,&quot;#FFFFFF&quot;,&quot;#F2EEE6&quot;,&quot;#EAF0F2&quot;],&quot;section&quot;:&quot;Brand Kit&quot;},&quot;corTinta&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#1E1E1E&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#1E1E1E&quot;,&quot;#0B0B0B&quot;,&quot;#14202B&quot;,&quot;#241C1C&quot;],&quot;section&quot;:&quot;Brand Kit&quot;},&quot;corAcento&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#E63946&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#E63946&quot;,&quot;#2F6BFF&quot;,&quot;#0FA36B&quot;,&quot;#F2A413&quot;],&quot;section&quot;:&quot;Brand Kit&quot;},&quot;fonte&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Helvetica&quot;,&quot;options&quot;:[&quot;Helvetica&quot;,&quot;Space Grotesk&quot;,&quot;Archivo&quot;,&quot;IBM Plex Sans&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Brand Kit&quot;},&quot;mostrarSlots&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Diagnóstico&quot;}}">
+const FONTS = {
+  "Helvetica": "Helvetica, 'Helvetica Neue', Arial, sans-serif",
+  "Space Grotesk": "'Space Grotesk', Helvetica, sans-serif",
+  "Archivo": "Archivo, Helvetica, sans-serif",
+  "IBM Plex Sans": "'IBM Plex Sans', Helvetica, sans-serif",
+};
+
+class Component extends DCLogic {
+  componentDidMount() { this.apply(); }
+  componentDidUpdate() { this.apply(); }
+  apply() {
+    const root = document.querySelector('[data-root]');
+    if (!root) return;
+    const p = this.props || {};
+    if (p.corPapel) root.style.setProperty('--c-paper', p.corPapel);
+    if (p.corTinta) root.style.setProperty('--c-ink', p.corTinta);
+    if (p.corAcento) root.style.setProperty('--c-accent', p.corAcento);
+    const f = FONTS[p.fonte];
+    if (f) { root.style.setProperty('--f-display', f); root.style.setProperty('--f-ui', f); }
+    const on = p.mostrarSlots === true;
+    root.querySelectorAll('[data-slot]').forEach(el => {
+      el.style.outline = on ? '2px dashed rgba(0,229,204,0.75)' : '';
+      el.style.outlineOffset = on ? '6px' : '';
+    });
+  }
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

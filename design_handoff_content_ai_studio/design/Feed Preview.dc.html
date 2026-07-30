@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#EDEDEB}
+  body{font-family:'Space Grotesk',sans-serif;color:#0A0A0A;-webkit-font-smoothing:antialiased}
+  a{color:#0A0A0A;text-decoration:none;border-bottom:1px solid #C7C7C3}
+  a:hover{border-bottom-color:#0A0A0A}
+  button{font-family:inherit}
+  .ic{display:inline-flex}
+  .ic svg{width:100%;height:100%;stroke-width:1.5}
+  .noscroll::-webkit-scrollbar{display:none}
+</style>
+</helmet>
+
+<div data-app style="--c-paper:#F5F5F5; --c-ink:#1E1E1E; --c-accent:#E63946; width:100%; max-width:430px; margin:0 auto; min-height:100vh; background:#FFFFFF; border-left:1px solid #E4E4E2; border-right:1px solid #E4E4E2; display:flex; flex-direction:column">
+
+  <header style="position:sticky; top:0; z-index:20; background:#FFFFFFF2; backdrop-filter:blur(8px); border-bottom:1px solid #EDEDEB; padding:14px 18px; display:flex; align-items:center; justify-content:space-between; gap:12px">
+    <sc-if value="{{ isGrid }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex; align-items:center; gap:9px; min-width:0">
+        <svg viewBox="0 0 220 168" style="width:22px; flex:none"><polygon points="12,140 106,22 106,140" fill="#7A7A7A"></polygon><polygon points="114,140 114,22 208,140" fill="#0A0A0A"></polygon></svg>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#9A9A95">preview do feed</div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ isPost }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ backToGrid }}" style="display:flex; align-items:center; gap:10px; cursor:pointer; min-width:0">
+        <span class="ic" style="width:20px; height:20px; flex:none"><i data-lucide="arrow-left"></i></span>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#9A9A95; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">post {{ post.index }} de {{ postCount }}</div>
+      </div>
+    </sc-if>
+    <button onClick="{{ cycleClient }}" style="display:flex; align-items:center; gap:7px; background:#F4F4F2; border:1px solid #E4E4E2; border-radius:999px; padding:5px 10px 5px 6px; cursor:pointer; flex:none; min-height:34px">
+      <span style="width:20px; height:20px; border-radius:5px; background:var(--c-accent)"></span>
+      <span style="font-family:'JetBrains Mono',monospace; font-size:10.5px; color:#0A0A0A">{{ client.short }}</span>
+      <span class="ic" style="width:12px; height:12px; color:#9A9A95"><i data-lucide="chevrons-up-down"></i></span>
+    </button>
+  </header>
+
+  <!-- ══ GRADE ══ -->
+  <sc-if value="{{ isGrid }}" hint-placeholder-val="{{ true }}">
+  <div>
+    <div style="padding:24px 18px 20px 18px; display:flex; gap:18px; align-items:center">
+      <div style="width:82px; height:82px; border-radius:99px; background:var(--c-ink); flex:none; display:flex; align-items:center; justify-content:center; color:var(--c-paper); font-weight:700; font-size:28px; letter-spacing:-.03em">{{ client.initial }}</div>
+      <div style="display:flex; gap:22px; flex:1">
+        <div>
+          <div style="font-size:19px; font-weight:700; letter-spacing:-.02em">{{ stats.posts }}</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#9A9A95; margin-top:2px">posts</div>
+        </div>
+        <div>
+          <div style="font-size:19px; font-weight:700; letter-spacing:-.02em">{{ stats.followers }}</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#9A9A95; margin-top:2px">seguidores</div>
+        </div>
+        <div>
+          <div style="font-size:19px; font-weight:700; letter-spacing:-.02em">{{ stats.following }}</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#9A9A95; margin-top:2px">seguindo</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:0 18px 20px 18px">
+      <div style="font-size:16px; font-weight:600">{{ client.name }}</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#9A9A95; margin-top:3px">{{ client.category }}</div>
+      <div style="font-size:14.5px; line-height:1.5; color:#3A3A38; margin-top:9px; text-wrap:pretty">{{ client.bio }}</div>
+      <div style="font-size:14px; margin-top:8px"><a href="#">{{ client.link }}</a></div>
+    </div>
+
+    <div style="padding:0 18px 22px 18px; display:flex; gap:8px">
+      <button style="flex:1; background:#080808; color:#FFFFFF; border:none; border-radius:9px; padding:13px; font-size:14px; font-weight:600; cursor:pointer; min-height:46px">{{ client.cta }}</button>
+      <button style="background:#FFFFFF; border:1px solid #E4E4E2; border-radius:9px; padding:13px 15px; cursor:pointer; min-height:46px; color:#0A0A0A"><span class="ic" style="width:17px; height:17px"><i data-lucide="message-circle"></i></span></button>
+      <button style="background:#FFFFFF; border:1px solid #E4E4E2; border-radius:9px; padding:13px 15px; cursor:pointer; min-height:46px; color:#0A0A0A"><span class="ic" style="width:17px; height:17px"><i data-lucide="bookmark"></i></span></button>
+    </div>
+
+    <div style="display:flex; border-top:1px solid #EDEDEB; border-bottom:1px solid #EDEDEB">
+      <div style="flex:1; display:flex; align-items:center; justify-content:center; padding:13px; border-bottom:1.5px solid #0A0A0A; color:#0A0A0A"><span class="ic" style="width:18px; height:18px"><i data-lucide="grid-3x3"></i></span></div>
+      <div style="flex:1; display:flex; align-items:center; justify-content:center; padding:13px; color:#C7C7C3"><span class="ic" style="width:18px; height:18px"><i data-lucide="play"></i></span></div>
+      <div style="flex:1; display:flex; align-items:center; justify-content:center; padding:13px; color:#C7C7C3"><span class="ic" style="width:18px; height:18px"><i data-lucide="user-square"></i></span></div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:2px; padding:2px 0 40px 0">
+      <sc-for list="{{ tiles }}" as="t" hint-placeholder-count="0">
+        <div onClick="{{ t.open }}" style="position:relative; aspect-ratio:1/1; background:{{ t.bg }}; cursor:pointer; overflow:hidden">
+          <sc-if value="{{ t.hasImg }}" hint-placeholder-val="{{ false }}">
+            <img data-photo="{{ t.img }}" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover" />
+          </sc-if>
+          <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.78) 100%)"></div>
+          <div style="position:absolute; left:8px; right:8px; bottom:8px; font-size:9.5px; line-height:1.2; font-weight:700; color:{{ t.fg }}; letter-spacing:-.01em">{{ t.title }}</div>
+          <sc-if value="{{ t.isCarousel }}" hint-placeholder-val="{{ true }}">
+            <div style="position:absolute; top:7px; right:7px; color:{{ t.fg }}; opacity:.85"><span class="ic" style="width:13px; height:13px"><i data-lucide="layers"></i></span></div>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ══ POST ══ -->
+  <sc-if value="{{ isPost }}" hint-placeholder-val="{{ false }}">
+  <div style="padding-bottom:40px">
+    <div style="display:flex; align-items:center; gap:11px; padding:13px 16px">
+      <div style="width:38px; height:38px; border-radius:99px; background:var(--c-ink); flex:none; display:flex; align-items:center; justify-content:center; color:var(--c-paper); font-weight:700; font-size:15px">{{ client.initial }}</div>
+      <div style="flex:1; min-width:0">
+        <div style="font-size:14px; font-weight:600">{{ client.handle }}</div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#9A9A95; margin-top:2px">{{ post.when }}</div>
+      </div>
+      <span class="ic" style="width:18px; height:18px; color:#9A9A95"><i data-lucide="more-horizontal"></i></span>
+    </div>
+
+    <div style="position:relative; width:100%; aspect-ratio:4/5; background:var(--c-ink); overflow:hidden">
+      <sc-if value="{{ slide.isFull }}" hint-placeholder-val="{{ false }}">
+        <sc-if value="{{ slide.hasImg }}" hint-placeholder-val="{{ false }}">
+          <img data-photo="{{ slide.img }}" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover" />
+        </sc-if>
+        <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.32) 42%, rgba(0,0,0,0.93) 100%)"></div>
+      </sc-if>
+      <sc-if value="{{ slide.isGallery }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute; left:4.4%; top:52%; width:89.8%; height:35%; border-radius:5.5%; overflow:hidden; box-shadow:inset 0 0 0 1px var(--c-paper)">
+          <sc-if value="{{ slide.hasImg }}" hint-placeholder-val="{{ false }}">
+            <img data-photo="{{ slide.img }}" alt="" style="width:100%; height:100%; object-fit:cover" />
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <div style="position:absolute; left:4.5%; top:2.3%; width:91%; display:flex; justify-content:space-between; font-weight:700; font-size:8px; letter-spacing:.14em; color:var(--c-paper); text-transform:uppercase">
+        <span>{{ client.handle }}</span><span>{{ client.short }}</span>
+      </div>
+      <div style="position:absolute; left:4.4%; top:{{ slide.titleTop }}; width:79%; font-weight:700; font-size:{{ slide.titleSize }}; line-height:0.95; letter-spacing:-.05em; color:{{ slide.titleColor }}">{{ slide.title }}</div>
+      <div style="position:absolute; left:4.4%; top:{{ slide.bodyTop }}; width:70%; font-weight:400; font-size:15px; line-height:1.3; color:var(--c-paper)">{{ slide.body }}</div>
+      <div style="position:absolute; left:4.5%; top:92.3%; width:91%; height:4.3%; border-radius:99px; box-shadow:inset 0 0 0 1px var(--c-paper); display:flex; align-items:center; justify-content:space-between; padding:0 9px">
+        <div style="width:8px; height:8px; background:var(--c-paper); border-radius:1px; transform:rotate(45deg)"></div>
+        <div style="display:flex; gap:8px; align-items:center; font-weight:700; font-size:7.5px; letter-spacing:.14em; color:var(--c-paper)"><span>{{ footerCta }}</span><span>/</span><span style="font-size:9px">→</span></div>
+      </div>
+
+      <div onClick="{{ prevSlide }}" style="position:absolute; left:0; top:0; width:38%; height:100%; cursor:pointer"></div>
+      <div onClick="{{ nextSlide }}" style="position:absolute; right:0; top:0; width:38%; height:100%; cursor:pointer"></div>
+
+      <div style="position:absolute; top:12px; right:12px; background:rgba(0,0,0,.6); border-radius:99px; padding:4px 10px; font-family:'JetBrains Mono',monospace; font-size:10px; color:#FFFFFF">{{ slide.counter }}</div>
+    </div>
+
+    <div style="display:flex; justify-content:center; gap:5px; padding:12px 0 4px 0">
+      <sc-for list="{{ dots }}" as="d" hint-placeholder-count="6">
+        <span onClick="{{ d.pick }}" style="width:6px; height:6px; border-radius:99px; background:{{ d.color }}; cursor:pointer"></span>
+      </sc-for>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:16px; padding:8px 16px 4px 16px">
+      <span onClick="{{ toggleLike }}" class="ic" style="width:23px; height:23px; color:{{ likeColor }}; cursor:pointer"><i data-lucide="heart"></i></span>
+      <span class="ic" style="width:23px; height:23px; color:#0A0A0A"><i data-lucide="message-circle"></i></span>
+      <span class="ic" style="width:23px; height:23px; color:#0A0A0A"><i data-lucide="send"></i></span>
+      <span class="ic" style="width:23px; height:23px; color:#0A0A0A; margin-left:auto"><i data-lucide="bookmark"></i></span>
+    </div>
+
+    <div style="padding:6px 16px 0 16px; font-size:13.5px; font-weight:600">{{ likes }} curtidas</div>
+
+    <div style="padding:8px 16px 0 16px; font-size:14.5px; line-height:1.5; text-wrap:pretty">
+      <span style="font-weight:600">{{ client.handle }}</span> {{ post.caption }}
+    </div>
+    <div style="padding:10px 16px 0 16px; font-size:14px; line-height:1.6; color:#5A6E8C">{{ post.hashtags }}</div>
+    <div style="padding:14px 16px 0 16px; font-family:'JetBrains Mono',monospace; font-size:10.5px; color:#9A9A95">{{ post.meta }}</div>
+
+    <div style="margin:22px 16px 0 16px; border-top:1px solid #EDEDEB; padding-top:16px; display:flex; gap:8px">
+      <button onClick="{{ prevPost }}" style="flex:1; background:#FFFFFF; border:1px solid #E4E4E2; border-radius:9px; padding:13px; font-size:14px; cursor:pointer; min-height:46px">Post anterior</button>
+      <button onClick="{{ nextPost }}" style="flex:1; background:#080808; color:#FFFFFF; border:none; border-radius:9px; padding:13px; font-size:14px; font-weight:600; cursor:pointer; min-height:46px">Próximo post</button>
+    </div>
+  </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:430,&quot;height&quot;:932}}">
+const CLIENTS = [
+  { name: "AD Comunicação", handle: "@ad.comunicacao", short: "ad", kit: 2,
+    category: "Agência · Conteúdo e performance",
+    bio: "Conteúdo que vende, para qualquer vertical. Feito com o Content AI Studio.",
+    link: "adcomintegrada.com", cta: "Ver portfólio",
+    stats: { posts: "412", followers: "9,8 mil", following: "643" } },
+  { name: "Marchetti Imóveis", handle: "@marchettiimoveis", short: "marchetti", kit: 0,
+    category: "Imobiliária · Alto padrão",
+    bio: "Curadoria de imóveis acima de R$ 3M. Visitas com hora marcada.",
+    link: "marchetti.com.br/agendar", cta: "Agendar visita",
+    stats: { posts: "184", followers: "12,4 mil", following: "312" } },
+  { name: "Norte Café", handle: "@nortecafe", short: "norte", kit: 1,
+    category: "Cafeteria · Torra própria",
+    bio: "Grãos de origem, torrados aqui. Três casas em São Paulo.",
+    link: "nortecafe.com.br", cta: "Ver cardápio",
+    stats: { posts: "296", followers: "48,1 mil", following: "180" } },
+];
+const KITS = [
+  { paper: "#F5F5F5", ink: "#1E1E1E", accent: "#E63946" },
+  { paper: "#F2EEE6", ink: "#14202B", accent: "#0FA36B" },
+  { paper: "#FAFAFA", ink: "#080808", accent: "#BFBFBF" },
+];
+
+const POSTS = [
+  {
+    title: "Como anunciar no Meta Ads em 2026",
+    when: "hoje · 09:00",
+    caption: "Meta Ads em 2026 não premia quem sabe segmentar — premia quem sabe produzir. Os 4 pontos que mudam o resultado de uma conta em 30 dias.",
+    hashtags: "#metaads #tráfegopago #gestordetráfego #performance #marketingdigital",
+    meta: "carrossel · 6 slides · template editorial 4:5",
+    slides: [
+      { variant: "capa", title: "Como anunciar no Meta Ads em 2026", body: "" },
+      { variant: "texto", title: "O que mudou", body: "Público amplo virou padrão. Quem ganha campanha ganha no criativo." },
+      { variant: "texto", title: "01 · Estrutura", body: "Um conjunto amplo, 5 a 8 criativos. Mais dados por conjunto." },
+      { variant: "galeria", title: "02 · Criativo", body: "Três ângulos por três formatos." },
+      { variant: "texto", title: "03 · Sinal", body: "Sem API de Conversões, a automação otimiza para o dado errado." },
+      { variant: "fecho", title: "Quer isso na sua conta?", body: "" },
+    ],
+  },
+  {
+    title: "Quanto custa o lead do alto padrão?",
+    when: "ontem · 09:00",
+    caption: "A faixa existe: R$ 45 a R$ 180. Mas ela não decide nada sozinha — o que decide é o custo por visita agendada.",
+    hashtags: "#altopadrão #mercadoimobiliário #custoporlead #marketingimobiliário",
+    meta: "carrossel · 7 slides · template editorial 4:5",
+    slides: [
+      { variant: "capa", title: "Quanto custa o lead do alto padrão?", body: "" },
+      { variant: "texto", title: "A faixa real", body: "De R$ 45 a R$ 180, conforme praça, ticket e qualificação." },
+      { variant: "galeria", title: "O que encarece", body: "Público restrito e criativo genérico." },
+      { variant: "texto", title: "A conta que importa", body: "Custo por visita agendada, não por lead." },
+      { variant: "fecho", title: "Vamos calcular o seu", body: "" },
+    ],
+  },
+  {
+    title: "Tráfego, engajamento ou venda?",
+    when: "22 jul",
+    caption: "Escolher o objetivo errado é o jeito mais rápido de queimar verba. A distribuição que uso: 70 / 20 / 10.",
+    hashtags: "#metaads #objetivodecampanha #tráfegopago #performance",
+    meta: "carrossel · 6 slides · template editorial 4:5",
+    slides: [
+      { variant: "capa", title: "Tráfego, engajamento ou venda?", body: "" },
+      { variant: "texto", title: "Tráfego", body: "Entrega cliques, não compradores. Serve para testar criativo." },
+      { variant: "texto", title: "Vendas", body: "É onde o pixel aprende quem compra de você." },
+      { variant: "galeria", title: "Regra prática", body: "70% conversão, 20% engajamento, 10% teste." },
+      { variant: "fecho", title: "Está distribuindo errado?", body: "" },
+    ],
+  },
+];
+
+const GRID = [
+  "Como anunciar no Meta Ads em 2026", "Quanto custa o lead do alto padrão?", "Tráfego, engajamento ou venda?",
+  "3 erros no cardápio digital", "Como precificar serviço recorrente", "Antes e depois: reforma de marca",
+  "O criativo que salvou a campanha", "Perguntas do mês", "Landing page em 4 blocos",
+  "O que é CAPI, sem jargão", "Remarketing por onde começar", "Bastidores da produção",
+];
+
+function photo(seed, w, h) {
+  return "https://picsum.photos/seed/" + encodeURIComponent(seed) + "/" + w + "/" + h;
+}
+
+class Component extends DCLogic {
+  state = { screen: "grid", clientIdx: 0, postIdx: 0, slideIdx: 0, liked: false };
+
+  drawIcons() {
+    if (window.lucide && typeof window.lucide.createIcons === "function") window.lucide.createIcons();
+    else this._i = setTimeout(() => this.drawIcons(), 120);
+  }
+  bindPhotos() {
+    document.querySelectorAll("img[data-photo]").forEach(el => {
+      const u = el.getAttribute("data-photo");
+      if (u && u.indexOf("{{") === -1 && el.getAttribute("src") !== u) el.setAttribute("src", u);
+    });
+  }
+  componentDidMount() { this.paintKit(); this.drawIcons(); this.bindPhotos(); }
+  componentDidUpdate() { this.paintKit(); this.drawIcons(); this.bindPhotos(); }
+  componentWillUnmount() { if (this._i) clearTimeout(this._i); }
+
+  paintKit() {
+    const el = document.querySelector("[data-app]");
+    if (!el) return;
+    const k = KITS[CLIENTS[this.state.clientIdx].kit];
+    el.style.setProperty("--c-paper", k.paper);
+    el.style.setProperty("--c-ink", k.ink);
+    el.style.setProperty("--c-accent", k.accent);
+  }
+
+  renderVals() {
+    const s = this.state;
+    const c = CLIENTS[s.clientIdx];
+    const kit = KITS[c.kit];
+    const post = POSTS[s.postIdx];
+    const idx = Math.min(s.slideIdx, post.slides.length - 1);
+    const sl = post.slides[idx];
+    const isCover = sl.variant === "capa" || sl.variant === "fecho";
+
+    return {
+      client: { ...c, initial: c.name.charAt(0) },
+      stats: c.stats,
+      isGrid: s.screen === "grid",
+      isPost: s.screen === "post",
+      backToGrid: () => this.setState({ screen: "grid" }),
+      cycleClient: () => this.setState(p => ({ clientIdx: (p.clientIdx + 1) % CLIENTS.length })),
+
+      tiles: GRID.map((title, i) => ({
+        title,
+        img: photo("cas-grid-" + i, 400, 400),
+        hasImg: true,
+        bg: kit.ink,
+        fg: kit.paper,
+        isCarousel: i % 3 !== 2,
+        open: () => this.setState({ screen: "post", postIdx: i % POSTS.length, slideIdx: 0, liked: false }),
+      })),
+
+      postCount: POSTS.length,
+      post: { ...post, index: s.postIdx + 1 },
+      footerCta: post.slides.length && idx === post.slides.length - 1 ? "SALVE ESTE POST" : "ARRASTE PARA O LADO",
+      slide: {
+        title: sl.title,
+        body: sl.body,
+        img: photo("cas-p" + s.postIdx + "-s" + idx, 864, 1080),
+        hasImg: true,
+        isFull: isCover,
+        isGallery: sl.variant === "galeria",
+        titleTop: isCover ? "56%" : "17%",
+        titleSize: isCover ? "44px" : "37px",
+        titleColor: isCover ? kit.paper : kit.accent,
+        bodyTop: isCover ? "83%" : "49%",
+        counter: (idx + 1) + "/" + post.slides.length,
+      },
+      dots: post.slides.map((_, i) => ({
+        color: i === idx ? "#0A0A0A" : "#D6D6D2",
+        pick: () => this.setState({ slideIdx: i }),
+      })),
+      prevSlide: () => this.setState(p => ({ slideIdx: Math.max(0, p.slideIdx - 1) })),
+      nextSlide: () => this.setState(p => ({ slideIdx: Math.min(POSTS[p.postIdx].slides.length - 1, p.slideIdx + 1) })),
+      prevPost: () => this.setState(p => ({ postIdx: (p.postIdx - 1 + POSTS.length) % POSTS.length, slideIdx: 0, liked: false })),
+      nextPost: () => this.setState(p => ({ postIdx: (p.postIdx + 1) % POSTS.length, slideIdx: 0, liked: false })),
+
+      liked: s.liked,
+      likeColor: s.liked ? "#E63946" : "#0A0A0A",
+      likes: s.liked ? "1.249" : "1.248",
+      toggleLike: () => this.setState(p => ({ liked: !p.liked })),
+    };
+  }
+}
+</script>
+</body>
+</html>

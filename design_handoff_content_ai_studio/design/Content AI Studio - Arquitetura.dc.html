@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  html, body { margin:0; padding:0; background:#0A0B0D; }
+  body { font-family:'IBM Plex Sans', Helvetica, sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:oklch(0.80 0.11 178); text-decoration:none; }
+  a:hover { color:oklch(0.88 0.09 178); text-decoration:underline; }
+  ::selection { background:oklch(0.80 0.11 178 / 0.25); }
+</style>
+</helmet>
+
+<div style="background:#0A0B0D; color:#E9EAEC; min-height:100vh; padding:0 0 140px 0">
+
+  <div style="max-width:1120px; margin:0 auto; padding:96px 48px 0 48px">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:56px">
+      <div style="width:10px; height:10px; border-radius:2px; background:oklch(0.80 0.11 178)"></div>
+      <div style="font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#7C828C">Documento de Arquitetura · v1.0 · Pré-implementação</div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr; gap:28px; padding-bottom:72px; border-bottom:1px solid #1C1E23">
+      <h1 style="margin:0; font-size:76px; line-height:1.02; letter-spacing:-0.035em; font-weight:600; max-width:900px; text-wrap:pretty">Content AI Studio</h1>
+      <p style="margin:0; font-size:21px; line-height:1.55; color:#9AA0A9; max-width:720px; text-wrap:pretty">Estúdio de conteúdo com IA. O usuário informa um tema — o sistema pesquisa, estrutura, escreve, ilustra, renderiza e publica. Arquitetura orientada a domínio, provedores intercambiáveis, identidade visual desacoplada do layout.</p>
+      <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:8px">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#B8BDC5; border:1px solid #26292F; border-radius:999px; padding:7px 14px">Next.js 15 · React 19</span>
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#B8BDC5; border:1px solid #26292F; border-radius:999px; padding:7px 14px">TypeScript estrito</span>
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#B8BDC5; border:1px solid #26292F; border-radius:999px; padding:7px 14px">Supabase</span>
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#B8BDC5; border:1px solid #26292F; border-radius:999px; padding:7px 14px">Clean Architecture</span>
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#B8BDC5; border:1px solid #26292F; border-radius:999px; padding:7px 14px">HTML + Puppeteer</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 01 PRINCÍPIOS -->
+  <section style="max-width:1120px; margin:0 auto; padding:88px 48px 0 48px">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.16em; color:oklch(0.80 0.11 178); margin-bottom:16px">01 — PRINCÍPIOS</div>
+    <h2 style="margin:0 0 20px 0; font-size:38px; line-height:1.12; letter-spacing:-0.025em; font-weight:600">Regras que não se negociam</h2>
+    <p style="margin:0 0 40px 0; font-size:17px; line-height:1.65; color:#9AA0A9; max-width:680px; text-wrap:pretty">Cada decisão abaixo existe para que o sistema cresça sem reescrita. Elas restringem o código de propósito.</p>
+    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:16px">
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:14px; padding:24px">
+        <div style="font-size:16px; font-weight:600; margin-bottom:8px">Dependências apontam para dentro</div>
+        <div style="font-size:14px; line-height:1.6; color:#8B919B">Domain não conhece Next.js, Supabase ou provedor de IA. Infra implementa interfaces declaradas pelo domínio.</div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:14px; padding:24px">
+        <div style="font-size:16px; font-weight:600; margin-bottom:8px">Todo provedor é substituível</div>
+        <div style="font-size:14px; line-height:1.6; color:#8B919B">IA, storage, fila e publicação são plugins registrados por configuração. Adicionar um não altera nenhum outro arquivo.</div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:14px; padding:24px">
+        <div style="font-size:16px; font-weight:600; margin-bottom:8px">Estrutura ≠ identidade</div>
+        <div style="font-size:14px; line-height:1.6; color:#8B919B">Template define grid, áreas e proporções. Brand Kit define cor, fonte, logo e estilo. Nunca se misturam.</div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:14px; padding:24px">
+        <div style="font-size:16px; font-weight:600; margin-bottom:8px">Renderização é HTML</div>
+        <div style="font-size:14px; line-height:1.6; color:#8B919B">Slides são DOM real, estilizado por CSS custom properties. Puppeteer apenas fotografa. Zero Canvas.</div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:14px; padding:24px">
+        <div style="font-size:16px; font-weight:600; margin-bottom:8px">Gratuito primeiro</div>
+        <div style="font-size:14px; line-height:1.6; color:#8B919B">Free tier maduro tem prioridade. O custo entra como fallback, nunca como dependência estrutural.</div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:14px; padding:24px">
+        <div style="font-size:16px; font-weight:600; margin-bottom:8px">Toda geração é auditável</div>
+        <div style="font-size:14px; line-height:1.6; color:#8B919B">Prompt, provedor, modelo, tokens, custo, latência e resultado ficam em <span style="font-family:'IBM Plex Mono',monospace; color:#C6CBD3">ai_logs</span>.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 CAMADAS -->
+  <section style="max-width:1120px; margin:0 auto; padding:96px 48px 0 48px">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.16em; color:oklch(0.80 0.11 178); margin-bottom:16px">02 — DIAGRAMA</div>
+    <h2 style="margin:0 0 40px 0; font-size:38px; line-height:1.12; letter-spacing:-0.025em; font-weight:600">Camadas da aplicação</h2>
+
+    <div style="display:grid; gap:14px">
+      <div style="border:1px solid #26292F; border-radius:16px; padding:22px; background:linear-gradient(180deg,#131519,#0F1114)">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:16px">
+          <div style="font-size:15px; font-weight:600">Presentation</div>
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#6E747E">app/ · components/ · hooks/</div>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:10px">
+          <div style="background:#191C21; border:1px solid #262A31; border-radius:10px; padding:14px; font-size:13px; color:#C6CBD3">Dashboard</div>
+          <div style="background:#191C21; border:1px solid #262A31; border-radius:10px; padding:14px; font-size:13px; color:#C6CBD3">Gerador</div>
+          <div style="background:#191C21; border:1px solid #262A31; border-radius:10px; padding:14px; font-size:13px; color:#C6CBD3">Editor</div>
+          <div style="background:#191C21; border:1px solid #262A31; border-radius:10px; padding:14px; font-size:13px; color:#C6CBD3">Calendário</div>
+          <div style="background:#191C21; border:1px solid #262A31; border-radius:10px; padding:14px; font-size:13px; color:#C6CBD3">Brand Kit</div>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:center; color:#3A3F47; font-size:14px">↓ Server Actions tipadas</div>
+
+      <div style="border:1px solid #26292F; border-radius:16px; padding:22px; background:linear-gradient(180deg,#131519,#0F1114)">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:16px">
+          <div style="font-size:15px; font-weight:600">Application · casos de uso</div>
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#6E747E">core/application/use-cases</div>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px">
+          <div style="background:#191C21; border:1px solid #262A31; border-radius:10px; padding:14px; font-size:13px; color:#C6CBD3">GenerateCarousel</div>
+          <div style="background:#191C21; border:1px solid #262A31; border-radius:10px; padding:14px; font-size:13px; color:#C6CBD3">AnalyzeReference</div>
+          <div style="background:#191C21; border:1px solid #262A31; border-radius:10px; padding:14px; font-size:13px; color:#C6CBD3">RenderSlides</div>
+          <div style="background:#191C21; border:1px solid #262A31; border-radius:10px; padding:14px; font-size:13px; color:#C6CBD3">SchedulePost</div>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:center; color:#3A3F47; font-size:14px">↓ interfaces (ports)</div>
+
+      <div style="border:1px solid oklch(0.80 0.11 178 / 0.35); border-radius:16px; padding:22px; background:linear-gradient(180deg,#0F1618,#0C1113)">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:16px">
+          <div style="font-size:15px; font-weight:600; color:oklch(0.86 0.09 178)">Domain — puro, sem I/O</div>
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#6E747E">core/domain</div>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:10px">
+          <div style="background:#131A1C; border:1px solid #1E2A2C; border-radius:10px; padding:12px; font-size:12.5px; color:#B9C3C4">Client</div>
+          <div style="background:#131A1C; border:1px solid #1E2A2C; border-radius:10px; padding:12px; font-size:12.5px; color:#B9C3C4">BrandKit</div>
+          <div style="background:#131A1C; border:1px solid #1E2A2C; border-radius:10px; padding:12px; font-size:12.5px; color:#B9C3C4">Template</div>
+          <div style="background:#131A1C; border:1px solid #1E2A2C; border-radius:10px; padding:12px; font-size:12.5px; color:#B9C3C4">Project</div>
+          <div style="background:#131A1C; border:1px solid #1E2A2C; border-radius:10px; padding:12px; font-size:12.5px; color:#B9C3C4">Slide</div>
+          <div style="background:#131A1C; border:1px solid #1E2A2C; border-radius:10px; padding:12px; font-size:12.5px; color:#B9C3C4">Publication</div>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:center; color:#3A3F47; font-size:14px">↑ implementações (adapters)</div>
+
+      <div style="border:1px solid #26292F; border-radius:16px; padding:22px; background:linear-gradient(180deg,#131519,#0F1114)">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:16px">
+          <div style="font-size:15px; font-weight:600">Infrastructure</div>
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#6E747E">infra/</div>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:10px">
+          <div style="background:#191C21; border:1px solid #262A31; border-radius:10px; padding:14px; font-size:13px; color:#C6CBD3">AI Gateway</div>
+          <div style="background:#191C21; border:1px solid #262A31; border-radius:10px; padding:14px; font-size:13px; color:#C6CBD3">Publishing Gateway</div>
+          <div style="background:#191C21; border:1px solid #262A31; border-radius:10px; padding:14px; font-size:13px; color:#C6CBD3">Render Engine</div>
+          <div style="background:#191C21; border:1px solid #262A31; border-radius:10px; padding:14px; font-size:13px; color:#C6CBD3">Repositories</div>
+          <div style="background:#191C21; border:1px solid #262A31; border-radius:10px; padding:14px; font-size:13px; color:#C6CBD3">Queue · Storage</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 AI GATEWAY -->
+  <section style="max-width:1120px; margin:0 auto; padding:96px 48px 0 48px">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.16em; color:oklch(0.80 0.11 178); margin-bottom:16px">03 — AI GATEWAY</div>
+    <h2 style="margin:0 0 20px 0; font-size:38px; line-height:1.12; letter-spacing:-0.025em; font-weight:600">Uma porta para toda IA</h2>
+    <p style="margin:0 0 36px 0; font-size:17px; line-height:1.65; color:#9AA0A9; max-width:680px; text-wrap:pretty">Nenhum componente, action ou serviço fala com uma API de IA. Todos falam com o Gateway, que resolve provedor, aplica fallback, registra log e normaliza a resposta.</p>
+
+    <div style="display:grid; grid-template-columns:1.05fr 1fr; gap:16px; align-items:start">
+      <div style="background:#0E1013; border:1px solid #1F2228; border-radius:14px; padding:22px; font-family:'IBM Plex Mono',monospace; font-size:13px; line-height:1.75; color:#C6CBD3; white-space:pre; overflow:auto">interface AIProvider {
+  id: ProviderId
+  capabilities: Capability[]
+  generateText(i: TextInput): Promise&lt;TextOutput&gt;
+  generateImage(i: ImageInput): Promise&lt;ImageOutput&gt;
+  analyzeImage(i: VisionInput): Promise&lt;VisionOutput&gt;
+  embed(i: EmbedInput): Promise&lt;EmbedOutput&gt;
+  healthcheck(): Promise&lt;boolean&gt;
+}
+
+class AIGateway {
+  constructor(
+    registry: ProviderRegistry,
+    policy: FallbackPolicy,
+    logger: AILogger,
+    limiter: RateLimiter,
+  ) {}
+  run&lt;T&gt;(task: Task): Promise&lt;Result&lt;T&gt;&gt;
+}</div>
+
+      <div style="display:grid; gap:12px">
+        <div style="background:#111317; border:1px solid #1F2228; border-radius:14px; padding:20px">
+          <div style="font-size:13px; font-weight:600; color:oklch(0.86 0.09 178); font-family:'IBM Plex Mono',monospace; letter-spacing:0.08em; margin-bottom:12px">TEXTO</div>
+          <div style="display:flex; gap:8px; align-items:center; font-size:14px; color:#C6CBD3">Kimi <span style="color:#4A4F58">→</span> OpenRouter <span style="color:#4A4F58">→</span> Gemini</div>
+        </div>
+        <div style="background:#111317; border:1px solid #1F2228; border-radius:14px; padding:20px">
+          <div style="font-size:13px; font-weight:600; color:oklch(0.86 0.09 178); font-family:'IBM Plex Mono',monospace; letter-spacing:0.08em; margin-bottom:12px">IMAGEM</div>
+          <div style="display:flex; gap:8px; align-items:center; font-size:14px; color:#C6CBD3">Hugging Face <span style="color:#4A4F58">→</span> Replicate <span style="color:#4A4F58">→</span> Fal.ai</div>
+        </div>
+        <div style="background:#111317; border:1px solid #1F2228; border-radius:14px; padding:20px">
+          <div style="font-size:13px; font-weight:600; color:oklch(0.86 0.09 178); font-family:'IBM Plex Mono',monospace; letter-spacing:0.08em; margin-bottom:12px">VISÃO</div>
+          <div style="display:flex; gap:8px; align-items:center; font-size:14px; color:#C6CBD3">Gemini <span style="color:#4A4F58">→</span> Qwen VL <span style="color:#4A4F58">→</span> Florence</div>
+        </div>
+        <div style="background:#111317; border:1px solid #1F2228; border-radius:14px; padding:20px">
+          <div style="font-size:14px; font-weight:600; margin-bottom:8px">Política de fallback</div>
+          <div style="font-size:13.5px; line-height:1.6; color:#8B919B">Timeout, erro 5xx, quota ou resposta inválida no schema disparam o próximo provedor. Circuit breaker por provedor, com reabertura progressiva. Ordem definida em <span style="font-family:'IBM Plex Mono',monospace; color:#C6CBD3">config/ai.ts</span>, sobrescrevível por cliente.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 TEMPLATE vs BRAND KIT -->
+  <section style="max-width:1120px; margin:0 auto; padding:96px 48px 0 48px">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.16em; color:oklch(0.80 0.11 178); margin-bottom:16px">04 — LAYOUT BLUEPRINT</div>
+    <h2 style="margin:0 0 20px 0; font-size:38px; line-height:1.12; letter-spacing:-0.025em; font-weight:600">Template é molde. Brand Kit é aparência.</h2>
+    <p style="margin:0 0 36px 0; font-size:17px; line-height:1.65; color:#9AA0A9; max-width:720px; text-wrap:pretty">O Figma enviado é lido como <em style="color:#C6CBD3; font-style:normal">blueprint estrutural</em>: extraímos grid, áreas, hierarquia, proporções e margens — nunca cor, fonte, logo ou ilustração. O resultado é um Template JSON + HTML que qualquer cliente veste com o próprio Brand Kit.</p>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px">
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:14px; padding:24px">
+        <div style="font-size:16px; font-weight:600; margin-bottom:14px">Template — o que ele guarda</div>
+        <div style="display:grid; gap:7px; font-size:14px; color:#8B919B; line-height:1.5">
+          <div>Grid, colunas, gutters e safe area</div>
+          <div>Slots: <span style="font-family:'IBM Plex Mono',monospace; color:#C6CBD3">header · media · body · footer · cta</span></div>
+          <div>Proporções e posição relativa dos blocos</div>
+          <div>Escala tipográfica em múltiplos (não em px absolutos)</div>
+          <div>Regras de overflow e reflow por quantidade de texto</div>
+          <div>Variantes de slide: capa · conteúdo · lista · fechamento</div>
+        </div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:14px; padding:24px">
+        <div style="font-size:16px; font-weight:600; margin-bottom:14px">Brand Kit — o que ele injeta</div>
+        <div style="display:grid; gap:7px; font-size:14px; color:#8B919B; line-height:1.5">
+          <div>Paleta como CSS custom properties</div>
+          <div>Famílias e pesos tipográficos</div>
+          <div>Logo, marca d'água e posicionamento</div>
+          <div>Estilo gráfico: raio, sombra, traço, textura</div>
+          <div>Estilo de imagem e prompt base do cliente</div>
+          <div>CTA, handles, tom de voz e persona</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#0E1013; border:1px solid #1F2228; border-radius:14px; padding:22px; font-family:'IBM Plex Mono',monospace; font-size:13px; line-height:1.75; color:#C6CBD3; white-space:pre; overflow:auto">Figma / PNG / PDF  →  VisionAnalyzer  →  LayoutBlueprint (JSON)  →  TemplateCompiler  →  Template
+                                                                                          +  BrandKit
+                                                                                          ↓
+                                                                              HTML + CSS vars  →  Puppeteer  →  PNG 1080×1350</div>
+  </section>
+
+  <!-- 05 PIPELINE -->
+  <section style="max-width:1120px; margin:0 auto; padding:96px 48px 0 48px">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.16em; color:oklch(0.80 0.11 178); margin-bottom:16px">05 — PIPELINE</div>
+    <h2 style="margin:0 0 36px 0; font-size:38px; line-height:1.12; letter-spacing:-0.025em; font-weight:600">Do tema ao post publicado</h2>
+    <div style="display:grid; gap:1px; background:#1C1E23; border:1px solid #1C1E23; border-radius:14px; overflow:hidden">
+      <div style="display:grid; grid-template-columns:64px 260px 1fr 200px; gap:20px; align-items:center; background:#111317; padding:18px 22px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:oklch(0.80 0.11 178)">05%</div>
+        <div style="font-size:15px; font-weight:500">Criando estrutura</div>
+        <div style="height:4px; background:#1C1E23; border-radius:2px"><div style="width:5%; height:4px; background:oklch(0.80 0.11 178); border-radius:2px"></div></div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#6E747E">ResearchService</div>
+      </div>
+      <div style="display:grid; grid-template-columns:64px 260px 1fr 200px; gap:20px; align-items:center; background:#111317; padding:18px 22px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:oklch(0.80 0.11 178)">20%</div>
+        <div style="font-size:15px; font-weight:500">Escrevendo conteúdo</div>
+        <div style="height:4px; background:#1C1E23; border-radius:2px"><div style="width:20%; height:4px; background:oklch(0.80 0.11 178); border-radius:2px"></div></div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#6E747E">CopyService</div>
+      </div>
+      <div style="display:grid; grid-template-columns:64px 260px 1fr 200px; gap:20px; align-items:center; background:#111317; padding:18px 22px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:oklch(0.80 0.11 178)">40%</div>
+        <div style="font-size:15px; font-weight:500">Gerando prompts</div>
+        <div style="height:4px; background:#1C1E23; border-radius:2px"><div style="width:40%; height:4px; background:oklch(0.80 0.11 178); border-radius:2px"></div></div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#6E747E">PromptService</div>
+      </div>
+      <div style="display:grid; grid-template-columns:64px 260px 1fr 200px; gap:20px; align-items:center; background:#111317; padding:18px 22px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:oklch(0.80 0.11 178)">60%</div>
+        <div style="font-size:15px; font-weight:500">Criando imagens</div>
+        <div style="height:4px; background:#1C1E23; border-radius:2px"><div style="width:60%; height:4px; background:oklch(0.80 0.11 178); border-radius:2px"></div></div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#6E747E">ImageService</div>
+      </div>
+      <div style="display:grid; grid-template-columns:64px 260px 1fr 200px; gap:20px; align-items:center; background:#111317; padding:18px 22px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:oklch(0.80 0.11 178)">80%</div>
+        <div style="font-size:15px; font-weight:500">Renderizando slides</div>
+        <div style="height:4px; background:#1C1E23; border-radius:2px"><div style="width:80%; height:4px; background:oklch(0.80 0.11 178); border-radius:2px"></div></div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#6E747E">RenderService</div>
+      </div>
+      <div style="display:grid; grid-template-columns:64px 260px 1fr 200px; gap:20px; align-items:center; background:#111317; padding:18px 22px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:oklch(0.80 0.11 178)">95%</div>
+        <div style="font-size:15px; font-weight:500">Publicando</div>
+        <div style="height:4px; background:#1C1E23; border-radius:2px"><div style="width:95%; height:4px; background:oklch(0.80 0.11 178); border-radius:2px"></div></div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#6E747E">PublishingGateway</div>
+      </div>
+      <div style="display:grid; grid-template-columns:64px 260px 1fr 200px; gap:20px; align-items:center; background:#0F1618; padding:18px 22px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:oklch(0.86 0.09 178)">100%</div>
+        <div style="font-size:15px; font-weight:500; color:oklch(0.90 0.07 178)">Concluído</div>
+        <div style="height:4px; background:#1C1E23; border-radius:2px"><div style="width:100%; height:4px; background:oklch(0.86 0.09 178); border-radius:2px"></div></div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#6E747E">job.completed</div>
+      </div>
+    </div>
+    <p style="margin:20px 0 0 0; font-size:14.5px; line-height:1.6; color:#7C828C; max-width:720px">Cada etapa é um step idempotente da fila, com retry próprio e checkpoint persistido — falha no passo 4 não recomeça do zero. Progresso vai ao cliente por Supabase Realtime.</p>
+  </section>
+
+  <!-- 06 PASTAS -->
+  <section style="max-width:1120px; margin:0 auto; padding:96px 48px 0 48px">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.16em; color:oklch(0.80 0.11 178); margin-bottom:16px">06 — ESTRUTURA</div>
+    <h2 style="margin:0 0 36px 0; font-size:38px; line-height:1.12; letter-spacing:-0.025em; font-weight:600">Estrutura de pastas</h2>
+    <div style="background:#0E1013; border:1px solid #1F2228; border-radius:14px; padding:26px; font-family:'IBM Plex Mono',monospace; font-size:13px; line-height:1.85; color:#A9AFB8; white-space:pre; overflow:auto">src/
+├── app/                        <span style="color:#5F656E">rotas, server actions, route handlers</span>
+│   ├── (auth)/ · (dashboard)/ · api/
+├── core/
+│   ├── domain/                 <span style="color:#5F656E">entidades, value objects, erros de domínio</span>
+│   │   ├── client/ brandkit/ template/ project/ slide/ publication/
+│   │   └── ports/              <span style="color:#5F656E">AIProvider, Repository, Publisher, Storage, Queue</span>
+│   └── application/
+│       ├── use-cases/          <span style="color:#5F656E">1 arquivo = 1 caso de uso</span>
+│       ├── services/           <span style="color:#5F656E">Research, Copy, Prompt, Image, Render</span>
+│       └── dto/                <span style="color:#5F656E">schemas Zod de entrada e saída</span>
+├── infra/
+│   ├── ai/
+│   │   ├── gateway.ts · registry.ts · fallback.ts · logger.ts
+│   │   └── providers/          <span style="color:#5F656E">kimi/ gemini/ openrouter/ openai/ hf/ replicate/ fal/ cloudflare/</span>
+│   ├── publishing/
+│   │   ├── gateway.ts
+│   │   └── channels/           <span style="color:#5F656E">instagram/ facebook/ linkedin/ threads/ tiktok/ pinterest/ postiz/ metricool/</span>
+│   ├── render/                 <span style="color:#5F656E">puppeteer runner, html builder, export</span>
+│   ├── db/                     <span style="color:#5F656E">supabase client, repositories, migrations</span>
+│   ├── queue/                  <span style="color:#5F656E">adapter trigger.dev | bullmq</span>
+│   └── storage/
+├── templates/                  <span style="color:#5F656E">moldes HTML+CSS, sem identidade visual</span>
+├── design-system/              <span style="color:#5F656E">tokens, primitivos shadcn, padrões de composição</span>
+├── config/                     <span style="color:#5F656E">ai.ts · publishing.ts · queue.ts · features.ts</span>
+└── shared/                     <span style="color:#5F656E">result, logger, errors, utils tipados</span></div>
+  </section>
+
+  <!-- 07 BANCO -->
+  <section style="max-width:1120px; margin:0 auto; padding:96px 48px 0 48px">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.16em; color:oklch(0.80 0.11 178); margin-bottom:16px">07 — DADOS</div>
+    <h2 style="margin:0 0 20px 0; font-size:38px; line-height:1.12; letter-spacing:-0.025em; font-weight:600">Modelo de banco</h2>
+    <p style="margin:0 0 36px 0; font-size:17px; line-height:1.65; color:#9AA0A9; max-width:680px; text-wrap:pretty">Postgres no Supabase, multi-tenant por <span style="font-family:'IBM Plex Mono',monospace; color:#C6CBD3">org_id</span> com Row Level Security em todas as tabelas. Chaves de API nunca no banco de aplicação.</p>
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px">
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:12px; padding:18px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:14px; color:oklch(0.86 0.09 178); margin-bottom:10px">users</div>
+        <div style="font-size:12.5px; line-height:1.7; color:#7C828C; font-family:'IBM Plex Mono',monospace">id · org_id · email<br>role · created_at</div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:12px; padding:18px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:14px; color:oklch(0.86 0.09 178); margin-bottom:10px">clients</div>
+        <div style="font-size:12.5px; line-height:1.7; color:#7C828C; font-family:'IBM Plex Mono',monospace">id · name · handles<br>persona · tone · goals<br>specialties · site</div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:12px; padding:18px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:14px; color:oklch(0.86 0.09 178); margin-bottom:10px">brandkits</div>
+        <div style="font-size:12.5px; line-height:1.7; color:#7C828C; font-family:'IBM Plex Mono',monospace">id · client_id · palette<br>fonts · logo_id · style<br>cta · image_style</div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:12px; padding:18px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:14px; color:oklch(0.86 0.09 178); margin-bottom:10px">templates</div>
+        <div style="font-size:12.5px; line-height:1.7; color:#7C828C; font-family:'IBM Plex Mono',monospace">id · blueprint(jsonb)<br>slots · variants · ratio<br>source_ref · version</div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:12px; padding:18px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:14px; color:oklch(0.86 0.09 178); margin-bottom:10px">projects</div>
+        <div style="font-size:12.5px; line-height:1.7; color:#7C828C; font-family:'IBM Plex Mono',monospace">id · client_id · theme<br>goal · status · progress<br>template_id</div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:12px; padding:18px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:14px; color:oklch(0.86 0.09 178); margin-bottom:10px">slides</div>
+        <div style="font-size:12.5px; line-height:1.7; color:#7C828C; font-family:'IBM Plex Mono',monospace">id · project_id · index<br>variant · content(jsonb)<br>media_id · overrides</div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:12px; padding:18px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:14px; color:oklch(0.86 0.09 178); margin-bottom:10px">posts</div>
+        <div style="font-size:12.5px; line-height:1.7; color:#7C828C; font-family:'IBM Plex Mono',monospace">id · project_id<br>scheduled_at · status<br>channel_targets</div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:12px; padding:18px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:14px; color:oklch(0.86 0.09 178); margin-bottom:10px">captions</div>
+        <div style="font-size:12.5px; line-height:1.7; color:#7C828C; font-family:'IBM Plex Mono',monospace">id · post_id · body<br>cta · variant</div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:12px; padding:18px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:14px; color:oklch(0.86 0.09 178); margin-bottom:10px">hashtags</div>
+        <div style="font-size:12.5px; line-height:1.7; color:#7C828C; font-family:'IBM Plex Mono',monospace">id · post_id · tags[]<br>score · source</div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:12px; padding:18px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:14px; color:oklch(0.86 0.09 178); margin-bottom:10px">publications</div>
+        <div style="font-size:12.5px; line-height:1.7; color:#7C828C; font-family:'IBM Plex Mono',monospace">id · post_id · channel<br>external_id · status<br>error · published_at</div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:12px; padding:18px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:14px; color:oklch(0.86 0.09 178); margin-bottom:10px">media</div>
+        <div style="font-size:12.5px; line-height:1.7; color:#7C828C; font-family:'IBM Plex Mono',monospace">id · path · kind<br>width · height<br>provider · prompt_id</div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:12px; padding:18px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:14px; color:oklch(0.86 0.09 178); margin-bottom:10px">uploads</div>
+        <div style="font-size:12.5px; line-height:1.7; color:#7C828C; font-family:'IBM Plex Mono',monospace">id · path · mime<br>purpose · analyzed_at</div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:12px; padding:18px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:14px; color:oklch(0.86 0.09 178); margin-bottom:10px">prompt_history</div>
+        <div style="font-size:12.5px; line-height:1.7; color:#7C828C; font-family:'IBM Plex Mono',monospace">id · scope · template<br>vars · rendered · hash</div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:12px; padding:18px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:14px; color:oklch(0.86 0.09 178); margin-bottom:10px">ai_logs</div>
+        <div style="font-size:12.5px; line-height:1.7; color:#7C828C; font-family:'IBM Plex Mono',monospace">id · provider · model<br>task · tokens · cost<br>latency · fallback_from</div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:12px; padding:18px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:14px; color:oklch(0.86 0.09 178); margin-bottom:10px">jobs</div>
+        <div style="font-size:12.5px; line-height:1.7; color:#7C828C; font-family:'IBM Plex Mono',monospace">id · project_id · step<br>progress · attempts<br>payload · state</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 DESIGN SYSTEM -->
+  <section style="max-width:1120px; margin:0 auto; padding:96px 48px 0 48px">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.16em; color:oklch(0.80 0.11 178); margin-bottom:16px">08 — DESIGN SYSTEM</div>
+    <h2 style="margin:0 0 20px 0; font-size:38px; line-height:1.12; letter-spacing:-0.025em; font-weight:600">Interface do produto</h2>
+    <p style="margin:0 0 36px 0; font-size:17px; line-height:1.65; color:#9AA0A9; max-width:680px; text-wrap:pretty">Duas camadas visuais separadas: o <em style="color:#C6CBD3; font-style:normal">chrome do produto</em> (neutro, denso, silencioso) e o <em style="color:#C6CBD3; font-style:normal">canvas do cliente</em> (100% Brand Kit). O produto nunca colore o conteúdo do cliente.</p>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px">
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:14px; padding:24px">
+        <div style="font-size:15px; font-weight:600; margin-bottom:12px">Tokens</div>
+        <div style="font-size:13.5px; line-height:1.7; color:#8B919B">Escala de espaço 4/8 · raio 8-16 · 1 acento · 6 níveis de superfície · tipografia em 6 degraus · sombra apenas em overlay.</div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:14px; padding:24px">
+        <div style="font-size:15px; font-weight:600; margin-bottom:12px">Primitivos</div>
+        <div style="font-size:13.5px; line-height:1.7; color:#8B919B">shadcn como base: Button, Input, Select, Dialog, Sheet, Popover, Tabs, Toast, Command, Tooltip, Skeleton.</div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:14px; padding:24px">
+        <div style="font-size:15px; font-weight:600; margin-bottom:12px">Compostos</div>
+        <div style="font-size:13.5px; line-height:1.7; color:#8B919B">ThemeInput, ClientSwitcher, BrandKitCard, SlideCanvas, SlideRail, InspectorPanel, ProgressStepper, CalendarBoard.</div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:14px; padding:24px">
+        <div style="font-size:15px; font-weight:600; margin-bottom:12px">Movimento</div>
+        <div style="font-size:13.5px; line-height:1.7; color:#8B919B">Framer Motion, 120–200ms, ease-out. Só entra animação que comunica estado: progresso, reordenar, abrir inspector.</div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:14px; padding:24px">
+        <div style="font-size:15px; font-weight:600; margin-bottom:12px">Densidade</div>
+        <div style="font-size:13.5px; line-height:1.7; color:#8B919B">Editor denso e utilitário; onboarding e gerador arejados. Comando ⌘K como navegação primária.</div>
+      </div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:14px; padding:24px">
+        <div style="font-size:15px; font-weight:600; margin-bottom:12px">Estados</div>
+        <div style="font-size:13.5px; line-height:1.7; color:#8B919B">Todo componente define loading, vazio, erro e parcial — geração por IA falha e o layout precisa suportar.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 SEGURANÇA -->
+  <section style="max-width:1120px; margin:0 auto; padding:96px 48px 0 48px">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.16em; color:oklch(0.80 0.11 178); margin-bottom:16px">09 — SEGURANÇA</div>
+    <h2 style="margin:0 0 36px 0; font-size:38px; line-height:1.12; letter-spacing:-0.025em; font-weight:600">Limites e controles</h2>
+    <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:12px">
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:12px; padding:20px; font-size:14px; line-height:1.6; color:#8B919B"><span style="color:#E9EAEC; font-weight:600">Chaves só no servidor.</span> Variáveis de ambiente + secret manager; nenhuma chamada de IA a partir do browser.</div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:12px; padding:20px; font-size:14px; line-height:1.6; color:#8B919B"><span style="color:#E9EAEC; font-weight:600">RLS em tudo.</span> Isolamento por org_id na própria base, não apenas na aplicação.</div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:12px; padding:20px; font-size:14px; line-height:1.6; color:#8B919B"><span style="color:#E9EAEC; font-weight:600">Rate limit em camadas.</span> Por usuário, por org e por provedor, com orçamento mensal de custo de IA.</div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:12px; padding:20px; font-size:14px; line-height:1.6; color:#8B919B"><span style="color:#E9EAEC; font-weight:600">Tokens OAuth cifrados.</span> Credenciais de canais em vault, com rotação e revogação por cliente.</div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:12px; padding:20px; font-size:14px; line-height:1.6; color:#8B919B"><span style="color:#E9EAEC; font-weight:600">Validação de saída.</span> Toda resposta de IA passa por schema Zod antes de tocar o domínio.</div>
+      <div style="background:#111317; border:1px solid #1F2228; border-radius:12px; padding:20px; font-size:14px; line-height:1.6; color:#8B919B"><span style="color:#E9EAEC; font-weight:600">Auditoria.</span> Logs estruturados de ação, geração e publicação, com retenção definida.</div>
+    </div>
+  </section>
+
+  <!-- 10 BACKLOG -->
+  <sc-if value="{{ mostrarBacklog }}" hint-placeholder-val="{{ true }}">
+  <section style="max-width:1120px; margin:0 auto; padding:96px 48px 0 48px">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.16em; color:oklch(0.80 0.11 178); margin-bottom:16px">10 — BACKLOG</div>
+    <h2 style="margin:0 0 36px 0; font-size:38px; line-height:1.12; letter-spacing:-0.025em; font-weight:600">Backlog técnico priorizado</h2>
+    <div style="display:grid; gap:1px; background:#1C1E23; border:1px solid #1C1E23; border-radius:14px; overflow:hidden">
+      <div style="display:grid; grid-template-columns:80px 1fr 150px 90px; gap:20px; background:#0E1013; padding:14px 22px; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.12em; color:#6E747E">
+        <div>PRIO</div><div>ENTREGA</div><div>ÁREA</div><div>EST.</div>
+      </div>
+      <div style="display:grid; grid-template-columns:80px 1fr 150px 90px; gap:20px; background:#111317; padding:16px 22px; align-items:center">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:oklch(0.86 0.09 178)">P0</div>
+        <div style="font-size:14.5px">Fundação: monorepo, tipos, config, Supabase, auth, RLS</div>
+        <div style="font-size:13px; color:#8B919B">Plataforma</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:#8B919B">1 sem</div>
+      </div>
+      <div style="display:grid; grid-template-columns:80px 1fr 150px 90px; gap:20px; background:#111317; padding:16px 22px; align-items:center">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:oklch(0.86 0.09 178)">P0</div>
+        <div style="font-size:14.5px">AI Gateway + registry + fallback + ai_logs (Kimi, OpenRouter, Gemini)</div>
+        <div style="font-size:13px; color:#8B919B">IA</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:#8B919B">1,5 sem</div>
+      </div>
+      <div style="display:grid; grid-template-columns:80px 1fr 150px 90px; gap:20px; background:#111317; padding:16px 22px; align-items:center">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:oklch(0.86 0.09 178)">P0</div>
+        <div style="font-size:14.5px">Domínio Client + Brand Kit + CRUD e upload de logo</div>
+        <div style="font-size:13px; color:#8B919B">Domínio</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:#8B919B">1 sem</div>
+      </div>
+      <div style="display:grid; grid-template-columns:80px 1fr 150px 90px; gap:20px; background:#111317; padding:16px 22px; align-items:center">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:oklch(0.86 0.09 178)">P0</div>
+        <div style="font-size:14.5px">Template engine: blueprint JSON → HTML + CSS vars, 3 moldes base</div>
+        <div style="font-size:13px; color:#8B919B">Render</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:#8B919B">2 sem</div>
+      </div>
+      <div style="display:grid; grid-template-columns:80px 1fr 150px 90px; gap:20px; background:#111317; padding:16px 22px; align-items:center">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:oklch(0.86 0.09 178)">P0</div>
+        <div style="font-size:14.5px">Pipeline de geração com fila, progresso e retomada por step</div>
+        <div style="font-size:13px; color:#8B919B">Automação</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:#8B919B">2 sem</div>
+      </div>
+      <div style="display:grid; grid-template-columns:80px 1fr 150px 90px; gap:20px; background:#111317; padding:16px 22px; align-items:center">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#C6A15B">P1</div>
+        <div style="font-size:14.5px">Geração de imagem (HF → Replicate → Fal) + Storage + política sem texto</div>
+        <div style="font-size:13px; color:#8B919B">IA</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:#8B919B">1,5 sem</div>
+      </div>
+      <div style="display:grid; grid-template-columns:80px 1fr 150px 90px; gap:20px; background:#111317; padding:16px 22px; align-items:center">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#C6A15B">P1</div>
+        <div style="font-size:14.5px">Editor de slides: texto, imagem, duplicar, reordenar, overrides</div>
+        <div style="font-size:13px; color:#8B919B">Produto</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:#8B919B">3 sem</div>
+      </div>
+      <div style="display:grid; grid-template-columns:80px 1fr 150px 90px; gap:20px; background:#111317; padding:16px 22px; align-items:center">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#C6A15B">P1</div>
+        <div style="font-size:14.5px">Vision: referência visual → LayoutBlueprint → novo Template</div>
+        <div style="font-size:13px; color:#8B919B">IA</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:#8B919B">2 sem</div>
+      </div>
+      <div style="display:grid; grid-template-columns:80px 1fr 150px 90px; gap:20px; background:#111317; padding:16px 22px; align-items:center">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#C6A15B">P1</div>
+        <div style="font-size:14.5px">Publishing Gateway + canal Instagram (Graph API)</div>
+        <div style="font-size:13px; color:#8B919B">Publicação</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:#8B919B">1,5 sem</div>
+      </div>
+      <div style="display:grid; grid-template-columns:80px 1fr 150px 90px; gap:20px; background:#111317; padding:16px 22px; align-items:center">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#7C828C">P2</div>
+        <div style="font-size:14.5px">Calendário editorial: agendar, mover, duplicar, publicar</div>
+        <div style="font-size:13px; color:#8B919B">Produto</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:#8B919B">2 sem</div>
+      </div>
+      <div style="display:grid; grid-template-columns:80px 1fr 150px 90px; gap:20px; background:#111317; padding:16px 22px; align-items:center">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#7C828C">P2</div>
+        <div style="font-size:14.5px">Demais canais: LinkedIn, Facebook, Threads, TikTok, Pinterest, Postiz</div>
+        <div style="font-size:13px; color:#8B919B">Publicação</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:#8B919B">3 sem</div>
+      </div>
+      <div style="display:grid; grid-template-columns:80px 1fr 150px 90px; gap:20px; background:#111317; padding:16px 22px; align-items:center">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#7C828C">P3</div>
+        <div style="font-size:14.5px">Analytics de custo de IA, quotas por plano e billing</div>
+        <div style="font-size:13px; color:#8B919B">Plataforma</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:#8B919B">2 sem</div>
+      </div>
+    </div>
+  </section>
+  </sc-if>
+
+  <!-- 11 DECISÕES -->
+  <section style="max-width:1120px; margin:0 auto; padding:96px 48px 0 48px">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.16em; color:oklch(0.80 0.11 178); margin-bottom:16px">11 — APROVAÇÃO</div>
+    <h2 style="margin:0 0 20px 0; font-size:38px; line-height:1.12; letter-spacing:-0.025em; font-weight:600">O que preciso decidido antes do código</h2>
+    <div style="display:grid; gap:12px; max-width:820px; margin-top:32px">
+      <div style="display:grid; grid-template-columns:32px 1fr; gap:16px; background:#111317; border:1px solid #1F2228; border-radius:12px; padding:20px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:oklch(0.80 0.11 178)">01</div>
+        <div style="font-size:14.5px; line-height:1.6; color:#B8BDC5"><span style="color:#E9EAEC; font-weight:600">Arquivo do Figma.</span> Ainda não recebi o blueprint. Sem ele não consigo derivar os primeiros Templates — envie o .fig ou o link.</div>
+      </div>
+      <div style="display:grid; grid-template-columns:32px 1fr; gap:16px; background:#111317; border:1px solid #1F2228; border-radius:12px; padding:20px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:oklch(0.80 0.11 178)">02</div>
+        <div style="font-size:14.5px; line-height:1.6; color:#B8BDC5"><span style="color:#E9EAEC; font-weight:600">Fila.</span> Trigger.dev (grátis para começar, menos infra) ou BullMQ + Redis (controle total, exige host). O adapter cobre os dois — preciso do padrão.</div>
+      </div>
+      <div style="display:grid; grid-template-columns:32px 1fr; gap:16px; background:#111317; border:1px solid #1F2228; border-radius:12px; padding:20px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:oklch(0.80 0.11 178)">03</div>
+        <div style="font-size:14.5px; line-height:1.6; color:#B8BDC5"><span style="color:#E9EAEC; font-weight:600">Puppeteer em produção.</span> Vercel não roda Chromium pesado bem; sugiro worker separado (Railway/Fly) ou browserless. Confirmar hospedagem.</div>
+      </div>
+      <div style="display:grid; grid-template-columns:32px 1fr; gap:16px; background:#111317; border:1px solid #1F2228; border-radius:12px; padding:20px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:oklch(0.80 0.11 178)">04</div>
+        <div style="font-size:14.5px; line-height:1.6; color:#B8BDC5"><span style="color:#E9EAEC; font-weight:600">Publicação direta vs. agregador.</span> Instagram Graph API exige conta business + revisão do app. Postiz/Metricool encurtam o caminho no MVP.</div>
+      </div>
+      <div style="display:grid; grid-template-columns:32px 1fr; gap:16px; background:#111317; border:1px solid #1F2228; border-radius:12px; padding:20px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:oklch(0.80 0.11 178)">05</div>
+        <div style="font-size:14.5px; line-height:1.6; color:#B8BDC5"><span style="color:#E9EAEC; font-weight:600">Escopo do MVP.</span> Proponho fechar em P0 + P1 (~11 semanas) com Instagram apenas. Calendário e demais canais na v1.1.</div>
+      </div>
+      <div style="display:grid; grid-template-columns:32px 1fr; gap:16px; background:#111317; border:1px solid #1F2228; border-radius:12px; padding:20px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:oklch(0.80 0.11 178)">06</div>
+        <div style="font-size:14.5px; line-height:1.6; color:#B8BDC5"><span style="color:#E9EAEC; font-weight:600">Conteúdo de saúde.</span> Os exemplos são clínicos — precisamos definir camada de revisão/compliance antes de publicar automaticamente.</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;mostrarBacklog&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Conteúdo&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return { mostrarBacklog: this.props.mostrarBacklog ?? true };
+  }
+}
+</script>
+</body>
+</html>

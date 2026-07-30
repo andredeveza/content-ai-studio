@@ -1,0 +1,28 @@
+# Blueprint do Render.com para o serviço de render (bloco 5). O app
+# Next.js principal continua sendo deployado na Vercel — este arquivo só
+# descreve o processo Puppeteer separado (README, "Renderização").
+services:
+  - type: web
+    name: content-ai-studio-render
+    env: docker
+    dockerfilePath: ./Dockerfile.render
+    dockerContext: .
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        sync: false
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        sync: false
+      - key: RENDER_SERVICE_TOKEN
+        sync: false
+      - key: NODE_ENV
+        value: production
+      - key: RENDER_SERVICE_PORT
+        value: 8080

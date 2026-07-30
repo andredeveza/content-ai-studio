@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#EDEDEB}
+  body{font-family:'Space Grotesk',sans-serif;color:#0A0A0A;-webkit-font-smoothing:antialiased}
+  a{color:#0A0A0A;text-decoration:none;border-bottom:1px solid #C7C7C3}
+  a:hover{border-bottom-color:#0A0A0A}
+  button{font-family:inherit}
+</style>
+</helmet>
+
+<div data-app style="background:#EDEDEB; min-height:100vh; padding:0 0 120px 0">
+
+  <div style="max-width:1240px; margin:0 auto; padding:64px 32px 0 32px">
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:30px">
+      <svg viewBox="0 0 220 168" style="width:24px"><polygon points="12,140 106,22 106,140" fill="#7A7A7A"></polygon><polygon points="114,140 114,22 208,140" fill="#0A0A0A"></polygon></svg>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:#9A9A95">// biblioteca de blueprints · extraída das referências</div>
+    </div>
+    <h1 style="margin:0 0 12px 0; font-size:46px; line-height:1.04; letter-spacing:-.035em; font-weight:700; max-width:760px; text-wrap:pretty">Oito arquétipos de layout para o usuário escolher</h1>
+    <p style="margin:0 0 14px 0; font-size:16.5px; line-height:1.6; color:#585853; max-width:680px; text-wrap:pretty">Dos arquivos que você anexou eu extraí <em style="font-style:normal; color:#0A0A0A">estrutura</em>: grid, margens, hierarquia, escala tipográfica e posição de cada slot. Cor, fonte, logo e imagem continuam vindo do Brand Kit do cliente — por isso o mesmo blueprint serve para qualquer marca.</p>
+    <p style="margin:0 0 32px 0; font-size:14px; line-height:1.6; color:#9A9A95; max-width:680px">Medidas transcritas do arquivo: canvas 1080, margem 80, manchete 90/110px, número 175/185px, citação 32/48px, assinatura 36/38px.</p>
+
+    <div style="display:flex; gap:8px; flex-wrap:wrap; padding-bottom:36px; border-bottom:1px solid #E4E4E2">
+      <sc-for list="{{ ratios }}" as="rt" hint-placeholder-count="0">
+        <button onClick="{{ rt.pick }}" style="background:{{ rt.bg }}; color:{{ rt.color }}; border:1px solid #E4E4E2; border-radius:999px; padding:9px 15px; font-family:'JetBrains Mono',monospace; font-size:11.5px; cursor:pointer">{{ rt.label }}</button>
+      </sc-for>
+      <button onClick="{{ toggleSlots }}" style="background:{{ slotsBg }}; color:{{ slotsColor }}; border:1px solid #E4E4E2; border-radius:999px; padding:9px 15px; font-family:'JetBrains Mono',monospace; font-size:11.5px; cursor:pointer; margin-left:8px">{{ slotsLabel }}</button>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#9A9A95; display:flex; align-items:center; gap:7px; margin-left:12px"><span style="width:11px; height:11px; border-radius:3px; background:#4A3AFF"></span>cor dos previews = paleta da referência, não do cliente</div>
+    </div>
+  </div>
+
+  <section style="max-width:1240px; margin:0 auto; padding:40px 32px 0 32px">
+    <div style="display:grid; grid-template-columns:repeat(auto-fill, 268px); justify-content:start; gap:26px 22px">
+      <sc-for list="{{ blueprints }}" as="bp" hint-placeholder-count="0">
+        <div>
+          <div onClick="{{ bp.pick }}" style="width:268px; aspect-ratio:{{ bp.ratioCss }}; border-radius:10px; border:1.5px solid {{ bp.ring }}; overflow:hidden; background:#FFFFFF; cursor:pointer; position:relative">
+            <div style="width:1080px; height:{{ bp.stageH }}; transform:scale({{ bp.scale }}); transform-origin:top left; position:relative; background:#FFFFFF">
+              <sc-for list="{{ bp.boxes }}" as="b" hint-placeholder-count="0">
+                <div style="position:absolute; left:{{ b.l }}; top:{{ b.t }}; width:{{ b.w }}; height:{{ b.h }}; border-radius:{{ b.r }}; background:{{ b.bg }}; border:{{ b.border }}; display:flex; align-items:{{ b.va }}; justify-content:{{ b.ha }}; padding:{{ b.pad }}; overflow:hidden">
+                  <span style="font-family:{{ b.font }}; font-weight:{{ b.weight }}; font-size:{{ b.fs }}; line-height:{{ b.lh }}; letter-spacing:{{ b.ls }}; color:{{ b.fg }}; text-align:{{ b.ta }}">{{ b.text }}</span>
+                </div>
+              </sc-for>
+              <sc-if value="{{ showSlots }}" hint-placeholder-val="{{ false }}">
+                <sc-for list="{{ bp.boxes }}" as="b" hint-placeholder-count="0">
+                  <div style="position:absolute; left:{{ b.l }}; top:{{ b.t }}; width:{{ b.w }}; height:{{ b.h }}; outline:3px dashed rgba(58,154,72,.85); outline-offset:4px"></div>
+                </sc-for>
+              </sc-if>
+            </div>
+          </div>
+          <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-top:9px">
+            <div style="font-size:14px; font-weight:600; letter-spacing:-.01em">{{ bp.name }}</div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#9A9A95">{{ bp.id }}</div>
+          </div>
+          <div style="font-size:12.5px; line-height:1.5; color:#585853; margin-top:4px">{{ bp.role }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section style="max-width:1240px; margin:0 auto; padding:56px 32px 0 32px">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(360px,1fr)); gap:16px; align-items:start">
+      <div style="background:#FFFFFF; border:1px solid #E4E4E2; border-radius:14px; padding:22px">
+        <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#9A9A95; margin-bottom:12px">blueprint selecionado</div>
+        <div style="font-size:19px; font-weight:700; letter-spacing:-.02em">{{ sel.name }}</div>
+        <div style="font-size:14px; line-height:1.6; color:#585853; margin-top:8px">{{ sel.role }}</div>
+        <div style="margin-top:16px; display:grid; gap:8px">
+          <div style="display:flex; justify-content:space-between; gap:12px; font-family:'JetBrains Mono',monospace; font-size:11.5px; color:#585853; border-bottom:1px solid #EDEDEB; padding-bottom:7px"><span>canvas</span><span style="color:#0A0A0A">{{ sel.canvas }}</span></div>
+          <div style="display:flex; justify-content:space-between; gap:12px; font-family:'JetBrains Mono',monospace; font-size:11.5px; color:#585853; border-bottom:1px solid #EDEDEB; padding-bottom:7px"><span>margem</span><span style="color:#0A0A0A">80 px</span></div>
+          <div style="display:flex; justify-content:space-between; gap:12px; font-family:'JetBrains Mono',monospace; font-size:11.5px; color:#585853; border-bottom:1px solid #EDEDEB; padding-bottom:7px"><span>slots</span><span style="color:#0A0A0A">{{ sel.slotList }}</span></div>
+          <div style="display:flex; justify-content:space-between; gap:12px; font-family:'JetBrains Mono',monospace; font-size:11.5px; color:#585853"><span>usar quando</span><span style="color:#0A0A0A">{{ sel.when }}</span></div>
+        </div>
+      </div>
+
+      <div style="background:#080808; border-radius:14px; padding:22px; font-family:'JetBrains Mono',monospace; font-size:11.5px; line-height:1.8; color:#A6A6A2; white-space:pre; overflow:auto">{{ sel.json }}</div>
+    </div>
+  </section>
+
+  <section style="max-width:1240px; margin:0 auto; padding:52px 32px 0 32px">
+    <h2 style="margin:0 0 8px 0; font-size:26px; line-height:1.1; letter-spacing:-.03em; font-weight:700">Como o sistema escolhe sozinho</h2>
+    <p style="margin:0 0 22px 0; font-size:15px; line-height:1.6; color:#585853; max-width:660px">O usuário pode fixar um blueprint, mas o padrão é o sistema decidir por forma do conteúdo — não por gosto. Regra determinística, roda antes de renderizar.</p>
+    <div style="display:grid; gap:1px; background:#E4E4E2; border:1px solid #E4E4E2; border-radius:12px; overflow:hidden">
+      <div style="display:grid; grid-template-columns:200px 1fr 150px; gap:18px; background:#F4F4F2; padding:13px 20px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:#9A9A95">
+        <div>sinal do conteúdo</div><div>condição</div><div>blueprint</div>
+      </div>
+      <sc-for list="{{ rules }}" as="ru" hint-placeholder-count="0">
+        <div style="display:grid; grid-template-columns:200px 1fr 150px; gap:18px; background:#FFFFFF; padding:14px 20px; align-items:center">
+          <div style="font-size:13.5px; font-weight:500">{{ ru.signal }}</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:11.5px; color:#585853">{{ ru.cond }}</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#0A0A0A">{{ ru.bp }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <p style="margin:20px 0 0 0; font-size:13.5px; line-height:1.6; color:#9A9A95; max-width:680px">Dentro do blueprint escolhido o sistema ainda sorteia eixos permitidos — posição do bloco de texto, alinhamento, degrau da escala, logo no topo ou na base, rodapé com pílula ou limpo. Todos os valores são validados, então nenhuma combinação produz texto ilegível.</p>
+  </section>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1300,&quot;height&quot;:900},&quot;ratioInicial&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;45&quot;,&quot;options&quot;:[&quot;45&quot;,&quot;11&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Blueprint&quot;}}">
+const MONO = "'JetBrains Mono', monospace";
+const SANS = "Inter, 'Space Grotesk', sans-serif";
+const INK = "#211F54";
+const ACCENT = "#4A3AFF";
+const SOFT = "#EFEEFF";
+const LINE = "1px solid #DCDDEB";
+
+function T(l, t, w, h, text, o) {
+  return Object.assign({
+    l, t, w, h, text: text || "",
+    r: 0, bg: "transparent", border: "none",
+    va: "flex-start", ha: "flex-start", pad: "0",
+    font: SANS, weight: 700, fs: 90, lh: "110px", ls: "-0.02em",
+    fg: INK, ta: "left",
+  }, o || {});
+}
+
+// Faixas reservadas ao chrome: topo 80..160, base H-190..H-80.
+// Todo conteúdo vive entre TOP e BOT, derivado de H — o mesmo blueprint
+// reflui em 1080 e 1350 sem nunca invadir o chrome.
+function band(H) { const TOP = 200, BOT = H - 230; return { TOP, BOT, CH: BOT - TOP }; }
+function mid(TOP, CH, blockH) { return TOP + Math.max(0, (CH - blockH) / 2); }
+
+function chrome(H) {
+  return [
+    T(80, 80, 274, 80, "@cliente", { fs: 36, lh: "40px", weight: 600, fg: ACCENT, va: "center", font: MONO, ls: "0.02em" }),
+    T(80, H - 160, 347, 80, "post by", { fs: 28, lh: "32px", weight: 400, fg: "#6E7191", va: "center", font: MONO }),
+    T(867, H - 188, 133, 108, "→", { fs: 60, lh: "60px", weight: 700, fg: "#FFFFFF", bg: ACCENT, r: 54, va: "center", ha: "center", ta: "center" }),
+  ];
+}
+
+const BP = [
+  {
+    id: "cover-centro", name: "Capa centrada", role: "Abertura de alto impacto, manchete no eixo central.",
+    when: "título ≤ 8 palavras", slots: "heading · kicker · chrome",
+    body: H => {
+      const { TOP, CH } = band(H);
+      const y = mid(TOP, CH, 602);
+      return [
+        T(80, y, 920, 60, "KICKER DO TEMA", { fs: 32, lh: "40px", weight: 600, fg: ACCENT, font: MONO, ta: "center", ha: "center", ls: "0.14em" }),
+        T(80, y + 120, 920, 354, "Manchete forte em três linhas no centro", { fs: 110, lh: "118px", ta: "center", ha: "center" }),
+        T(80, y + 514, 920, 88, "linha de apoio curta", { fs: 36, lh: "44px", weight: 400, fg: "#6E7191", ta: "center", ha: "center" }),
+      ];
+    },
+  },
+  {
+    id: "numerada", name: "Numerada", role: "Item de lista com número gigante acima da manchete.",
+    when: "carrossel em passos", slots: "number · heading · chrome",
+    body: H => {
+      const { TOP, CH } = band(H);
+      const y = mid(TOP, CH, 555);
+      return [
+        T(413, y, 253, 185, "01", { fs: 175, lh: "185px", fg: ACCENT, ta: "center", ha: "center" }),
+        T(80, y + 225, 920, 330, "Manchete do passo em duas ou três linhas", { fs: 90, lh: "110px", ta: "center", ha: "center" }),
+      ];
+    },
+  },
+  {
+    id: "citacao", name: "Citação", role: "Cartão translúcido sobre foto, com marca de aspas.",
+    when: "depoimento ou frase forte", slots: "media · quote · author",
+    body: H => {
+      const { TOP, CH } = band(H);
+      const y = mid(TOP, CH, 560);
+      return [
+        T(0, 0, 1080, H, "MEDIA FULL-BLEED", { bg: "#D9D9D9", fs: 30, lh: "30px", weight: 400, fg: "#8A8AA3", font: MONO, va: "center", ha: "center", ta: "center", ls: "0.12em" }),
+        T(80, TOP, 919, CH, "", { bg: "rgba(255,255,255,0.9)", r: 30 }),
+        T(405, y, 270, 130, "\u201C", { fs: 200, lh: "170px", fg: ACCENT, ta: "center", ha: "center" }),
+        T(140, y + 170, 800, 310, "A frase que sustenta o post inteiro, em duas ou três linhas", { fs: 48, lh: "62px", weight: 400, ta: "center", ha: "center" }),
+        T(140, y + 500, 800, 60, "— nome do autor", { fs: 32, lh: "48px", weight: 400, fg: ACCENT, ta: "center", ha: "center" }),
+      ];
+    },
+  },
+  {
+    id: "dado", name: "Dado", role: "Manchete no topo e área de gráfico ocupando o corpo.",
+    when: "número, série ou comparativo", slots: "heading · chart",
+    body: H => {
+      const { TOP, BOT } = band(H);
+      const cTop = TOP + 250;
+      const cH = BOT - cTop;
+      const base = cTop + cH - 40;
+      const bar = (x, h, c) => T(x, base - h, 120, h, "", { bg: c, r: 10 });
+      return [
+        T(199, TOP, 683, 210, "O dado que prova o ponto", { fs: 90, lh: "100px", ta: "center", ha: "center" }),
+        T(116, cTop, 848, cH, "", { bg: SOFT, r: 16 }),
+        bar(160, cH * 0.42, ACCENT),
+        bar(310, cH * 0.62, ACCENT),
+        bar(460, cH * 0.26, "#B5AFFF"),
+        bar(610, cH * 0.50, "#B5AFFF"),
+      ];
+    },
+  },
+  {
+    id: "foto-total", name: "Foto total", role: "Imagem sangrando com manchete ancorada na base.",
+    when: "produto, ambiente ou pessoa", slots: "media · heading",
+    body: H => {
+      const { BOT } = band(H);
+      return [
+        T(0, 0, 1080, H, "MEDIA FULL-BLEED", { bg: "#D9D9D9", fs: 30, lh: "30px", weight: 400, fg: "#8A8AA3", font: MONO, va: "center", ha: "center", ta: "center", ls: "0.12em" }),
+        T(0, H * 0.45, 1080, H * 0.55, "", { bg: "linear-gradient(180deg, rgba(10,10,10,0) 0%, rgba(10,10,10,0.92) 100%)" }),
+        T(80, BOT - 232, 780, 232, "Manchete sobre a imagem", { fs: 110, lh: "116px", fg: "#FFFFFF" }),
+      ];
+    },
+  },
+  {
+    id: "lista-icone", name: "Lista com ícone", role: "Itens curtos, cada um com marcador à esquerda.",
+    when: "3 a 5 itens de até 9 palavras", slots: "heading · items[]",
+    body: H => {
+      const { TOP, CH } = band(H);
+      const step = Math.min(150, (CH - 240 - 88) / 2);
+      const rows = [0, 1, 2].map(i => {
+        const y = TOP + 240 + i * step;
+        return [
+          T(80, y, 88, 88, "", { bg: SOFT, r: 24 }),
+          T(200, y + 6, 800, 76, "Item da lista em uma linha", { fs: 44, lh: "56px", weight: 600 }),
+        ];
+      });
+      return [T(80, TOP, 920, 200, "Título da lista", { fs: 90, lh: "100px" })].concat(rows[0], rows[1], rows[2]);
+    },
+  },
+  {
+    id: "evento", name: "Evento", role: "Bloco de data destacado com título e detalhe.",
+    when: "webinar, live, lançamento", slots: "date · heading · detail",
+    body: H => {
+      const { TOP, CH } = band(H);
+      const y = mid(TOP, CH, 644);
+      return [
+        T(80, y, 260, 260, "", { bg: ACCENT, r: 30 }),
+        T(80, y + 42, 260, 130, "12", { fs: 120, lh: "126px", fg: "#FFFFFF", ta: "center", ha: "center" }),
+        T(80, y + 178, 260, 50, "AGOSTO", { fs: 32, lh: "40px", weight: 600, fg: "#FFFFFF", ta: "center", ha: "center", font: MONO, ls: "0.14em" }),
+        T(80, y + 310, 920, 208, "Título do evento em duas linhas", { fs: 90, lh: "104px" }),
+        T(80, y + 548, 780, 96, "19h · online e gratuito · vagas limitadas", { fs: 36, lh: "48px", weight: 400, fg: "#6E7191" }),
+      ];
+    },
+  },
+  {
+    id: "fecho", name: "Fechamento", role: "Chamada final com ação clara e assinatura da marca.",
+    when: "último slide, sempre", slots: "heading · cta · chrome",
+    body: H => {
+      const { TOP, CH } = band(H);
+      const y = mid(TOP, CH, 544);
+      return [
+        T(80, y, 920, 236, "Chamada final direta", { fs: 110, lh: "118px", ta: "center", ha: "center" }),
+        T(80, y + 276, 920, 88, "o próximo passo em uma linha", { fs: 36, lh: "44px", weight: 400, fg: "#6E7191", ta: "center", ha: "center" }),
+        T(290, y + 424, 500, 120, "FALE COM A GENTE", { fs: 34, lh: "34px", weight: 700, fg: "#FFFFFF", bg: ACCENT, r: 60, va: "center", ha: "center", ta: "center", font: MONO, ls: "0.1em" }),
+      ];
+    },
+  },
+];
+
+const RULES = [
+  { signal: "Papel do slide", cond: "índice === 0", bp: "cover-centro" },
+  { signal: "Papel do slide", cond: "índice === último", bp: "fecho" },
+  { signal: "Estrutura em passos", cond: "slide tem número de ordem", bp: "numerada" },
+  { signal: "Citação detectada", cond: "corpo entre aspas ou com autor", bp: "citacao" },
+  { signal: "Número no corpo", cond: "regex de valor, % ou série", bp: "dado" },
+  { signal: "Itens curtos", cond: "3 a 5 linhas de ≤ 9 palavras", bp: "lista-icone" },
+  { signal: "Data no corpo", cond: "dia, mês e hora presentes", bp: "evento" },
+  { signal: "Foto forte disponível", cond: "acervo tem imagem com faixa escura", bp: "foto-total" },
+  { signal: "Nenhum sinal", cond: "fallback", bp: "cover-centro" },
+];
+
+const RATIOS = [
+  { id: "45", label: "4:5 · 1080×1350", h: 1350 },
+  { id: "11", label: "1:1 · 1080×1080", h: 1080 },
+];
+
+class Component extends DCLogic {
+  state = { ratio: "45", selIdx: 0, slots: false };
+
+  renderVals() {
+    const s = this.state;
+    const R = RATIOS.filter(r => r.id === s.ratio)[0] || RATIOS[0];
+    const H = R.h;
+    const scale = 268 / 1080;
+    const sel = BP[s.selIdx] || BP[0];
+
+    const px = v => Math.round(v) + "px";
+
+    return {
+      ratios: RATIOS.map(r => ({
+        label: r.label,
+        bg: s.ratio === r.id ? "#080808" : "#FFFFFF",
+        color: s.ratio === r.id ? "#FFFFFF" : "#0A0A0A",
+        pick: () => this.setState({ ratio: r.id }),
+      })),
+      showSlots: s.slots,
+      slotsLabel: s.slots ? "slots visíveis" : "mostrar slots",
+      slotsBg: s.slots ? "#080808" : "#FFFFFF",
+      slotsColor: s.slots ? "#FFFFFF" : "#0A0A0A",
+      toggleSlots: () => this.setState(p => ({ slots: !p.slots })),
+
+      blueprints: BP.map((b, i) => ({
+        id: b.id,
+        name: b.name,
+        role: b.role,
+        ring: i === s.selIdx ? "#0A0A0A" : "#E4E4E2",
+        ratioCss: s.ratio === "45" ? "4 / 5" : "1 / 1",
+        stageH: px(H),
+        scale: String(scale),
+        pick: () => this.setState({ selIdx: i }),
+        boxes: b.body(H).concat(chrome(H)).map(x => ({
+          l: px(x.l), t: px(x.t), w: px(x.w), h: px(x.h),
+          r: px(x.r), bg: x.bg, border: x.border,
+          va: x.va, ha: x.ha, pad: x.pad,
+          font: x.font, weight: x.weight, fs: px(x.fs), lh: x.lh, ls: x.ls,
+          fg: x.fg, ta: x.ta, text: x.text,
+        })),
+      })),
+
+      sel: {
+        name: sel.name,
+        role: sel.role,
+        canvas: s.ratio === "45" ? "1080 × 1350" : "1080 × 1080",
+        slotList: sel.slots,
+        when: sel.when,
+        json: [
+          "{",
+          '  "id": "' + sel.id + '",',
+          '  "canvas": { "w": 1080, "h": ' + H + " },",
+          '  "margin": 80,',
+          '  "slots": "' + sel.slots + '",',
+          '  "scale": {',
+          '    "hero":    { "size": 175, "lh": 185 },',
+          '    "display": { "size": 110, "lh": 118 },',
+          '    "heading": { "size": 90,  "lh": 110 },',
+          '    "lead":    { "size": 48,  "lh": 62  },',
+          '    "body":    { "size": 36,  "lh": 44  },',
+          '    "micro":   { "size": 32,  "lh": 40, "ls": "0.14em" }',
+          "  },",
+          '  "safeBand": { "top": 200, "bottom": ' + (H - 230) + " },",
+          '  "chrome": { "user": [80,80], "postBy": [80,-160], "next": [867,-188] },',
+          '  "brandKit": ["paper","ink","accent","display","ui","logo"]',
+          "}",
+        ].join("\n"),
+      },
+
+      rules: RULES,
+    };
+  }
+}
+</script>
+</body>
+</html>
