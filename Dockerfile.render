@@ -38,4 +38,9 @@ COPY src ./src
 ENV NODE_ENV=production
 EXPOSE 8080
 
-CMD ["npx", "tsx", "src/infra/render/server.ts"]
+# --conditions=react-server: os módulos de infra compartilhados com o
+# app Next.js importam "server-only" (guarda contra vazar código de
+# servidor pro bundle do cliente); fora do bundler do Next, isso só
+# resolve sem lançar erro com essa condition (é o que o webpack do Next
+# passa por baixo dos panos).
+CMD ["npx", "tsx", "--conditions=react-server", "src/infra/render/server.ts"]
