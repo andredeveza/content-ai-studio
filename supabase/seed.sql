@@ -7,13 +7,13 @@
 -- cliente real fornecer os valores.
 
 insert into public.orgs (id, name)
-values ('00000000-0000-0000-0000-000000000001', 'AD Tráfego Digital')
+values ('a0000000-0000-4000-8000-000000000001', 'AD Tráfego Digital')
 on conflict (id) do nothing;
 
 insert into public.clients (id, org_id, name, handles, persona, tone, goals, specialties, site)
 values (
-  '00000000-0000-0000-0000-000000000002',
-  '00000000-0000-0000-0000-000000000001',
+  'a0000000-0000-4000-8000-000000000002',
+  'a0000000-0000-4000-8000-000000000001',
   'AD Tráfego Digital',
   array['@trafegodigitalad'],
   null,
@@ -28,7 +28,7 @@ insert into public.brandkits (
   client_id, palette, gradient, fonts, logo_radius, chrome, rules, image_style, cta, style
 )
 values (
-  '00000000-0000-0000-0000-000000000002',
+  'a0000000-0000-4000-8000-000000000002',
   jsonb_build_object(
     'ink', '#06070A',
     'graphite', '#101319',
