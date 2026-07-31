@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # Vercel já faz o deploy real com as env vars de verdade — este build
+    # só valida que o projeto compila; os valores abaixo apenas satisfazem
+    # o schema do config/env.ts (nenhum é usado para chamar Supabase de
+    # verdade em nenhum destes passos).
+    env:
+      SUPABASE_URL: https://example.supabase.co
+      SUPABASE_ANON_KEY: dummy
+      SUPABASE_SERVICE_KEY: dummy
+      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: dummy
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Lint
+        run: npx eslint src/
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
