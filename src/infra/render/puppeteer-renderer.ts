@@ -21,8 +21,12 @@ async function launchBrowser(): Promise<Browser> {
     });
   }
 
+  // `--no-sandbox` também aqui: runners de CI (GitHub Actions) rodam como
+  // root, e o sandbox do Chrome recusa iniciar nesse caso — sem isso,
+  // puppeteer-renderer.test.ts (que sobe um browser de verdade) falha só
+  // em CI, nunca localmente.
   const { default: puppeteer } = await import("puppeteer");
-  return puppeteer.launch({ headless: true }) as unknown as Promise<Browser> as unknown as Browser;
+  return puppeteer.launch({ headless: true, args: ["--no-sandbox"] }) as unknown as Promise<Browser> as unknown as Browser;
 }
 
 // Espera fontes (`document.fonts.ready`) e imagens antes do screenshot —
