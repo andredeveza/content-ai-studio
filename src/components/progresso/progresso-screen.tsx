@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Search, PenLine, ImagePlus, Sparkles, LayoutTemplate, PackageCheck, CheckCircle2, XCircle, Check } from "lucide-react";
 import { createClient } from "@/infra/db/supabase/client";
 import { JOB_STEPS, type JobState, type JobStep } from "@/core/domain/pipeline/job";
+import { ScreenContainer } from "@/components/chrome/screen-container";
 import { cn } from "@/lib/utils";
 
 interface JobSnapshot {
@@ -79,7 +80,7 @@ export function ProgressoScreen({ jobId, initialJob, theme, editorHref, geradorH
   const stepIndex = JOB_STEPS.indexOf(job.step);
 
   return (
-    <div className="px-4 pt-6 pb-10">
+    <ScreenContainer width="form" className="pt-6 pb-10">
       <h1 className="mb-1 text-[28px] font-bold tracking-[-.03em] leading-[1.1]">Progresso</h1>
       {theme && <p className="mb-6 text-sm text-(--chrome-muted)">{theme}</p>}
 
@@ -150,6 +151,6 @@ export function ProgressoScreen({ jobId, initialJob, theme, editorHref, geradorH
           Tentar de novo
         </Link>
       )}
-    </div>
+    </ScreenContainer>
   );
 }

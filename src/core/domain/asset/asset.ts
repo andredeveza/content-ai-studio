@@ -19,6 +19,12 @@ export interface Asset {
   readonly excerpts: readonly string[];
   readonly family: string | null;
   readonly error: string | null;
+  // Preenchidos só quando o asset veio de um importador em massa
+  // (README, "Importar acervo a partir do site do cliente") — sustenta
+  // a autorização depois ("registre... é o que sustenta a autorização
+  // depois"). Upload manual deixa os dois null.
+  readonly sourceUrl: string | null;
+  readonly importedBy: string | null;
   readonly analyzedAt: string | null;
   readonly createdAt: string;
   readonly updatedAt: string;
@@ -30,6 +36,8 @@ export interface NewAsset {
   readonly path: string;
   readonly mime: string;
   readonly kind: AssetKind;
+  readonly sourceUrl?: string | null;
+  readonly importedBy?: string | null;
 }
 
 // Resultado da extração (README, "Extração") — o que

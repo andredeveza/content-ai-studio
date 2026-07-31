@@ -33,6 +33,8 @@ function baseAsset(overrides: Partial<Asset>): Asset {
     excerpts: [],
     family: null,
     error: null,
+    sourceUrl: null,
+    importedBy: null,
     analyzedAt: null,
     createdAt: now,
     updatedAt: now,
@@ -46,6 +48,9 @@ class FakeAssetRepository implements AssetRepository {
   readonly failedErrors: string[] = [];
 
   async create(_input: NewAsset): Promise<Asset> {
+    throw new Error("não usado neste teste");
+  }
+  async listByClient(): Promise<Asset[]> {
     throw new Error("não usado neste teste");
   }
   async findById(orgId: string, assetId: string): Promise<Asset | null> {

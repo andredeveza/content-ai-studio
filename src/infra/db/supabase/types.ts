@@ -287,7 +287,7 @@ export interface Database {
           status: "draft" | "running" | "completed" | "failed";
           progress: number;
           slide_count: number;
-          ratio: "4:5" | "1:1";
+          ratio: "4:5" | "1:1" | "9:16";
           caption: string | null;
           hashtags: string[];
           cta: string | null;
@@ -303,7 +303,7 @@ export interface Database {
           status?: "draft" | "running" | "completed" | "failed";
           progress?: number;
           slide_count: number;
-          ratio?: "4:5" | "1:1";
+          ratio?: "4:5" | "1:1" | "9:16";
           caption?: string | null;
           hashtags?: string[];
           cta?: string | null;
@@ -319,7 +319,7 @@ export interface Database {
           status?: "draft" | "running" | "completed" | "failed";
           progress?: number;
           slide_count?: number;
-          ratio?: "4:5" | "1:1";
+          ratio?: "4:5" | "1:1" | "9:16";
           caption?: string | null;
           hashtags?: string[];
           cta?: string | null;
@@ -470,6 +470,8 @@ export interface Database {
           excerpts: string[];
           family: string | null;
           error: string | null;
+          source_url: string | null;
+          imported_by: string | null;
           analyzed_at: string | null;
           created_at: string;
           updated_at: string;
@@ -492,6 +494,8 @@ export interface Database {
           excerpts?: string[];
           family?: string | null;
           error?: string | null;
+          source_url?: string | null;
+          imported_by?: string | null;
           analyzed_at?: string | null;
           created_at?: string;
           updated_at?: string;
@@ -514,6 +518,8 @@ export interface Database {
           excerpts?: string[];
           family?: string | null;
           error?: string | null;
+          source_url?: string | null;
+          imported_by?: string | null;
           analyzed_at?: string | null;
           created_at?: string;
           updated_at?: string;

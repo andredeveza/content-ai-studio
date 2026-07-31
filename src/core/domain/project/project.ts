@@ -3,7 +3,7 @@
 // em venda, quebrar objeção.
 export type ProjectGoal = "educar" | "autoridade" | "converter" | "mito";
 export type ProjectStatus = "draft" | "running" | "completed" | "failed";
-export type ProjectRatio = "4:5" | "1:1";
+export type ProjectRatio = "4:5" | "1:1" | "9:16";
 
 export interface Project {
   readonly id: string;
@@ -40,5 +40,7 @@ export interface ProjectPatch {
 }
 
 export function canvasForRatio(ratio: ProjectRatio): { readonly w: number; readonly h: number } {
-  return ratio === "1:1" ? { w: 1080, h: 1080 } : { w: 1080, h: 1350 };
+  if (ratio === "1:1") return { w: 1080, h: 1080 };
+  if (ratio === "9:16") return { w: 1080, h: 1920 };
+  return { w: 1080, h: 1350 };
 }

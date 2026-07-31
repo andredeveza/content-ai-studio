@@ -30,12 +30,17 @@ class FakeAssetRepository implements AssetRepository {
       excerpts: [],
       family: null,
       error: null,
+      sourceUrl: input.sourceUrl ?? null,
+      importedBy: input.importedBy ?? null,
       analyzedAt: null,
       createdAt: now,
       updatedAt: now,
     };
   }
   async findById(): Promise<Asset | null> {
+    throw new Error("não usado neste teste");
+  }
+  async listByClient(): Promise<Asset[]> {
     throw new Error("não usado neste teste");
   }
   async listAnalyzedImagesByClient(): Promise<Asset[]> {

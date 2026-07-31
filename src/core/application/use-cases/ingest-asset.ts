@@ -14,6 +14,11 @@ export interface IngestAssetInput {
   readonly filename: string;
   readonly mime: string;
   readonly file: Buffer;
+  // Preenchidos só pelo importador de site (README, "Importar acervo a
+  // partir do site do cliente") — sustenta a autorização depois; upload
+  // manual não passa nenhum dos dois.
+  readonly sourceUrl?: string;
+  readonly importedBy?: string;
 }
 
 const FONT_EXTENSION_REGEX = /\.(ttf|otf|woff2?)$/i;
@@ -50,6 +55,8 @@ export class IngestAssetUseCase {
       path: uploaded.path,
       mime: input.mime,
       kind,
+      sourceUrl: input.sourceUrl ?? null,
+      importedBy: input.importedBy ?? null,
     });
 
     return ok(asset);

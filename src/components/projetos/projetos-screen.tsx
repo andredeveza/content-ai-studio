@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { CheckCircle2, Loader2, XCircle, FileClock, Plus } from "lucide-react";
 import type { ProjectStatus } from "@/core/domain/project/project";
+import { ScreenContainer } from "@/components/chrome/screen-container";
 
 export interface ProjetosProjectData {
   readonly id: string;
@@ -40,7 +41,7 @@ function statusColorVar(status: ProjectStatus): string {
 
 export function ProjetosScreen({ projects, geradorHref }: ProjetosScreenProps) {
   return (
-    <div className="px-4 pt-6 pb-10">
+    <ScreenContainer width="wide" className="pt-6 pb-10">
       <div className="mb-6 flex items-center justify-between gap-3">
         <h1 className="text-[28px] font-bold tracking-[-.03em] leading-[1.1]">Projetos</h1>
         <Link
@@ -65,7 +66,7 @@ export function ProjetosScreen({ projects, geradorHref }: ProjetosScreenProps) {
         </div>
       )}
 
-      <div className="grid gap-2.5">
+      <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
         {projects.map((project) => {
           const Icon = STATUS_ICON[project.status];
           const inner = (
@@ -103,6 +104,6 @@ export function ProjetosScreen({ projects, geradorHref }: ProjetosScreenProps) {
           );
         })}
       </div>
-    </div>
+    </ScreenContainer>
   );
 }

@@ -1,4 +1,3 @@
-import { PDFParse } from "pdf-parse";
 import { splitExcerpts, topTermsByFrequency } from "@/core/application/services/text-tokens";
 
 // Porte quase literal de `analyzePdf()` em
@@ -16,6 +15,16 @@ export interface PdfExtraction {
 }
 
 export async function extractPdfBuffer(buffer: Buffer): Promise<PdfExtraction> {
+  // Import dinâmico de propósito: `pdf-parse` quebra a build de Server
+  // Components com "Object.defineProperty called on non-object" se
+  // entrar no grafo de módulos avaliado no carregamento de uma
+  // page.tsx (mesmo transitivo, via uma server action vinculada —
+  // Next.js empacota o módulo inteiro de uma action bindada num
+  // Server Component, não só o de quem a chama). Import estático no
+  // topo do arquivo já causou isso (ver PROGRESSO.md); dinâmico adia a
+  // avaliação real do pacote para quando a função roda de verdade
+  // (dentro de uma server action, nunca durante o render da página).
+  const { PDFParse } = await import("pdf-parse");
   const parser = new PDFParse({ data: buffer });
   try {
     const info = await parser.getInfo();

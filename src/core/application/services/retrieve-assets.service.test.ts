@@ -26,6 +26,8 @@ function makeAsset(overrides: Partial<Asset>): Asset {
     excerpts: [],
     family: null,
     error: null,
+    sourceUrl: null,
+    importedBy: null,
     analyzedAt: now,
     createdAt: now,
     updatedAt: now,
@@ -39,6 +41,9 @@ class FakeAssetRepository implements AssetRepository {
     throw new Error("não usado neste teste");
   }
   async findById(): Promise<Asset | null> {
+    throw new Error("não usado neste teste");
+  }
+  async listByClient(): Promise<Asset[]> {
     throw new Error("não usado neste teste");
   }
   async listAnalyzedImagesByClient(clientId: string): Promise<Asset[]> {

@@ -25,6 +25,8 @@ function toDomain(row: AssetRow): Asset {
     excerpts: row.excerpts,
     family: row.family,
     error: row.error,
+    sourceUrl: row.source_url,
+    importedBy: row.imported_by,
     analyzedAt: row.analyzed_at,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -43,6 +45,8 @@ export class SupabaseAssetRepository implements AssetRepository {
         path: input.path,
         mime: input.mime,
         kind: input.kind,
+        source_url: input.sourceUrl ?? null,
+        imported_by: input.importedBy ?? null,
       })
       .select("*")
       .single();
@@ -71,6 +75,18 @@ export class SupabaseAssetRepository implements AssetRepository {
       .eq("client_id", clientId)
       .eq("kind", imageKind)
       .eq("status", "analyzed");
+
+    if (error) throw error;
+    return (data ?? []).map(toDomain);
+  }
+
+  async listByClient(orgId: string, clientId: string): Promise<Asset[]> {
+    const { data, error } = await this.db
+      .from("assets")
+      .select("*")
+      .eq("org_id", orgId)
+      .eq("client_id", clientId)
+      .order("created_at", { ascending: false });
 
     if (error) throw error;
     return (data ?? []).map(toDomain);

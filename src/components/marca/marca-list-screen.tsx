@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { ChevronRight, Globe, Plus } from "lucide-react";
+import { ScreenContainer } from "@/components/chrome/screen-container";
 import { cn } from "@/lib/utils";
 
 export interface MarcaClientData {
@@ -57,7 +58,7 @@ export function MarcaListScreen({ clients: initialClients, createClientAction }:
   }
 
   return (
-    <div className="px-4 pt-6 pb-10">
+    <ScreenContainer width="wide" className="pt-6 pb-10">
       <h1 className="mb-1 text-[28px] font-bold tracking-[-.03em] leading-[1.1]">Marca</h1>
       <p className="mb-6 text-sm text-(--chrome-muted)">Clientes e brand kits.</p>
 
@@ -93,7 +94,7 @@ export function MarcaListScreen({ clients: initialClients, createClientAction }:
         </div>
       )}
 
-      <div className="grid gap-2.5">
+      <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
         {clients.map((client) => (
           <Link
             key={client.id}
@@ -121,6 +122,6 @@ export function MarcaListScreen({ clients: initialClients, createClientAction }:
           </Link>
         ))}
       </div>
-    </div>
+    </ScreenContainer>
   );
 }

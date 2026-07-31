@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useMemo, useState, useTransition } from "react";
 import { ChevronLeft, ChevronRight, XCircle, Send } from "lucide-react";
 import type { PostStatus } from "@/core/domain/post/post";
+import { ScreenContainer } from "@/components/chrome/screen-container";
 import { cn } from "@/lib/utils";
 
 export interface AgendaPostData {
@@ -103,7 +104,7 @@ export function AgendaScreen({
   }
 
   return (
-    <div className="px-4 pt-6 pb-10">
+    <ScreenContainer width="wide" className="pt-6 pb-10">
       <div className="mb-4 flex items-baseline justify-between gap-3">
         <div className="flex items-center gap-2">
           <Link href={prevMonthHref} className="px-1 text-(--chrome-muted)" aria-label="Mês anterior">
@@ -237,6 +238,6 @@ export function AgendaScreen({
           );
         })}
       </div>
-    </div>
+    </ScreenContainer>
   );
 }

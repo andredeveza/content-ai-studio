@@ -1,5 +1,3 @@
-import sharp from "sharp";
-
 // Porte quase literal de `analyzeImage()` em
 // design/Acervo Inteligente.dc.html (um dos dois protótipos que o
 // README trata como especificação executável) — troca `canvas`/
@@ -27,6 +25,13 @@ function toHex(value: number): string {
 }
 
 export async function analyzeImageBuffer(buffer: Buffer): Promise<ImageAnalysis> {
+  // Import dinâmico de propósito: mesma razão do `pdf-parse` em
+  // pdf-extraction.service.ts — um binário nativo (`sharp`) estático no
+  // topo do arquivo entra no grafo de módulos do Server Component que
+  // importa (mesmo transitivo, via server action bindada) e quebra a
+  // build com "Object.defineProperty called on non-object" (só
+  // descoberto rodando de verdade — ver PROGRESSO.md).
+  const { default: sharp } = await import("sharp");
   const metadata = await sharp(buffer).metadata();
   const width = metadata.width ?? 0;
   const height = metadata.height ?? 0;

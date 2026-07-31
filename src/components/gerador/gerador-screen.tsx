@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { GraduationCap, Award, TrendingUp, ShieldQuestion, Smartphone, Square, Sparkles, Loader2 } from "lucide-react";
+import { useId, useState, useTransition } from "react";
+import { GraduationCap, Award, TrendingUp, ShieldQuestion, Smartphone, Square, RectangleVertical, Sparkles, Loader2 } from "lucide-react";
 import type { ProjectGoal, ProjectRatio } from "@/core/domain/project/project";
+import { ScreenContainer } from "@/components/chrome/screen-container";
 import { cn } from "@/lib/utils";
 
 export interface GeradorClientOption {
@@ -28,9 +29,15 @@ const GOAL_OPTIONS: readonly { value: ProjectGoal; label: string; icon: typeof G
   { value: "mito", label: "Quebrar objeção", icon: ShieldQuestion },
 ];
 
+// ADENDO-02, "Defeito 2, correção 4": os 3 formatos do README (4:5,
+// 1:1, 9:16 Story), como seletor único de verdade — value do
+// `<input type="radio">` garante exclusividade estrutural, não só
+// visual (o bug reportado era exatamente parecer 2 checkboxes
+// independentes em vez de 1 escolha).
 const RATIO_OPTIONS: readonly { value: ProjectRatio; label: string; icon: typeof Smartphone }[] = [
   { value: "4:5", label: "4:5 (retrato)", icon: Smartphone },
   { value: "1:1", label: "1:1 (quadrado)", icon: Square },
+  { value: "9:16", label: "9:16 (story)", icon: RectangleVertical },
 ];
 
 export function GeradorScreen({ clients, generateAction }: GeradorScreenProps) {
@@ -41,6 +48,7 @@ export function GeradorScreen({ clients, generateAction }: GeradorScreenProps) {
   const [ratio, setRatio] = useState<ProjectRatio>("4:5");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startAction] = useTransition();
+  const ratioGroupName = useId();
 
   function handleSubmit(event: React.FormEvent): void {
     event.preventDefault();
@@ -62,7 +70,7 @@ export function GeradorScreen({ clients, generateAction }: GeradorScreenProps) {
   }
 
   return (
-    <div className="px-4 pt-6 pb-10">
+    <ScreenContainer width="form" className="pt-6 pb-10">
       <div className="mb-6 flex items-center gap-2.5">
         <div className="flex size-9 flex-none items-center justify-center rounded-xl bg-linear-to-br from-[#0A47A8] via-[#1C7ED6] to-[#57A8FF] text-white">
           <Sparkles className="size-4.5" strokeWidth={2} />
@@ -144,30 +152,39 @@ export function GeradorScreen({ clients, generateAction }: GeradorScreenProps) {
           />
         </label>
 
-        <div className="grid gap-1.5">
-          <span className="font-mono text-[10px] uppercase tracking-[.16em] text-(--chrome-muted)">Formato</span>
-          <div className="grid grid-cols-2 gap-2">
+        <fieldset className="grid gap-1.5">
+          <legend className="font-mono text-[10px] uppercase tracking-[.16em] text-(--chrome-muted)">Formato</legend>
+          <div className="grid grid-cols-3 gap-2">
             {RATIO_OPTIONS.map((option) => {
               const Icon = option.icon;
+              const inputId = `${ratioGroupName}-${option.value}`;
               return (
-                <button
+                <label
                   key={option.value}
-                  type="button"
-                  onClick={() => setRatio(option.value)}
+                  htmlFor={inputId}
                   className={cn(
-                    "flex items-center justify-center gap-2 rounded-md border px-3 py-2.5 text-sm",
+                    "flex cursor-pointer flex-col items-center gap-1.5 rounded-md border px-2 py-2.5 text-center text-[12.5px]",
                     ratio === option.value
                       ? "border-(--chrome-ink) bg-(--chrome-ink) text-white"
                       : "border-(--chrome-border) bg-(--chrome-surface) text-(--chrome-text)",
                   )}
                 >
+                  <input
+                    id={inputId}
+                    type="radio"
+                    name={ratioGroupName}
+                    value={option.value}
+                    checked={ratio === option.value}
+                    onChange={() => setRatio(option.value)}
+                    className="sr-only"
+                  />
                   <Icon className="size-4" strokeWidth={1.75} />
                   {option.label}
-                </button>
+                </label>
               );
             })}
           </div>
-        </div>
+        </fieldset>
 
         <button
           type="submit"
@@ -178,6 +195,6 @@ export function GeradorScreen({ clients, generateAction }: GeradorScreenProps) {
           {isPending ? "Gerando carrossel..." : "Gerar carrossel"}
         </button>
       </form>
-    </div>
+    </ScreenContainer>
   );
 }
