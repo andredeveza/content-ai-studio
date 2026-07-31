@@ -1,7 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState, useTransition } from "react";
+import { ChevronLeft, ChevronRight, XCircle, Send } from "lucide-react";
 import type { PostStatus } from "@/core/domain/post/post";
 import { cn } from "@/lib/utils";
 
@@ -105,11 +107,11 @@ export function AgendaScreen({
       <div className="mb-4 flex items-baseline justify-between gap-3">
         <div className="flex items-center gap-2">
           <Link href={prevMonthHref} className="px-1 text-(--chrome-muted)" aria-label="Mês anterior">
-            ←
+            <ChevronLeft className="size-4.5" />
           </Link>
           <h1 className="text-[28px] font-bold tracking-[-.03em] leading-[1.1]">{monthLabel}</h1>
           <Link href={nextMonthHref} className="px-1 text-(--chrome-muted)" aria-label="Próximo mês">
-            →
+            <ChevronRight className="size-4.5" />
           </Link>
         </div>
         <div className="font-mono text-[10px] text-(--chrome-muted)">via export</div>
@@ -174,8 +176,14 @@ export function AgendaScreen({
       </div>
 
       {visiblePosts.length === 0 && (
-        <div className="rounded-md border border-dashed border-(--chrome-border) p-6 text-center text-sm text-(--chrome-muted)">
-          Nada agendado {selectedDay == null ? "neste mês" : "neste dia"}.
+        <div className="relative h-32 overflow-hidden rounded-2xl border border-(--chrome-border)">
+          <Image src="/brand/empty-agenda.jpg" alt="" aria-hidden="true" fill sizes="480px" className="object-cover" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 p-4">
+            <p className="text-sm font-medium text-white">
+              Nada agendado {selectedDay == null ? "neste mês" : "neste dia"}.
+            </p>
+          </div>
         </div>
       )}
 
@@ -209,15 +217,17 @@ export function AgendaScreen({
                     <button
                       type="button"
                       onClick={() => handleMarkPublished(post.id)}
-                      className="rounded-md bg-(--chrome-ink) px-3 py-2 font-mono text-[11px] text-white"
+                      className="flex items-center gap-1.5 rounded-md bg-(--chrome-ink) px-3 py-2 font-mono text-[11px] text-white"
                     >
+                      <Send className="size-3.5" />
                       marcar como publicado
                     </button>
                     <button
                       type="button"
                       onClick={() => handleCancel(post.id)}
-                      className="rounded-md border border-(--chrome-border) px-3 py-2 font-mono text-[11px] text-(--chrome-text)"
+                      className="flex items-center gap-1.5 rounded-md border border-(--chrome-border) px-3 py-2 font-mono text-[11px] text-(--chrome-text)"
                     >
+                      <XCircle className="size-3.5" />
                       cancelar
                     </button>
                   </div>

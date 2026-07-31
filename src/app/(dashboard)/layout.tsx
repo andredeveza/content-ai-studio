@@ -1,4 +1,5 @@
 import { signOut } from "@/app/(auth)/actions";
+import { LogoMark } from "@/components/brand/logo-mark";
 import { TabBar } from "@/components/nav/tab-bar";
 
 // Chrome do produto (design_handoff_content_ai_studio/README.md, seção
@@ -9,11 +10,14 @@ import { TabBar } from "@/components/nav/tab-bar";
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-1 flex-col bg-(--chrome-bg)">
-      <form action={signOut} className="flex justify-end px-4 pt-3">
-        <button type="submit" className="font-mono text-[10px] uppercase tracking-[.1em] text-(--chrome-muted)">
-          Sair
-        </button>
-      </form>
+      <div className="flex items-center justify-between px-4 pt-4">
+        <LogoMark size="sm" />
+        <form action={signOut}>
+          <button type="submit" className="font-mono text-[10px] uppercase tracking-[.1em] text-(--chrome-muted)">
+            Sair
+          </button>
+        </form>
+      </div>
       <div className="flex-1 overflow-y-auto">{children}</div>
       <TabBar />
     </div>

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Search, PenLine, ImagePlus, Sparkles, LayoutTemplate, PackageCheck, CheckCircle2, XCircle, Check } from "lucide-react";
 import { createClient } from "@/infra/db/supabase/client";
 import { JOB_STEPS, type JobState, type JobStep } from "@/core/domain/pipeline/job";
 import { cn } from "@/lib/utils";
@@ -29,6 +30,16 @@ const STEP_LABEL: Record<JobStep, string> = {
   render: "Renderizando os slides",
   publish: "Preparando a exportação",
   completed: "Concluído",
+};
+
+const STEP_ICON: Record<JobStep, typeof Search> = {
+  research: Search,
+  copy: PenLine,
+  prompt: ImagePlus,
+  image: Sparkles,
+  render: LayoutTemplate,
+  publish: PackageCheck,
+  completed: CheckCircle2,
 };
 
 // Assina mudanças em `jobs` via Supabase Realtime (README, "Pipeline de
@@ -84,14 +95,29 @@ export function ProgressoScreen({ jobId, initialJob, theme, editorHref, geradorH
           const isDone = job.state === "completed" || index < stepIndex || (index === stepIndex && job.state !== "running" && job.state !== "failed");
           const isCurrent = step === job.step && job.state === "running";
           const isFailed = step === job.step && job.state === "failed";
+          const Icon = STEP_ICON[step];
           return (
             <div key={step} className="flex items-center gap-3 rounded-[9px] border border-(--chrome-border) bg-(--chrome-surface) px-3.5 py-2.5">
-              <span
+              <div
                 className={cn(
-                  "size-2 flex-none rounded-full",
-                  isFailed ? "bg-red-500" : isDone ? "bg-(--chrome-ok)" : isCurrent ? "bg-(--chrome-ink) animate-pulse" : "bg-(--chrome-border)",
+                  "flex size-7 flex-none items-center justify-center rounded-full",
+                  isFailed
+                    ? "bg-red-100 text-red-600"
+                    : isDone
+                      ? "bg-(--chrome-ok)/15 text-(--chrome-ok)"
+                      : isCurrent
+                        ? "bg-(--chrome-ink) text-white"
+                        : "bg-(--chrome-surface-2) text-(--chrome-faint)",
                 )}
-              />
+              >
+                {isFailed ? (
+                  <XCircle className="size-4" strokeWidth={2} />
+                ) : isDone ? (
+                  <Check className="size-3.5" strokeWidth={3} />
+                ) : (
+                  <Icon className={cn("size-3.5", isCurrent && "animate-pulse")} strokeWidth={2} />
+                )}
+              </div>
               <span className={cn("text-sm", isDone || isCurrent || isFailed ? "text-(--chrome-ink)" : "text-(--chrome-muted)")}>
                 {STEP_LABEL[step]}
               </span>
@@ -109,8 +135,9 @@ export function ProgressoScreen({ jobId, initialJob, theme, editorHref, geradorH
       {job.state === "completed" && (
         <Link
           href={editorHref}
-          className="mt-6 block rounded-md bg-(--chrome-ink) px-4 py-3 text-center font-mono text-[12px] uppercase tracking-[.1em] text-white"
+          className="mt-6 flex items-center justify-center gap-2 rounded-md bg-(--chrome-ink) px-4 py-3 text-center font-mono text-[12px] uppercase tracking-widest text-white"
         >
+          <CheckCircle2 className="size-4" />
           Abrir no editor
         </Link>
       )}
@@ -118,7 +145,7 @@ export function ProgressoScreen({ jobId, initialJob, theme, editorHref, geradorH
       {job.state === "failed" && (
         <Link
           href={geradorHref}
-          className="mt-3 block rounded-md border border-(--chrome-border) px-4 py-3 text-center font-mono text-[12px] uppercase tracking-[.1em] text-(--chrome-text)"
+          className="mt-3 block rounded-md border border-(--chrome-border) px-4 py-3 text-center font-mono text-[12px] uppercase tracking-widest text-(--chrome-text)"
         >
           Tentar de novo
         </Link>

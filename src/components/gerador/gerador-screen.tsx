@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { GraduationCap, Award, TrendingUp, ShieldQuestion, Smartphone, Square, Sparkles, Loader2 } from "lucide-react";
 import type { ProjectGoal, ProjectRatio } from "@/core/domain/project/project";
 import { cn } from "@/lib/utils";
 
@@ -20,16 +21,16 @@ export interface GeradorScreenProps {
   }) => Promise<{ ok: false; error: string } | void>;
 }
 
-const GOAL_OPTIONS: readonly { value: ProjectGoal; label: string }[] = [
-  { value: "educar", label: "Educar" },
-  { value: "autoridade", label: "Construir autoridade" },
-  { value: "converter", label: "Converter em venda" },
-  { value: "mito", label: "Quebrar objeção" },
+const GOAL_OPTIONS: readonly { value: ProjectGoal; label: string; icon: typeof GraduationCap }[] = [
+  { value: "educar", label: "Educar", icon: GraduationCap },
+  { value: "autoridade", label: "Construir autoridade", icon: Award },
+  { value: "converter", label: "Converter em venda", icon: TrendingUp },
+  { value: "mito", label: "Quebrar objeção", icon: ShieldQuestion },
 ];
 
-const RATIO_OPTIONS: readonly { value: ProjectRatio; label: string }[] = [
-  { value: "4:5", label: "4:5 (retrato)" },
-  { value: "1:1", label: "1:1 (quadrado)" },
+const RATIO_OPTIONS: readonly { value: ProjectRatio; label: string; icon: typeof Smartphone }[] = [
+  { value: "4:5", label: "4:5 (retrato)", icon: Smartphone },
+  { value: "1:1", label: "1:1 (quadrado)", icon: Square },
 ];
 
 export function GeradorScreen({ clients, generateAction }: GeradorScreenProps) {
@@ -62,8 +63,15 @@ export function GeradorScreen({ clients, generateAction }: GeradorScreenProps) {
 
   return (
     <div className="px-4 pt-6 pb-10">
-      <h1 className="mb-1 text-[28px] font-bold tracking-[-.03em] leading-[1.1]">Gerador</h1>
-      <p className="mb-6 text-sm text-(--chrome-muted)">Descreva o tema e a IA monta o carrossel inteiro.</p>
+      <div className="mb-6 flex items-center gap-2.5">
+        <div className="flex size-9 flex-none items-center justify-center rounded-xl bg-linear-to-br from-[#0A47A8] via-[#1C7ED6] to-[#57A8FF] text-white">
+          <Sparkles className="size-4.5" strokeWidth={2} />
+        </div>
+        <div>
+          <h1 className="text-[22px] font-bold tracking-[-.02em] leading-[1.1]">Gerador</h1>
+          <p className="text-sm text-(--chrome-muted)">Descreva o tema e a IA monta o carrossel inteiro.</p>
+        </div>
+      </div>
 
       {error && (
         <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</div>
@@ -100,21 +108,25 @@ export function GeradorScreen({ clients, generateAction }: GeradorScreenProps) {
         <div className="grid gap-1.5">
           <span className="font-mono text-[10px] uppercase tracking-[.16em] text-(--chrome-muted)">Objetivo</span>
           <div className="grid grid-cols-2 gap-2">
-            {GOAL_OPTIONS.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => setGoal(option.value)}
-                className={cn(
-                  "rounded-md border px-3 py-2.5 text-left text-sm",
-                  goal === option.value
-                    ? "border-(--chrome-ink) bg-(--chrome-ink) text-white"
-                    : "border-(--chrome-border) bg-(--chrome-surface) text-(--chrome-text)",
-                )}
-              >
-                {option.label}
-              </button>
-            ))}
+            {GOAL_OPTIONS.map((option) => {
+              const Icon = option.icon;
+              return (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => setGoal(option.value)}
+                  className={cn(
+                    "flex items-center gap-2 rounded-md border px-3 py-2.5 text-left text-sm",
+                    goal === option.value
+                      ? "border-(--chrome-ink) bg-(--chrome-ink) text-white"
+                      : "border-(--chrome-border) bg-(--chrome-surface) text-(--chrome-text)",
+                  )}
+                >
+                  <Icon className="size-4 flex-none" strokeWidth={1.75} />
+                  {option.label}
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -135,29 +147,34 @@ export function GeradorScreen({ clients, generateAction }: GeradorScreenProps) {
         <div className="grid gap-1.5">
           <span className="font-mono text-[10px] uppercase tracking-[.16em] text-(--chrome-muted)">Formato</span>
           <div className="grid grid-cols-2 gap-2">
-            {RATIO_OPTIONS.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => setRatio(option.value)}
-                className={cn(
-                  "rounded-md border px-3 py-2.5 text-sm",
-                  ratio === option.value
-                    ? "border-(--chrome-ink) bg-(--chrome-ink) text-white"
-                    : "border-(--chrome-border) bg-(--chrome-surface) text-(--chrome-text)",
-                )}
-              >
-                {option.label}
-              </button>
-            ))}
+            {RATIO_OPTIONS.map((option) => {
+              const Icon = option.icon;
+              return (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => setRatio(option.value)}
+                  className={cn(
+                    "flex items-center justify-center gap-2 rounded-md border px-3 py-2.5 text-sm",
+                    ratio === option.value
+                      ? "border-(--chrome-ink) bg-(--chrome-ink) text-white"
+                      : "border-(--chrome-border) bg-(--chrome-surface) text-(--chrome-text)",
+                  )}
+                >
+                  <Icon className="size-4" strokeWidth={1.75} />
+                  {option.label}
+                </button>
+              );
+            })}
           </div>
         </div>
 
         <button
           type="submit"
           disabled={isPending || clients.length === 0}
-          className="mt-2 rounded-md bg-(--chrome-ink) px-4 py-3 text-center font-mono text-[12px] uppercase tracking-[.1em] text-white disabled:opacity-50"
+          className="mt-2 flex items-center justify-center gap-2 rounded-md bg-(--chrome-ink) px-4 py-3 text-center font-mono text-[12px] uppercase tracking-widest text-white disabled:opacity-50"
         >
+          {isPending ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
           {isPending ? "Gerando carrossel..." : "Gerar carrossel"}
         </button>
       </form>

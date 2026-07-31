@@ -2,11 +2,11 @@
 
 import { useActionState } from "react";
 import Link from "next/link";
+import { Mail, Lock, ArrowRight } from "lucide-react";
 import { signUp, type AuthActionState } from "@/app/(auth)/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const initialState: AuthActionState = { error: null };
 
@@ -14,32 +14,47 @@ export default function SignupPage() {
   const [state, formAction, pending] = useActionState(signUp, initialState);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Criar conta</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form action={formAction} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="email">E-mail</Label>
-            <Input id="email" name="email" type="email" autoComplete="email" required />
+    <div>
+      <h1 className="text-2xl font-bold tracking-[-0.02em]">Criar conta</h1>
+      <p className="mt-1.5 text-sm text-(--chrome-muted)">Comece a gerar carrosséis em minutos.</p>
+
+      <form action={formAction} className="mt-8 flex flex-col gap-4">
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="email">E-mail</Label>
+          <div className="relative">
+            <Mail className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-(--chrome-faint)" />
+            <Input id="email" name="email" type="email" autoComplete="email" required className="h-10 pl-8" />
           </div>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="password">Senha</Label>
-            <Input id="password" name="password" type="password" autoComplete="new-password" required minLength={8} />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="password">Senha</Label>
+          <div className="relative">
+            <Lock className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-(--chrome-faint)" />
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="new-password"
+              required
+              minLength={8}
+              className="h-10 pl-8"
+            />
           </div>
-          {state.error ? <p className="text-sm text-destructive">{state.error}</p> : null}
-          <Button type="submit" disabled={pending}>
-            {pending ? "Criando conta..." : "Criar conta"}
-          </Button>
-        </form>
-        <p className="mt-4 text-center text-sm text-muted-foreground">
-          Já tem conta?{" "}
-          <Link href="/login" className="underline">
-            Entrar
-          </Link>
-        </p>
-      </CardContent>
-    </Card>
+          <p className="text-xs text-(--chrome-faint)">Mínimo de 8 caracteres.</p>
+        </div>
+        {state.error ? <p className="text-sm text-destructive">{state.error}</p> : null}
+        <Button type="submit" disabled={pending} className="mt-2 h-10">
+          {pending ? "Criando conta..." : "Criar conta"}
+          {!pending && <ArrowRight className="size-4" />}
+        </Button>
+      </form>
+
+      <p className="mt-6 text-center text-sm text-(--chrome-muted)">
+        Já tem conta?{" "}
+        <Link href="/login" className="font-medium text-(--chrome-ink) underline underline-offset-4">
+          Entrar
+        </Link>
+      </p>
+    </div>
   );
 }

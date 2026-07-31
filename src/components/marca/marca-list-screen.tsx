@@ -1,7 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState, useTransition } from "react";
+import { ChevronRight, Globe, Plus } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export interface MarcaClientData {
   readonly id: string;
@@ -14,6 +17,19 @@ export interface MarcaListScreenProps {
   readonly createClientAction: (
     name: string,
   ) => Promise<{ ok: true; clientId: string } | { ok: false; error: string }>;
+}
+
+const AVATAR_GRADIENTS = [
+  "from-[#0A47A8] to-[#57A8FF]",
+  "from-[#7C3AED] to-[#EC4899]",
+  "from-[#0EA5E9] to-[#22D3EE]",
+  "from-[#F97316] to-[#FACC15]",
+];
+
+function avatarGradient(seed: string): string {
+  let hash = 0;
+  for (const char of seed) hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+  return AVATAR_GRADIENTS[hash % AVATAR_GRADIENTS.length]!;
 }
 
 export function MarcaListScreen({ clients: initialClients, createClientAction }: MarcaListScreenProps) {
@@ -59,15 +75,21 @@ export function MarcaListScreen({ clients: initialClients, createClientAction }:
         <button
           type="submit"
           disabled={isPending}
-          className="rounded-md bg-(--chrome-ink) px-4 py-2.5 font-mono text-[11px] uppercase tracking-[.1em] text-white disabled:opacity-50"
+          className="flex items-center gap-1.5 rounded-md bg-(--chrome-ink) px-4 py-2.5 font-mono text-[11px] uppercase tracking-widest text-white disabled:opacity-50"
         >
-          + novo
+          <Plus className="size-3.5" strokeWidth={2.5} />
+          novo
         </button>
       </form>
 
       {clients.length === 0 && (
-        <div className="rounded-md border border-dashed border-(--chrome-border) p-6 text-center text-sm text-(--chrome-muted)">
-          Nenhum cliente cadastrado.
+        <div className="relative h-40 overflow-hidden rounded-2xl border border-(--chrome-border)">
+          <Image src="/brand/empty-brand.jpg" alt="" aria-hidden="true" fill sizes="480px" className="object-cover" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 p-4">
+            <p className="text-sm font-medium text-white">Nenhum cliente cadastrado.</p>
+            <p className="mt-1 text-xs text-white/70">Cadastre um cliente e monte o brand kit acima.</p>
+          </div>
         </div>
       )}
 
@@ -76,9 +98,26 @@ export function MarcaListScreen({ clients: initialClients, createClientAction }:
           <Link
             key={client.id}
             href={`/marca/${client.id}`}
-            className="rounded-[9px] border border-(--chrome-border) bg-(--chrome-surface) p-3.5 text-[15px] font-medium"
+            className="flex items-center gap-3 rounded-[9px] border border-(--chrome-border) bg-(--chrome-surface) p-3.5 transition-colors active:bg-(--chrome-surface-2)"
           >
-            {client.name}
+            <div
+              className={cn(
+                "flex size-9 flex-none items-center justify-center rounded-full bg-linear-to-br text-sm font-semibold text-white",
+                avatarGradient(client.name),
+              )}
+            >
+              {client.name.charAt(0).toUpperCase()}
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="truncate text-[15px] font-medium">{client.name}</div>
+              {client.hasSite && (
+                <div className="mt-0.5 flex items-center gap-1 text-[10.5px] text-(--chrome-muted)">
+                  <Globe className="size-3" />
+                  site cadastrado
+                </div>
+              )}
+            </div>
+            <ChevronRight className="size-4 flex-none text-(--chrome-faint)" />
           </Link>
         ))}
       </div>

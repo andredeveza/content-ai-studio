@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
+import { Image as ImageIcon } from "lucide-react";
 import type { UpdateClientInput } from "@/core/application/dto/client.dto";
 import type { UpsertBrandKitInput } from "@/core/application/dto/brand-kit.dto";
 import type { Client } from "@/core/domain/client/client";
@@ -188,7 +189,13 @@ export function MarcaDetailScreen({
 
         <div>
           <span className="mb-1.5 block font-mono text-[10px] uppercase tracking-[.16em] text-(--chrome-muted)">Logo</span>
-          {logoUrl && <img src={logoUrl} alt="Logo atual" className="mb-2 h-14 w-14 rounded-lg object-cover" />}
+          {logoUrl ? (
+            <img src={logoUrl} alt="Logo atual" className="mb-2 h-14 w-14 rounded-lg object-cover" />
+          ) : (
+            <div className="mb-2 flex h-14 w-14 items-center justify-center rounded-lg border border-dashed border-(--chrome-border) text-(--chrome-faint)">
+              <ImageIcon className="size-5" strokeWidth={1.5} />
+            </div>
+          )}
           <div className="flex gap-2">
             <input ref={fileInputRef} type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" className="flex-1 text-sm" />
             <button type="button" onClick={handleUploadLogo} disabled={isPending} className={submitClass}>
