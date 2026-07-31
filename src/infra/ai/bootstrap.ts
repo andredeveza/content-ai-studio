@@ -12,6 +12,8 @@ import { createGeminiProvider } from "@/infra/ai/providers/gemini/provider";
 import { createHuggingFaceProvider } from "@/infra/ai/providers/hf/provider";
 import { createReplicateProvider } from "@/infra/ai/providers/replicate/provider";
 import { createFalProvider } from "@/infra/ai/providers/fal/provider";
+import { createAdminClient } from "@/infra/db/supabase/admin";
+import { SupabaseStorage } from "@/infra/storage/supabase-storage";
 
 function buildRegistry(): ProviderRegistry {
   const registry = new ProviderRegistry(aiConfig.fallbackOrder);
@@ -23,7 +25,12 @@ function buildRegistry(): ProviderRegistry {
   }
   registry.register(createKimiProvider());
   registry.register(createGeminiProvider());
-  registry.register(createHuggingFaceProvider());
+  if (env.HUGGINGFACE_API_KEY) {
+    // Bucket "media" (bloco 5) — a imagem gerada some dentro do PNG
+    // final do slide de qualquer forma, não precisa de bucket próprio.
+    const storage = new SupabaseStorage(createAdminClient(), "media");
+    registry.register(createHuggingFaceProvider({ apiKey: env.HUGGINGFACE_API_KEY, storage }));
+  }
   registry.register(createReplicateProvider());
   registry.register(createFalProvider());
 

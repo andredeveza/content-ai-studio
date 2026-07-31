@@ -5,6 +5,10 @@
 export interface FontRef {
   readonly family: string;
   readonly weights: readonly number[];
+  // URL do stylesheet que declara o @font-face (Fontshare, Google Fonts,
+  // ou self-hosted) — sem isso o TemplateEngineService cai no fallback
+  // do navegador/Puppeteer, que não conhece a fonte real do Brand Kit.
+  readonly cssUrl?: string;
 }
 
 export interface BrandKitPalette {

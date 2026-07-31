@@ -14,7 +14,11 @@ export interface FeatureFlags {
 export const featureFlags: FeatureFlags = {
   aiProviderKimi: false,
   aiProviderGemini: false,
-  aiProviderHuggingFace: false,
+  // Ligado: geração real de imagem via Hugging Face Inference API
+  // (stable-diffusion-3-medium, README "Ordem de implementação" —
+  // pendência crítica corrigida). Sem HUGGINGFACE_API_KEY no ambiente,
+  // o provider nem entra no registry (infra/ai/bootstrap.ts).
+  aiProviderHuggingFace: true,
   aiProviderReplicate: false,
   aiProviderFal: false,
   publishingPostiz: false,

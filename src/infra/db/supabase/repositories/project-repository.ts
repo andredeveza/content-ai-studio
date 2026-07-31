@@ -76,4 +76,15 @@ export class SupabaseProjectRepository implements ProjectRepository {
     if (error) throw error;
     return data ? toDomain(data) : null;
   }
+
+  async listByOrg(orgId: string): Promise<Project[]> {
+    const { data, error } = await this.db
+      .from("projects")
+      .select("*")
+      .eq("org_id", orgId)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+    return (data ?? []).map(toDomain);
+  }
 }

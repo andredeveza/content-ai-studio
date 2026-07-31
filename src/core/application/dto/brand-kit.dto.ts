@@ -5,6 +5,7 @@ const HexColor = z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Cor precisa ser um hex d
 const FontRefSchema = z.object({
   family: z.string().trim().min(1),
   weights: z.array(z.number().int().positive()).min(1),
+  cssUrl: z.string().trim().url().optional(),
 });
 
 const PaletteSchema = z.object({

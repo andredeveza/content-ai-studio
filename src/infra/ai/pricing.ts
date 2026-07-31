@@ -2,7 +2,7 @@
 // MVP; modelo desconhecido custa 0 — subestimar é mais seguro que travar
 // a geração por falta de tabela de preço.
 const TEXT_PRICING_PER_MILLION_TOKENS: Record<string, { input: number; output: number }> = {
-  "meta-llama/llama-3.3-70b-instruct:free": { input: 0, output: 0 },
+  "nvidia/nemotron-3-nano-30b-a3b:free": { input: 0, output: 0 },
 };
 
 export function estimateTextCostUsd(model: string, tokensInput: number, tokensOutput: number): number {

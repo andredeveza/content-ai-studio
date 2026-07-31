@@ -26,9 +26,13 @@ export class SupabaseJobRepository implements JobRepository {
   constructor(private readonly db: SupabaseClient<Database>) {}
 
   async create(input: NewJob): Promise<Job> {
+    // `step` não tem default na tabela (só state/progress/attempts/payload
+    // têm) — sem setar aqui, o insert falha com "null value in column
+    // step" (só descoberto ao rodar o pipeline de verdade pela primeira
+    // vez; os fakes de teste sempre setaram "research" manualmente).
     const { data, error } = await this.db
       .from("jobs")
-      .insert({ org_id: input.orgId, project_id: input.projectId })
+      .insert({ org_id: input.orgId, project_id: input.projectId, step: "research" })
       .select("*")
       .single();
 

@@ -33,9 +33,21 @@ const brandKit: BrandKit = {
   },
   gradient: "linear-gradient(135deg, #0A47A8, #1C7ED6 55%, #57A8FF)",
   fonts: {
-    display: { family: "Satoshi", weights: [700, 900] },
-    body: { family: "General Sans", weights: [400, 500] },
-    mono: { family: "JetBrains Mono", weights: [400, 500] },
+    display: {
+      family: "Satoshi",
+      weights: [700, 900],
+      cssUrl: "https://api.fontshare.com/v2/css?f[]=satoshi@700,900&f[]=general-sans@400,500&display=swap",
+    },
+    body: {
+      family: "General Sans",
+      weights: [400, 500],
+      cssUrl: "https://api.fontshare.com/v2/css?f[]=satoshi@700,900&f[]=general-sans@400,500&display=swap",
+    },
+    mono: {
+      family: "JetBrains Mono",
+      weights: [400, 500],
+      cssUrl: "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap",
+    },
   },
   logo: { path: null, radius: 0 },
   chrome: {
@@ -120,6 +132,35 @@ describe("TemplateEngineService (bloco 4) — regra de clamp obrigatória", () =
     const html = engine.render(getBlueprint(id), CANVAS, content, brandKit, { isLastSlide: false });
     expect(html).toContain("ARRASTE PARA O LADO");
     expect(html).not.toContain("SALVE ESTE POST");
+  });
+
+  it("injeta <link> para as fontes do Brand Kit que têm cssUrl, sem duplicar URLs repetidas", () => {
+    const id = "cover-centro";
+    const content: SlideContent = { texts: { kicker: "k", heading: "h", lead: "l" } };
+    const html = engine.render(getBlueprint(id), CANVAS, content, brandKit);
+
+    expect(html).toContain(
+      '<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@700,900&amp;f[]=general-sans@400,500&amp;display=swap">',
+    );
+    expect(html).toContain(
+      '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&amp;display=swap">',
+    );
+    expect(html.match(/api\.fontshare\.com/g)?.length).toBe(1);
+  });
+
+  it("não injeta nenhum <link> quando nenhuma fonte do Brand Kit declara cssUrl", () => {
+    const id = "cover-centro";
+    const content: SlideContent = { texts: { kicker: "k", heading: "h", lead: "l" } };
+    const brandKitSemCssUrl: BrandKit = {
+      ...brandKit,
+      fonts: {
+        display: { family: "Satoshi", weights: [700, 900] },
+        body: { family: "General Sans", weights: [400, 500] },
+        mono: { family: "JetBrains Mono", weights: [400, 500] },
+      },
+    };
+    const html = engine.render(getBlueprint(id), CANVAS, content, brandKitSemCssUrl);
+    expect(html).not.toContain("<link rel=\"stylesheet\"");
   });
 
   it("escapa HTML do conteúdo para não quebrar o layout", () => {

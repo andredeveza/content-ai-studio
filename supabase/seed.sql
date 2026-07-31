@@ -46,10 +46,10 @@ values (
   ),
   'linear-gradient(135deg, #0A47A8, #1C7ED6 55%, #57A8FF)',
   jsonb_build_object(
-    'display', jsonb_build_object('family', 'Satoshi', 'weights', array[700, 900]),
-    'body', jsonb_build_object('family', 'General Sans', 'weights', array[400, 500]),
-    'mono', jsonb_build_object('family', 'JetBrains Mono', 'weights', array[400, 500]),
-    'editorial', jsonb_build_object('family', 'Instrument Serif', 'weights', array[400])
+    'display', jsonb_build_object('family', 'Satoshi', 'weights', array[700, 900], 'cssUrl', 'https://api.fontshare.com/v2/css?f[]=satoshi@700,900&f[]=general-sans@400,500&display=swap'),
+    'body', jsonb_build_object('family', 'General Sans', 'weights', array[400, 500], 'cssUrl', 'https://api.fontshare.com/v2/css?f[]=satoshi@700,900&f[]=general-sans@400,500&display=swap'),
+    'mono', jsonb_build_object('family', 'JetBrains Mono', 'weights', array[400, 500], 'cssUrl', 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap'),
+    'editorial', jsonb_build_object('family', 'Instrument Serif', 'weights', array[400], 'cssUrl', 'https://fonts.googleapis.com/css2?family=Instrument+Serif:wght@400&display=swap')
   ),
   0,
   jsonb_build_object(

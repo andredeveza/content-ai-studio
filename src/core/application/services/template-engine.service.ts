@@ -41,10 +41,12 @@ export class TemplateEngineService {
     const slotsHtml = slots.map((slot) => this.renderSlot(slot, content)).join("\n");
     const chromeHtml = this.renderChrome(canvas, brandKit, options.isLastSlide ?? false);
     const rootVars = this.buildBrandKitVars(brandKit);
+    const fontLinksHtml = this.buildFontLinks(brandKit);
 
     return [
       "<!doctype html>",
       '<html><head><meta charset="utf-8">',
+      fontLinksHtml,
       `<style>${rootVars} *{box-sizing:border-box;margin:0;padding:0} .stage{position:relative;overflow:hidden;font-family:var(--bk-font-body)}</style>`,
       "</head><body>",
       `<div class="stage" style="width:${canvas.w}px;height:${canvas.h}px;background:${colorVar("ink")}">`,
@@ -70,6 +72,19 @@ export class TemplateEngineService {
     return `:root{${paletteVars}${fontVars}}`;
   }
 
+  // Sem isto, o Brand Kit declara `--bk-font-display:'Satoshi'` mas o
+  // navegador (preview) e o Puppeteer (render final) nunca baixam a
+  // fonte de verdade — caem no fallback do sistema silenciosamente.
+  private buildFontLinks(brandKit: BrandKit): string {
+    const urls = new Set<string>();
+    for (const ref of Object.values(brandKit.fonts)) {
+      if (ref?.cssUrl) urls.add(ref.cssUrl);
+    }
+    return Array.from(urls)
+      .map((url) => `<link rel="stylesheet" href="${escapeHtml(url)}">`)
+      .join("\n");
+  }
+
   private renderSlot(slot: Slot, content: SlideContent): string {
     const { box } = slot;
     const position = `position:absolute;left:${box.x}px;top:${box.y}px;width:${box.w}px;height:${box.h}px;`;
@@ -90,7 +105,10 @@ export class TemplateEngineService {
       }
       case "scrim": {
         const to = colorVar(slot.toColor, "ink");
-        const opacity = slot.toOpacity ?? 0.9;
+        // Calculado (bloco 7, RetrieveAssetsService) sempre que a imagem
+        // veio do acervo — README: "o véu é calculado, não fixo". Sem
+        // isso (ex.: imagem gerada por IA), cai no padrão do blueprint.
+        const opacity = content.scrimOpacity ?? slot.toOpacity ?? 0.9;
         return `<div style="${position}background:linear-gradient(180deg, rgba(0,0,0,0) 0%, ${to} 100%);opacity:${opacity}"></div>`;
       }
       case "chart-bar": {

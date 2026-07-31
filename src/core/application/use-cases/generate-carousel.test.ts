@@ -38,6 +38,9 @@ class FakeProjectRepository implements ProjectRepository {
   async update(_orgId: string, _projectId: string, _patch: ProjectPatch): Promise<Project | null> {
     throw new Error("não usado neste teste");
   }
+  async listByOrg(): Promise<Project[]> {
+    throw new Error("não usado neste teste");
+  }
 }
 
 class FakeJobRepository implements JobRepository {

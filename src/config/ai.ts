@@ -1,4 +1,5 @@
 import { env } from "@/config/env";
+import { featureFlags } from "@/config/features";
 import type { Capability } from "@/core/domain/ports/ai-provider";
 
 export interface ProviderSlot {
@@ -36,7 +37,7 @@ export const aiConfig: AIConfig = {
       { id: "gemini", enabled: false },
     ],
     image: [
-      { id: "huggingface", enabled: false },
+      { id: "huggingface", enabled: featureFlags.aiProviderHuggingFace && Boolean(env.HUGGINGFACE_API_KEY) },
       { id: "replicate", enabled: false },
       { id: "fal", enabled: false },
     ],
@@ -47,7 +48,13 @@ export const aiConfig: AIConfig = {
     ],
     embed: [{ id: "huggingface", enabled: false }],
   },
-  defaultTextModel: "meta-llama/llama-3.3-70b-instruct:free",
+  // Confirmado rodando de verdade em 2026-07-30:
+  // "meta-llama/llama-3.3-70b-instruct:free" saiu do plano gratuito do
+  // OpenRouter (404 — "use this slug instead: meta-llama/llama-3.3-70b-instruct",
+  // a versão paga). Se o OpenRouter trocar de novo, reveja com
+  // `curl https://openrouter.ai/api/v1/models` filtrando por ids que
+  // terminam em ":free".
+  defaultTextModel: "nvidia/nemotron-3-nano-30b-a3b:free",
   // Espelha o limite de crédito de US$5 do passo 3 do COLOCAR-NO-AR.md —
   // ajuste aqui quando o orçamento real do cliente for outro.
   budgets: {

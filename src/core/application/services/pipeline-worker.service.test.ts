@@ -104,6 +104,10 @@ class FakeProjectRepository implements ProjectRepository {
     this.rows.set(projectId, updated);
     return updated;
   }
+
+  async listByOrg(orgId: string): Promise<Project[]> {
+    return Array.from(this.rows.values()).filter((p) => p.orgId === orgId);
+  }
 }
 
 class FakeSlideRepository implements SlideRepository {
@@ -121,6 +125,7 @@ class FakeSlideRepository implements SlideRepository {
         index: input.index,
         archetypeId: input.archetypeId,
         content: input.content,
+        overrides: null,
         mediaId: null,
         createdAt: now,
         updatedAt: now,
@@ -135,6 +140,10 @@ class FakeSlideRepository implements SlideRepository {
     return [...this.rows.values()].filter((slide) => slide.projectId === projectId).sort((a, b) => a.index - b.index);
   }
 
+  async findById(slideId: string): Promise<Slide | null> {
+    return this.rows.get(slideId) ?? null;
+  }
+
   async updateContent(slideId: string, content: Slide["content"]): Promise<Slide | null> {
     const existing = this.rows.get(slideId);
     if (!existing) return null;
@@ -147,6 +156,14 @@ class FakeSlideRepository implements SlideRepository {
     const existing = this.rows.get(slideId);
     if (!existing) return null;
     const updated: Slide = { ...existing, mediaId };
+    this.rows.set(slideId, updated);
+    return updated;
+  }
+
+  async updateOverrides(slideId: string, overrides: Slide["overrides"]): Promise<Slide | null> {
+    const existing = this.rows.get(slideId);
+    if (!existing) return null;
+    const updated: Slide = { ...existing, overrides };
     this.rows.set(slideId, updated);
     return updated;
   }
@@ -206,6 +223,9 @@ class FakeStorage implements StoragePort {
   async remove(): Promise<void> {}
   getPublicUrl(path: string): string {
     return `https://storage.local/media/${path}`;
+  }
+  async download(): Promise<Buffer> {
+    return Buffer.from("");
   }
 }
 
