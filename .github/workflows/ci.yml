@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     # Vercel já faz o deploy real com as env vars de verdade — este build
     # só valida que o projeto compila; os valores abaixo apenas satisfazem
     # o schema do config/env.ts (nenhum é usado para chamar Supabase de
@@ -44,7 +46,7 @@ jobs:
         shell: bash
         run: |
           BODY=$(tail -c 60000 test-output.log | python3 -c "import json,sys;print(json.dumps(sys.stdin.read()))")
-          curl -s -X POST \
+          curl -s -w "\nHTTP:%{http_code}\n" -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
             "https://api.github.com/repos/${{ github.repository }}/commits/${{ github.sha }}/comments" \
