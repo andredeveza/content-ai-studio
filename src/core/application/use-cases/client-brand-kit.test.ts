@@ -112,6 +112,10 @@ class InMemoryStorage implements StoragePort {
   getPublicUrl(path: string): string {
     return `https://storage.local/brand-logos/${path}`;
   }
+
+  async download(): Promise<Buffer> {
+    return Buffer.from("");
+  }
 }
 
 const ORG_ID = "11111111-1111-4111-8111-111111111111";

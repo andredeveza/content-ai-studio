@@ -1,15 +1,21 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Tipografia do chrome do produto (design_handoff_content_ai_studio/README.md,
+// seção "Chrome do produto"): Space Grotesk na UI, JetBrains Mono em
+// rótulos/meta/logs. Não é a fonte do Brand Kit do cliente — essa entra
+// via CSS custom properties no canvas do slide (bloco 4), nunca aqui.
+const chromeSans = Space_Grotesk({
+  variable: "--font-chrome-sans",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const chromeMono = JetBrains_Mono({
+  variable: "--font-chrome-mono",
   subsets: ["latin"],
+  weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
@@ -24,8 +30,8 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      lang="pt-BR"
+      className={`${chromeSans.variable} ${chromeMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

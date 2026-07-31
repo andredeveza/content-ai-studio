@@ -1,7 +1,7 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { ArchetypeId } from "@/core/domain/template/blueprint";
-import type { NewSlide, Slide } from "@/core/domain/project/slide";
+import type { NewSlide, Slide, SlideOverrides } from "@/core/domain/project/slide";
 import type { SlideContent } from "@/core/domain/template/slide-content";
 import type { SlideRepository } from "@/core/domain/ports/slide-repository";
 import type { Database, Json } from "@/infra/db/supabase/types";
@@ -15,6 +15,7 @@ function toDomain(row: SlideRow): Slide {
     index: row.index,
     archetypeId: row.archetype_id as ArchetypeId,
     content: row.content as unknown as SlideContent,
+    overrides: row.overrides as unknown as SlideOverrides | null,
     mediaId: row.media_id,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -53,6 +54,12 @@ export class SupabaseSlideRepository implements SlideRepository {
     return (data ?? []).map(toDomain);
   }
 
+  async findById(slideId: string): Promise<Slide | null> {
+    const { data, error } = await this.db.from("slides").select("*").eq("id", slideId).maybeSingle();
+    if (error) throw error;
+    return data ? toDomain(data) : null;
+  }
+
   async updateContent(slideId: string, content: SlideContent): Promise<Slide | null> {
     const { data, error } = await this.db
       .from("slides")
@@ -69,6 +76,18 @@ export class SupabaseSlideRepository implements SlideRepository {
     const { data, error } = await this.db
       .from("slides")
       .update({ media_id: mediaId })
+      .eq("id", slideId)
+      .select("*")
+      .maybeSingle();
+
+    if (error) throw error;
+    return data ? toDomain(data) : null;
+  }
+
+  async updateOverrides(slideId: string, overrides: SlideOverrides | null): Promise<Slide | null> {
+    const { data, error } = await this.db
+      .from("slides")
+      .update({ overrides: overrides as unknown as Json | null })
       .eq("id", slideId)
       .select("*")
       .maybeSingle();

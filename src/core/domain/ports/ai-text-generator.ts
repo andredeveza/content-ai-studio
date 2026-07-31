@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import type { ImageInput, ImageOutput, TextInput } from "@/core/domain/ports/ai-provider";
+import type { EmbedInput, EmbedOutput, ImageInput, ImageOutput, TextInput } from "@/core/domain/ports/ai-provider";
 import type { AppError } from "@/shared/errors";
 import type { Result } from "@/shared/result";
 
@@ -21,4 +21,13 @@ export interface AITextGenerator {
 // Subconjunto que o ImageService precisa.
 export interface AIImageGenerator {
   generateImage(input: ImageInput, ctx: AIContext): Promise<Result<ImageOutput, AppError>>;
+}
+
+// Subconjunto que AnalyzeAssetUseCase usa pra indexar trechos de PDF
+// (README, "Indexação": "embedding semântico dos trechos para texto") —
+// opcional, porque só funciona quando um provider com capability
+// "embed" estiver ligado (Hugging Face é feature-flag desligada por
+// padrão no MVP).
+export interface TextEmbedder {
+  embed(input: EmbedInput, ctx: AIContext): Promise<Result<EmbedOutput, AppError>>;
 }

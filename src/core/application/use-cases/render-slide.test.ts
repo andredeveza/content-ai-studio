@@ -36,6 +36,10 @@ class FakeStorage implements StoragePort {
   getPublicUrl(path: string): string {
     return `https://storage.local/media/${path}`;
   }
+
+  async download(): Promise<Buffer> {
+    return Buffer.from("");
+  }
 }
 
 class FakeMediaRepository implements MediaRepository {

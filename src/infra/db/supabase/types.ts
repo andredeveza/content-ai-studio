@@ -451,12 +451,188 @@ export interface Database {
           },
         ];
       };
+      assets: {
+        Row: {
+          id: string;
+          org_id: string;
+          client_id: string;
+          path: string;
+          mime: string;
+          kind: "image" | "pdf" | "font";
+          status: "pending" | "analyzed" | "failed";
+          width: number | null;
+          height: number | null;
+          dominant_color: string | null;
+          luminance_top: number | null;
+          luminance_mid: number | null;
+          luminance_bottom: number | null;
+          terms: string[];
+          excerpts: string[];
+          family: string | null;
+          error: string | null;
+          analyzed_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          org_id: string;
+          client_id: string;
+          path: string;
+          mime: string;
+          kind: "image" | "pdf" | "font";
+          status?: "pending" | "analyzed" | "failed";
+          width?: number | null;
+          height?: number | null;
+          dominant_color?: string | null;
+          luminance_top?: number | null;
+          luminance_mid?: number | null;
+          luminance_bottom?: number | null;
+          terms?: string[];
+          excerpts?: string[];
+          family?: string | null;
+          error?: string | null;
+          analyzed_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          org_id?: string;
+          client_id?: string;
+          path?: string;
+          mime?: string;
+          kind?: "image" | "pdf" | "font";
+          status?: "pending" | "analyzed" | "failed";
+          width?: number | null;
+          height?: number | null;
+          dominant_color?: string | null;
+          luminance_top?: number | null;
+          luminance_mid?: number | null;
+          luminance_bottom?: number | null;
+          terms?: string[];
+          excerpts?: string[];
+          family?: string | null;
+          error?: string | null;
+          analyzed_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "assets_org_id_fkey";
+            columns: ["org_id"];
+            isOneToOne: false;
+            referencedRelation: "orgs";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "assets_client_id_fkey";
+            columns: ["client_id"];
+            isOneToOne: false;
+            referencedRelation: "clients";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      asset_embeddings: {
+        Row: {
+          id: string;
+          asset_id: string;
+          kind: "visual" | "semantic";
+          embedding: number[];
+          meta: Json;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          asset_id: string;
+          kind: "visual" | "semantic";
+          embedding: number[];
+          meta?: Json;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          asset_id?: string;
+          kind?: "visual" | "semantic";
+          embedding?: number[];
+          meta?: Json;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "asset_embeddings_asset_id_fkey";
+            columns: ["asset_id"];
+            isOneToOne: false;
+            referencedRelation: "assets";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      posts: {
+        Row: {
+          id: string;
+          org_id: string;
+          project_id: string;
+          scheduled_at: string;
+          status: "scheduled" | "published" | "failed";
+          channel_targets: string[];
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          org_id: string;
+          project_id: string;
+          scheduled_at: string;
+          status?: "scheduled" | "published" | "failed";
+          channel_targets?: string[];
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          org_id?: string;
+          project_id?: string;
+          scheduled_at?: string;
+          status?: "scheduled" | "published" | "failed";
+          channel_targets?: string[];
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "posts_org_id_fkey";
+            columns: ["org_id"];
+            isOneToOne: false;
+            referencedRelation: "orgs";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "posts_project_id_fkey";
+            columns: ["project_id"];
+            isOneToOne: true;
+            referencedRelation: "projects";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: {
       current_org_id: {
         Args: Record<PropertyKey, never>;
         Returns: string;
+      };
+      match_asset_embeddings: {
+        Args: {
+          p_client_id: string;
+          p_kind: string;
+          p_query: number[];
+          p_match_count?: number;
+        };
+        Returns: { asset_id: string; similarity: number }[];
       };
     };
     Enums: Record<string, never>;

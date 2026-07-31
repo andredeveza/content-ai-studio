@@ -32,4 +32,10 @@ export class SupabaseStorage implements StoragePort {
   getPublicUrl(path: string): string {
     return this.db.storage.from(this.bucket).getPublicUrl(path).data.publicUrl;
   }
+
+  async download(path: string): Promise<Buffer> {
+    const { data, error } = await this.db.storage.from(this.bucket).download(path);
+    if (error) throw error;
+    return Buffer.from(await data.arrayBuffer());
+  }
 }

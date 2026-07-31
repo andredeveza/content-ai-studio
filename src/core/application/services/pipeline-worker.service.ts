@@ -2,6 +2,7 @@ import type { ProjectCopy } from "@/core/application/dto/copy.dto";
 import type { ImageService } from "@/core/application/services/image.service";
 import type { CopyService } from "@/core/application/services/copy.service";
 import type { PromptService } from "@/core/application/services/prompt.service";
+import { computeScrimOpacity } from "@/core/application/services/asset-scoring.service";
 import type { ProjectStructure, ResearchService } from "@/core/application/services/research.service";
 import { mapGenericCopyToSlideContent } from "@/core/application/services/slide-content-mapper";
 import { selectLayout } from "@/core/application/services/layout.service";
@@ -11,14 +12,24 @@ import type { ClientRepository } from "@/core/domain/ports/client-repository";
 import type { JobRepository } from "@/core/domain/ports/job-repository";
 import type { ProjectRepository } from "@/core/domain/ports/project-repository";
 import type { PublishingGateway } from "@/core/domain/ports/publisher";
+import type { TitleBand } from "@/core/domain/ports/retrieval";
 import type { SlideRepository } from "@/core/domain/ports/slide-repository";
 import { JOB_STEPS, JOB_STEP_PROGRESS, type Job, type JobCheckpoint, type JobStep } from "@/core/domain/pipeline/job";
 import { canvasForRatio, type Project } from "@/core/domain/project/project";
+import type { ArchetypeId } from "@/core/domain/template/blueprint";
 import type { NewSlide } from "@/core/domain/project/slide";
 import type { SlideContent } from "@/core/domain/template/slide-content";
 import { getBlueprint } from "@/templates/blueprints";
 import { AppError, ExternalServiceError, NotFoundError } from "@/shared/errors";
 import { err, ok, type Result } from "@/shared/result";
+
+// Nenhum blueprint atual (bloco 4) ancora texto no topo sobre foto — os
+// dois com slot de mídia (foto-total, citacao) usam a faixa inferior
+// como referência de contraste. Um blueprint futuro com texto no topo
+// só precisa mudar este mapa.
+function titleBandForArchetype(_archetypeId: ArchetypeId): TitleBand {
+  return "bottom";
+}
 
 export interface PipelineWorkerDeps {
   readonly jobs: JobRepository;
@@ -188,28 +199,50 @@ export class PipelineWorker {
     return this.advance(job, "image", { ...job.payload, prompts });
   }
 
-  // Step "image" (60%, "+ RetrievalService antes" — README).
+  // Step "image" (60%, "+ RetrievalService antes" — README). Pontua o
+  // acervo do cliente (bloco 7) antes de gerar com IA, e acumula
+  // `usedAssetIds` ao longo do loop — é o que vira `penalty` (0.12) se o
+  // mesmo asset servir dois slides do mesmo carrossel.
   private async runImage(job: Job): Promise<Job> {
     const project = await this.requireProject(job);
     const projectCopy = job.payload.copy as ProjectCopy;
     const prompts = job.payload.prompts ?? {};
+    const slides = await this.deps.slides.listByProject(project.id);
 
+    const usedAssetIds: string[] = [];
     const mediaUrls: Record<number, string> = {};
+    const scrimOpacities: Record<number, number> = {};
+
     for (const [indexKey, prompt] of Object.entries(prompts)) {
       const index = Number(indexKey);
-      const slideCopy = projectCopy.slides.find((c) => c.index === index);
-      const brief = slideCopy?.body || slideCopy?.heading || "";
+      const slide = slides.find((s) => s.index === index);
+      if (!slide) continue;
 
-      const result = await this.deps.image.resolveMediaUrl(project.clientId, prompt, brief, {
-        orgId: job.orgId,
-        userId: null,
-      });
+      const slideCopy = projectCopy.slides.find((c) => c.index === index);
+      const theme = slideCopy?.body || slideCopy?.heading || project.theme;
+
+      const result = await this.deps.image.resolveMedia(
+        {
+          clientId: project.clientId,
+          theme,
+          titleBand: titleBandForArchetype(slide.archetypeId),
+          usedAssetIds,
+        },
+        prompt,
+        { orgId: job.orgId, userId: null },
+      );
       if (!result.ok) throw result.error;
-      mediaUrls[index] = result.value;
+
+      mediaUrls[index] = result.value.url;
+      if (result.value.assetId) {
+        usedAssetIds.push(result.value.assetId);
+        if (result.value.luminanceAtBand != null) {
+          scrimOpacities[index] = computeScrimOpacity(result.value.luminanceAtBand);
+        }
+      }
     }
 
     const canvas = canvasForRatio(project.ratio);
-    const slides = await this.deps.slides.listByProject(project.id);
     for (const slide of slides) {
       const url = mediaUrls[slide.index];
       if (!url) continue;
@@ -219,7 +252,12 @@ export class PipelineWorker {
         .find((slot) => slot.kind === "media")?.key;
       if (!mediaKey) continue;
 
-      const content: SlideContent = { ...slide.content, media: { ...slide.content.media, [mediaKey]: url } };
+      const scrimOpacity = scrimOpacities[slide.index];
+      const content: SlideContent = {
+        ...slide.content,
+        media: { ...slide.content.media, [mediaKey]: url },
+        ...(scrimOpacity !== undefined && { scrimOpacity }),
+      };
       await this.deps.slides.updateContent(slide.id, content);
     }
 
@@ -258,7 +296,7 @@ export class PipelineWorker {
   // chega no bloco 9. `NoopPublisher` mantém o step real sem publicar
   // nada ainda.
   private async runPublish(job: Job): Promise<Job> {
-    await this.deps.publisher.publish({ projectId: job.projectId });
+    await this.deps.publisher.publish({ orgId: job.orgId, projectId: job.projectId });
     return this.advance(job, "completed", job.payload);
   }
 

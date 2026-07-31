@@ -1,12 +1,15 @@
+import { RETRIEVAL_SCORE_THRESHOLD } from "@/core/application/services/asset-scoring.service";
 import type { AIContext, AIImageGenerator } from "@/core/domain/ports/ai-text-generator";
-import type { RetrievalPort } from "@/core/domain/ports/retrieval";
+import type { AssetQuery, RetrievalPort } from "@/core/domain/ports/retrieval";
 import type { AppError } from "@/shared/errors";
 import { ok, type Result } from "@/shared/result";
 
-// Mesmo limite mencionado no README ("Acervo / RAG"): se `total` (score
-// do RetrieveAssets) passa do limite, usa a foto real; senão, gera com
-// IA. O valor exato da fórmula chega no bloco 7 — aqui só o contrato.
-const RETRIEVAL_SCORE_THRESHOLD = 0.5;
+export interface ResolvedMedia {
+  readonly url: string;
+  // null quando a imagem foi gerada por IA (não veio do acervo).
+  readonly assetId: string | null;
+  readonly luminanceAtBand: number | null;
+}
 
 // Step "image" (60%, "+ RetrievalService antes" — README).
 export class ImageService {
@@ -15,19 +18,14 @@ export class ImageService {
     private readonly retrieval: RetrievalPort,
   ) {}
 
-  async resolveMediaUrl(
-    clientId: string,
-    prompt: string,
-    brief: string,
-    ctx: AIContext,
-  ): Promise<Result<string, AppError>> {
-    const match = await this.retrieval.findBestAsset(clientId, brief);
+  async resolveMedia(query: AssetQuery, prompt: string, ctx: AIContext): Promise<Result<ResolvedMedia, AppError>> {
+    const match = await this.retrieval.findBestAsset(query);
     if (match && match.score >= RETRIEVAL_SCORE_THRESHOLD) {
-      return ok(match.url);
+      return ok({ url: match.url, assetId: match.assetId, luminanceAtBand: match.luminanceAtBand });
     }
 
     const generated = await this.imageGenerator.generateImage({ prompt }, ctx);
     if (!generated.ok) return generated;
-    return ok(generated.value.imageUrl);
+    return ok({ url: generated.value.imageUrl, assetId: null, luminanceAtBand: null });
   }
 }
