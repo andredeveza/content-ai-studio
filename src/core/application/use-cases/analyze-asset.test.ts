@@ -139,7 +139,10 @@ describe("AnalyzeAssetUseCase (bloco 7)", () => {
 
   it("analisa PDF e indexa embedding semântico dos trechos quando o embedder funciona", async () => {
     const { default: puppeteer } = await import("puppeteer");
-    const browser = await puppeteer.launch({ headless: true });
+    // --no-sandbox: runners de CI (GitHub Actions) rodam como root e o
+    // Chrome recusa abrir sandbox nesse caso (mesma causa raiz do fix em
+    // src/infra/render/puppeteer-renderer.ts).
+    const browser = await puppeteer.launch({ headless: true, args: ["--no-sandbox"] });
     let pdfBuffer: Buffer;
     try {
       const page = await browser.newPage();
