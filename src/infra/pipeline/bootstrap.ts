@@ -54,6 +54,7 @@ export function getGenerateCarouselUseCase(): GenerateCarouselUseCase {
     slides,
     clients,
     brandKits,
+    assets,
     research: new ResearchService(gateway),
     copy: new CopyService(gateway),
     prompt: new PromptService(),

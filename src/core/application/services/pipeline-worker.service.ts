@@ -7,6 +7,7 @@ import type { ProjectStructure, ResearchService } from "@/core/application/servi
 import { mapGenericCopyToSlideContent } from "@/core/application/services/slide-content-mapper";
 import { selectLayout } from "@/core/application/services/layout.service";
 import type { RenderSlidePort } from "@/core/application/use-cases/render-slide";
+import type { AssetRepository } from "@/core/domain/ports/asset-repository";
 import type { BrandKitRepository } from "@/core/domain/ports/brand-kit-repository";
 import type { ClientRepository } from "@/core/domain/ports/client-repository";
 import type { JobRepository } from "@/core/domain/ports/job-repository";
@@ -37,6 +38,7 @@ export interface PipelineWorkerDeps {
   readonly slides: SlideRepository;
   readonly clients: ClientRepository;
   readonly brandKits: BrandKitRepository;
+  readonly assets: AssetRepository;
   readonly research: ResearchService;
   readonly copy: CopyService;
   readonly prompt: PromptService;
@@ -146,6 +148,15 @@ export class PipelineWorker {
 
     const projectCopy = result.value;
 
+    // Checado uma vez por carrossel (não por slide): bloco 7 (Acervo) já
+    // está ligado de verdade desde o ADENDO-02 — antes disso o acervo do
+    // cliente sempre estava vazio, então "foto-total" nunca era
+    // escolhido nem quando havia fotos reais no banco do cliente (bug
+    // relatado pelo usuário: carrossel só com texto mesmo após subir
+    // várias fotos para o acervo).
+    const analyzedImages = await this.deps.assets.listAnalyzedImagesByClient(project.clientId);
+    const hasStrongPhoto = analyzedImages.length > 0;
+
     const newSlides: NewSlide[] = projectCopy.slides.map((copy) => {
       const stepNumber = copy.number ? Number.parseInt(copy.number, 10) : Number.NaN;
       const archetypeId = selectLayout({
@@ -154,10 +165,7 @@ export class PipelineWorker {
         stepNumber: Number.isFinite(stepNumber) ? stepNumber : null,
         body: copy.body || copy.heading,
         items: copy.items,
-        // Sem RetrieveAssets real (bloco 7), nunca força "foto-total" por
-        // conta própria — evita escolher um arquétipo que precisa de
-        // mídia forte quando não há acervo nenhum ainda.
-        hasStrongPhoto: false,
+        hasStrongPhoto,
       });
       return { index: copy.index, archetypeId, content: mapGenericCopyToSlideContent(archetypeId, copy) };
     });

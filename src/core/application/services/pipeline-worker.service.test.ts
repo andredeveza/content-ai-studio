@@ -12,6 +12,7 @@ import { RenderSlideUseCase } from "@/core/application/use-cases/render-slide";
 import type { AIContext, AIImageGenerator, AITextGenerator } from "@/core/domain/ports/ai-text-generator";
 import type { ImageInput, ImageOutput, TextInput } from "@/core/domain/ports/ai-provider";
 import type { ClientRepository } from "@/core/domain/ports/client-repository";
+import type { AssetRepository } from "@/core/domain/ports/asset-repository";
 import type { BrandKitRepository } from "@/core/domain/ports/brand-kit-repository";
 import type { ProjectRepository } from "@/core/domain/ports/project-repository";
 import type { SlideRepository } from "@/core/domain/ports/slide-repository";
@@ -19,6 +20,7 @@ import type { JobRepository } from "@/core/domain/ports/job-repository";
 import type { RenderInput, RenderOutput, RenderPort } from "@/core/domain/ports/render";
 import type { StoragePort, UploadInput } from "@/core/domain/ports/storage";
 import type { MediaRepository } from "@/core/domain/ports/media-repository";
+import type { Asset } from "@/core/domain/asset/asset";
 import type { Client, NewClient } from "@/core/domain/client/client";
 import type { BrandKit, NewBrandKit } from "@/core/domain/brandkit/brand-kit";
 import type { Job, JobPatch, NewJob } from "@/core/domain/pipeline/job";
@@ -61,6 +63,28 @@ class FakeBrandKitRepository implements BrandKitRepository {
     throw new Error("não usado neste teste");
   }
   async setLogoPath(): Promise<BrandKit | null> {
+    throw new Error("não usado neste teste");
+  }
+}
+
+class FakeAssetRepository implements AssetRepository {
+  constructor(private readonly images: Asset[] = []) {}
+  async create(): Promise<Asset> {
+    throw new Error("não usado neste teste");
+  }
+  async findById(): Promise<Asset | null> {
+    throw new Error("não usado neste teste");
+  }
+  async listAnalyzedImagesByClient(clientId: string): Promise<Asset[]> {
+    return this.images.filter((asset) => asset.clientId === clientId);
+  }
+  async listByClient(): Promise<Asset[]> {
+    throw new Error("não usado neste teste");
+  }
+  async markAnalyzed(): Promise<Asset | null> {
+    throw new Error("não usado neste teste");
+  }
+  async markFailed(): Promise<Asset | null> {
     throw new Error("não usado neste teste");
   }
 }
@@ -374,7 +398,7 @@ const copyResponse = {
   cta: "Fale com a gente",
 };
 
-function buildDeps(textGenerator: FakeTextGenerator, imageGenerator: FakeImageGenerator) {
+function buildDeps(textGenerator: FakeTextGenerator, imageGenerator: FakeImageGenerator, analyzedImages: Asset[] = []) {
   const projects = new FakeProjectRepository();
   const slides = new FakeSlideRepository();
   const jobs = new FakeJobRepository();
@@ -388,6 +412,7 @@ function buildDeps(textGenerator: FakeTextGenerator, imageGenerator: FakeImageGe
     slides,
     clients: new FakeClientRepository(client),
     brandKits: new FakeBrandKitRepository(brandKit),
+    assets: new FakeAssetRepository(analyzedImages),
     research: new ResearchService(textGenerator),
     copy: new CopyService(textGenerator),
     prompt: new PromptService(),
@@ -445,6 +470,61 @@ describe("PipelineWorker (bloco 6) — 7 steps, checkpoint e retomada", () => {
     expect(imageGenerator.calls).toBe(1);
 
     expect(renderer.calls).toBe(SLIDE_COUNT);
+  });
+
+  // Bug real relatado por usuário: fotos reais subidas no acervo do
+  // cliente nunca eram usadas porque `hasStrongPhoto` estava hardcoded
+  // em `false` no step "copy" (comentário dizia "sem RetrieveAssets
+  // real" — desatualizado desde que o bloco 7 foi ligado de verdade).
+  it("com acervo analisado do cliente, um slide sem outro sinal vira foto-total", async () => {
+    const noSignalCopy = {
+      ...copyResponse,
+      slides: copyResponse.slides.map((slide) =>
+        slide.index === 2 ? { index: 2, heading: "Nosso time", body: "Conheça quem faz acontecer" } : slide,
+      ),
+    };
+    const textGenerator = new FakeTextGenerator([structureResponse, noSignalCopy]);
+    const imageGenerator = new FakeImageGenerator();
+    const analyzedImage: Asset = {
+      id: "asset-1",
+      orgId: ORG_ID,
+      clientId: CLIENT_ID,
+      path: "clients/x/foto.jpg",
+      mime: "image/jpeg",
+      kind: "image",
+      status: "analyzed",
+      width: 1200,
+      height: 1500,
+      dominantColor: "#0A47A8",
+      luminanceTop: 0.4,
+      luminanceMid: 0.3,
+      luminanceBottom: 0.2,
+      terms: [],
+      excerpts: [],
+      family: null,
+      error: null,
+      sourceUrl: null,
+      importedBy: null,
+      analyzedAt: "2026-01-01T00:00:00.000Z",
+      createdAt: "2026-01-01T00:00:00.000Z",
+      updatedAt: "2026-01-01T00:00:00.000Z",
+    };
+    const { deps, projects, slides, jobs } = buildDeps(textGenerator, imageGenerator, [analyzedImage]);
+
+    const project = await projects.create({
+      orgId: ORG_ID,
+      clientId: CLIENT_ID,
+      theme: "Como vender mais no Instagram",
+      goal: "converter",
+      slideCount: SLIDE_COUNT,
+    });
+    const job = await jobs.create({ orgId: ORG_ID, projectId: project.id });
+
+    const result = await new PipelineWorker(deps).run(job.id);
+    expect(result.ok).toBe(true);
+
+    const finalSlides = await slides.listByProject(project.id);
+    expect(finalSlides.find((slide) => slide.index === 2)?.archetypeId).toBe("foto-total");
   });
 
   it("falha no meio do pipeline sem avançar o step, e retoma exatamente dali", async () => {

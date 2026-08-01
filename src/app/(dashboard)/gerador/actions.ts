@@ -9,9 +9,11 @@ export type GenerateActionResult = { ok: false; error: string };
 
 // `orgId` chega pré-preenchido via `.bind(null, session.orgId)` na page
 // (Server Component) — o Client Component nunca escolhe a própria org.
-// `queue.enqueue` do adapter inline (único implementado) roda o pipeline
-// inteiro antes desta action retornar, então o redirect já manda pra
-// Progresso com o job praticamente resolvido (completed ou failed).
+// `queue.enqueue` do adapter `after` (config/queue.ts) só agenda o
+// pipeline pra rodar depois da resposta — ele NÃO termina antes desta
+// action retornar, então o redirect manda pra Progresso com o job ainda
+// em "research"/step 0, e o Realtime da tela mostra o avanço real
+// conforme `PipelineWorker.advance()` persiste cada step.
 export async function generateCarousel(
   orgId: string,
   input: {

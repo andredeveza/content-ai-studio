@@ -24,6 +24,8 @@ ADENDO-02 (correções urgentes) completos.
 - [x] Bloco 10 — Agenda (calendário editorial)
 - [x] ADENDO-02 — Correções urgentes (layout desktop, ingestão na tela
       Marca, seletor de Formato)
+- [x] Correção pós-ADENDO-02 — Progresso em tempo real + acervo
+      realmente usado na geração (ver decisões abaixo)
 
 ## Decisões tomadas durante a construção
 
@@ -98,6 +100,55 @@ ADENDO-02 (correções urgentes) completos.
   eram botões com `onClick` — já eram mutuamente exclusivos no estado,
   mas visualmente pareciam checkboxes independentes, que era exatamente
   o bug reportado). `role=radiogroup` implícito via `<fieldset>`/`<legend>`.
+
+- **Fila passou de `inline` pra `after`** (`config/queue.ts`,
+  `infra/queue/after-queue.ts`) — bug relatado por usuário: a tela de
+  Progresso nunca mostrava avanço real, só "completed" já na primeira
+  renderização, porque `InlineQueueAdapter.enqueue` esperava o pipeline
+  inteiro (7 steps) rodar antes da server action de `/gerador`
+  retornar/redirecionar. `AfterQueueAdapter` usa `after()` (Next 15,
+  `next/server`) pra agendar `worker.run(jobId)` sem esperar — a action
+  redireciona assim que `project`+`job` são criados, e o Realtime que já
+  existia na tabela `jobs` (migration 0005) passa a ter algo incremental
+  pra mostrar de verdade. `export const maxDuration = 300` adicionado em
+  `app/(dashboard)/gerador/page.tsx` (Route Segment Config vale pras
+  server actions vinculadas à page) — 300s é o teto do plano Pro; no
+  Hobby a Vercel limita a execução real a 60s independente deste valor
+  (não confirmado ainda qual plano está ativo). Verificado com geração
+  real ponta a ponta: a tela de Progresso capturou o job no meio do
+  pipeline (step "prompt") antes de completar — antes da correção isso
+  era estruturalmente impossível de acontecer. Duração real medida de
+  ponta a ponta pra um carrossel de 7 slides: **56,7s** (client→job
+  completed), com apenas 1 chamada de IA de texto e 0 chamadas de IA de
+  imagem (nenhum slide daquele tema específico bateu num arquétipo com
+  slot de mídia — ver decisão abaixo sobre prioridade de `foto-total`).
+- **`hasStrongPhoto` estava hardcoded em `false`** no step "copy" do
+  `PipelineWorker` (comentário dizia "sem RetrieveAssets real" —
+  desatualizado desde que o bloco 7 foi ligado de verdade no
+  ADENDO-02). Bug relatado por usuário: subiu várias fotos reais no
+  acervo do cliente HS Endoscopia e o carrossel gerado saiu só com
+  texto. Corrigido: `PipelineWorkerDeps` ganhou `assets:
+  AssetRepository`, e `runCopy` agora chama
+  `assets.listAnalyzedImagesByClient(project.clientId)` uma vez por
+  carrossel (não por slide) pra decidir `hasStrongPhoto` de verdade.
+  Testado (unitário: um slide sem nenhum outro sinal vira `foto-total`
+  quando há acervo analisado; nenhuma regressão nos 154 testes).
+  **Ressalva importante, descoberta rodando uma geração real de ponta a
+  ponta**: `hasStrongPhoto` é o ÚLTIMO critério em `selectLayout`
+  (`layout.service.ts`) — perde pra citação, número, lista e evento, e o
+  slide 0 (capa) e o último (fecho) são forçados por posição,
+  independente de foto disponível. Isso significa que o `cover-centro`
+  (exatamente o arquétipo do screenshot que o usuário reportou como
+  "resultado de merda") NUNCA vai usar uma foto, mesmo com a correção —
+  por design, é uma capa só de texto/gradiente. E como copy gerado por
+  IA tende a bater em número/lista/data com frequência, uma foto real só
+  aparece quando sobra algum slide sem nenhum desses sinais — na geração
+  de teste (tema "5 sinais de que sua clínica precisa de um novo site"),
+  nenhum dos 7 slides caiu nesse caso. Isso é uma tensão de produto real
+  — se o usuário quiser fotos aparecendo com mais frequência, a opção é
+  subir `hasStrongPhoto` na ordem de prioridade do `selectLayout` (ou
+  dar um slot de mídia opcional pro `cover-centro`), mas isso não foi
+  decidido/feito aqui — fica como pendência a validar com o usuário.
 
 ## Pendências conhecidas
 
