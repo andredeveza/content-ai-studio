@@ -18,6 +18,9 @@ export const StartProjectSchema = z
       .refine((slug) => STYLE_SLUGS.includes(slug), { message: "Estilo de composição desconhecido" })
       .default(DEFAULT_STYLE_SLUG),
     format: z.enum(["carousel", "single"]).default("carousel"),
+    // Campo "cta" do protótipo do Gerador. Vazio = usa o CTA padrão do
+    // Brand Kit do cliente.
+    cta: z.string().trim().default(""),
   })
   .superRefine((value, ctx) => {
     // README: post único e carrossel "não são o mesmo pipeline com

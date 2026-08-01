@@ -2,39 +2,38 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Sparkles, LayoutGrid, CalendarDays, Palette } from "lucide-react";
+import { isNavItemActive, NAV_ITEMS } from "@/components/nav/nav-items";
 import { cn } from "@/lib/utils";
 
-const TABS = [
-  { href: "/gerador", label: "Gerador", icon: Sparkles },
-  { href: "/projetos", label: "Projetos", icon: LayoutGrid },
-  { href: "/agenda", label: "Agenda", icon: CalendarDays },
-  { href: "/marca", label: "Marca", icon: Palette },
-] as const;
-
-// Navegação por abas (README, "Chrome do produto") — só existe a partir
-// de agora que as 4 telas ficaram prontas (ver comentário anterior em
-// (dashboard)/layout.tsx). Editor e Progresso são telas de fluxo
-// (chegam a partir de Projetos/Gerador), não abas fixas.
+// Tab bar do protótipo mobile, valores literais do handoff:
+// `position:fixed; bottom:0; background:#FFFFFFF2; backdrop-filter:blur(10px);
+//  border-top:1px solid #E4E4E2; grid-template-columns:repeat(5,1fr);
+//  padding:8px 4px 14px 4px`, ícone 20px, rótulo Mono 9.5px MINÚSCULO,
+// ativo `#0A0A0A`, inativo `#B8B8B4` (--chrome-faint, não --chrome-muted).
+//
+// Só no mobile: no desktop o protótipo usa a sidebar de 236px.
 export function TabBar() {
   const pathname = usePathname();
 
   return (
-    <nav className="sticky bottom-0 z-10 flex border-t border-(--chrome-border) bg-(--chrome-surface)/90 backdrop-blur-md">
-      {TABS.map((tab) => {
-        const isActive = pathname === tab.href || pathname.startsWith(`${tab.href}/`);
-        const Icon = tab.icon;
+    <nav className="sticky bottom-0 z-30 grid grid-cols-5 border-t border-(--chrome-border) bg-[#FFFFFFF2] px-1 pt-2 pb-3.5 backdrop-blur-[10px] lg:hidden">
+      {NAV_ITEMS.map((item) => {
+        const isActive = isNavItemActive(pathname, item.href);
+        const Icon = item.icon;
         return (
           <Link
-            key={tab.href}
-            href={tab.href}
+            key={item.href}
+            href={item.href}
+            aria-current={isActive ? "page" : undefined}
             className={cn(
-              "flex flex-1 flex-col items-center gap-1 py-2.5 text-center font-mono text-[10px] uppercase tracking-[.08em] transition-colors",
-              isActive ? "text-(--chrome-ink)" : "text-(--chrome-muted)",
+              // min-h-11 = 44px, o alvo de toque mínimo que o README
+              // exige "sem exceção".
+              "flex min-h-11 flex-col items-center justify-center gap-1.25 py-2 font-mono text-[9.5px]",
+              isActive ? "text-(--chrome-ink)" : "text-(--chrome-faint)",
             )}
           >
-            <Icon className="size-4.5" strokeWidth={isActive ? 2.25 : 1.75} />
-            <span className={isActive ? "font-semibold" : undefined}>{tab.label}</span>
+            <Icon className="size-5" strokeWidth={1.4} />
+            <span>{item.label}</span>
           </Link>
         );
       })}

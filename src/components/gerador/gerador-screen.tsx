@@ -1,8 +1,9 @@
 "use client";
 
 import { useId, useState, useTransition } from "react";
-import { GraduationCap, Award, TrendingUp, ShieldQuestion, Smartphone, Square, RectangleVertical, Sparkles, Loader2, Lock } from "lucide-react";
+import { Loader2, Lock, Sparkles } from "lucide-react";
 import type { ProjectGoal, ProjectRatio } from "@/core/domain/project/project";
+import { BlinkingCursor } from "@/components/brand/logo-mark";
 import { ScreenContainer } from "@/components/chrome/screen-container";
 import { DEFAULT_STYLE_SLUG } from "@/core/domain/template/composition-styles.catalog";
 import { cn } from "@/lib/utils";
@@ -38,26 +39,35 @@ export interface GeradorScreenProps {
     ratio: ProjectRatio;
     styleId: string;
     format: "carousel" | "single";
+    cta: string;
   }) => Promise<{ ok: false; error: string } | void>;
 }
 
-const GOAL_OPTIONS: readonly { value: ProjectGoal; label: string; icon: typeof GraduationCap }[] = [
-  { value: "educar", label: "Educar", icon: GraduationCap },
-  { value: "autoridade", label: "Construir autoridade", icon: Award },
-  { value: "converter", label: "Converter em venda", icon: TrendingUp },
-  { value: "mito", label: "Quebrar objeção", icon: ShieldQuestion },
+// Protótipo mobile, bloco "objetivo": lista de rádios com bolinha
+// desenhada à mão (15px de anel, 8px de miolo), não botões com ícone.
+const GOAL_OPTIONS: readonly { value: ProjectGoal; label: string }[] = [
+  { value: "educar", label: "Educar" },
+  { value: "autoridade", label: "Construir autoridade" },
+  { value: "converter", label: "Converter em venda" },
+  { value: "mito", label: "Quebrar objeção" },
 ];
 
-// ADENDO-02, "Defeito 2, correção 4": os 3 formatos do README (4:5,
-// 1:1, 9:16 Story), como seletor único de verdade — value do
-// `<input type="radio">` garante exclusividade estrutural, não só
-// visual (o bug reportado era exatamente parecer 2 checkboxes
-// independentes em vez de 1 escolha).
-const RATIO_OPTIONS: readonly { value: ProjectRatio; label: string; icon: typeof Smartphone }[] = [
-  { value: "4:5", label: "4:5 (retrato)", icon: Smartphone },
-  { value: "1:1", label: "1:1 (quadrado)", icon: Square },
-  { value: "9:16", label: "9:16 (story)", icon: RectangleVertical },
+const RATIO_OPTIONS: readonly { value: ProjectRatio; label: string; bar: string }[] = [
+  { value: "4:5", label: "4:5", bar: "h-8" },
+  { value: "1:1", label: "1:1", bar: "h-6.5" },
+  { value: "9:16", label: "9:16", bar: "h-11" },
 ];
+
+// Chips de sugestão do protótipo (carrossel horizontal, Mono 11px,
+// pílula de 44px). Preenchem o campo de tema com um clique.
+const SUGGESTIONS = [
+  "custo do lead alto padrão",
+  "tráfego ou venda?",
+  "erros no cardápio digital",
+  "3 mitos sobre anúncio",
+];
+
+const SECTION_LABEL = "font-mono text-[10px] uppercase tracking-[.16em] text-(--chrome-muted) mb-2.5";
 
 export function GeradorScreen({ clients, styles, generateAction }: GeradorScreenProps) {
   const [clientId, setClientId] = useState(clients[0]?.id ?? "");
@@ -66,10 +76,12 @@ export function GeradorScreen({ clients, styles, generateAction }: GeradorScreen
   const [goal, setGoal] = useState<ProjectGoal>("educar");
   const [slideCount, setSlideCount] = useState(7);
   const [ratio, setRatio] = useState<ProjectRatio>("4:5");
+  const [cta, setCta] = useState("Fale com a gente");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startAction] = useTransition();
   const ratioGroupName = useId();
   const styleGroupName = useId();
+  const goalGroupName = useId();
 
   const selectedClient = clients.find((client) => client.id === clientId);
   const availabilityFor = (id: string) => selectedClient?.styles.find((style) => style.id === id);
@@ -106,102 +118,192 @@ export function GeradorScreen({ clients, styles, generateAction }: GeradorScreen
         ratio,
         styleId,
         format: isSingle ? "single" : "carousel",
+        cta: cta.trim(),
       });
       if (result && !result.ok) setError(result.error);
     });
   }
 
   return (
-    <ScreenContainer width="form" className="pt-6 pb-10">
-      <div className="mb-6 flex items-center gap-2.5">
-        <div className="flex size-9 flex-none items-center justify-center rounded-xl bg-linear-to-br from-[#0A47A8] via-[#1C7ED6] to-[#57A8FF] text-white">
-          <Sparkles className="size-4.5" strokeWidth={2} />
-        </div>
-        <div>
-          <h1 className="text-[22px] font-bold tracking-[-.02em] leading-[1.1]">Gerador</h1>
-          <p className="text-sm text-(--chrome-muted)">Descreva o tema e a IA monta o carrossel inteiro.</p>
-        </div>
-      </div>
+    <ScreenContainer width="form" className="pt-7 pb-10">
+      <h1 className="mb-2.5 text-[32px] leading-[1.06] font-bold tracking-[-.03em] text-pretty">
+        Sobre o que vamos falar?
+      </h1>
+      <p className="mb-6 text-[14.5px] leading-[1.55] text-(--chrome-text)">
+        Informe o tema. Pesquisa, texto, imagens, legenda e hashtags saem daqui — no brand kit do cliente.
+      </p>
 
       {error && (
-        <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</div>
+        <div className="mb-4 rounded-[10px] border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</div>
       )}
 
-      <form onSubmit={handleSubmit} className="grid gap-5">
-        <label className="grid gap-1.5">
-          <span className="font-mono text-[10px] uppercase tracking-[.16em] text-(--chrome-muted)">Cliente</span>
-          <select
-            value={clientId}
-            onChange={(e) => setClientId(e.target.value)}
-            className="rounded-md border border-(--chrome-border) bg-(--chrome-surface) px-3 py-2.5 text-sm"
-          >
-            {clients.length === 0 && <option value="">Nenhum cliente cadastrado</option>}
-            {clients.map((client) => (
-              <option key={client.id} value={client.id}>
-                {client.name}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="grid gap-1.5">
-          <span className="font-mono text-[10px] uppercase tracking-[.16em] text-(--chrome-muted)">Tema</span>
-          <textarea
+      <form onSubmit={handleSubmit}>
+        {/* Prompt em foco: `>` verde #3A9A48 Mono 17px + cursor piscando.
+            É a assinatura da tela no handoff. */}
+        <div className="mb-2.5 flex items-center gap-2.5 rounded-xl border border-(--chrome-border) bg-(--chrome-surface) px-3.5 py-1">
+          <span className="flex-none font-mono text-[17px] text-(--chrome-ok)">&gt;</span>
+          <input
             value={theme}
             onChange={(e) => setTheme(e.target.value)}
-            rows={3}
-            placeholder="Ex.: 5 erros que travam o crescimento de uma clínica no Instagram"
-            className="resize-none rounded-md border border-(--chrome-border) bg-(--chrome-surface) px-3 py-2.5 text-sm"
+            placeholder="ex.: como anunciar no Meta Ads em 2026"
+            aria-label="Tema"
+            className="min-w-0 flex-1 border-none bg-transparent py-3.5 text-base text-(--chrome-ink) outline-none"
           />
-        </label>
+          <BlinkingCursor className="h-5 w-2 flex-none" />
+        </div>
 
-        <div className="grid gap-1.5">
-          <span className="font-mono text-[10px] uppercase tracking-[.16em] text-(--chrome-muted)">Objetivo</span>
-          <div className="grid grid-cols-2 gap-2">
+        <div className="noscroll -mx-4 mb-7 flex gap-1.75 overflow-x-auto px-4 sm:-mx-6 sm:px-6">
+          {SUGGESTIONS.map((suggestion) => (
+            <button
+              key={suggestion}
+              type="button"
+              onClick={() => setTheme(suggestion)}
+              className="min-h-11 flex-none rounded-full border border-(--chrome-border) bg-transparent px-3.5 py-3 font-mono text-[11px] whitespace-nowrap text-(--chrome-text)"
+            >
+              {suggestion}
+            </button>
+          ))}
+        </div>
+
+        <div className={SECTION_LABEL}>cliente</div>
+        <select
+          value={clientId}
+          onChange={(e) => setClientId(e.target.value)}
+          aria-label="Cliente"
+          className="mb-7 min-h-12 w-full rounded-[10px] border border-(--chrome-border) bg-(--chrome-surface) px-3.5 text-[15px]"
+        >
+          {clients.length === 0 && <option value="">Nenhum cliente cadastrado</option>}
+          {clients.map((client) => (
+            <option key={client.id} value={client.id}>
+              {client.name}
+            </option>
+          ))}
+        </select>
+
+        <fieldset className="mb-7">
+          <legend className={SECTION_LABEL}>objetivo</legend>
+          <div className="grid gap-1.5">
             {GOAL_OPTIONS.map((option) => {
-              const Icon = option.icon;
+              const inputId = `${goalGroupName}-${option.value}`;
+              const on = goal === option.value;
               return (
-                <button
+                <label
                   key={option.value}
-                  type="button"
-                  onClick={() => setGoal(option.value)}
+                  htmlFor={inputId}
                   className={cn(
-                    "flex items-center gap-2 rounded-md border px-3 py-2.5 text-left text-sm",
-                    goal === option.value
-                      ? "border-(--chrome-ink) bg-(--chrome-ink) text-white"
-                      : "border-(--chrome-border) bg-(--chrome-surface) text-(--chrome-text)",
+                    "flex min-h-12 cursor-pointer items-center gap-2.75 rounded-[10px] border bg-(--chrome-surface) p-3.5 text-[15px] text-(--chrome-ink)",
+                    on ? "border-(--chrome-ink)" : "border-(--chrome-border)",
                   )}
                 >
-                  <Icon className="size-4 flex-none" strokeWidth={1.75} />
+                  <input
+                    id={inputId}
+                    type="radio"
+                    name={goalGroupName}
+                    value={option.value}
+                    checked={on}
+                    onChange={() => setGoal(option.value)}
+                    className="sr-only"
+                  />
+                  <span className="flex size-[15px] flex-none items-center justify-center rounded-full border border-(--chrome-faint)">
+                    {on && <span className="size-2 rounded-full bg-(--chrome-ink)" />}
+                  </span>
                   {option.label}
-                </button>
+                </label>
               );
             })}
           </div>
-        </div>
+        </fieldset>
 
-        <fieldset className="grid gap-1.5">
-          <legend className="font-mono text-[10px] uppercase tracking-[.16em] text-(--chrome-muted)">
-            Estilo de composição
-          </legend>
-          <div className="grid gap-2 sm:grid-cols-2">
+        {!isSingle && (
+          <>
+            <div className={SECTION_LABEL}>slides</div>
+            {/* Stepper com botões 44×44 — o README exige alvo de toque
+                mínimo de 44px "sem exceção". Antes era um <input range>. */}
+            <div className="mb-6 flex items-center gap-3.5 rounded-[10px] border border-(--chrome-border) bg-(--chrome-surface) px-3 py-2">
+              <button
+                type="button"
+                onClick={() => setSlideCount((n) => Math.max(6, n - 1))}
+                disabled={slideCount <= 6}
+                aria-label="Menos slides"
+                className="size-11 rounded-lg border border-(--chrome-border) bg-(--chrome-surface-2) text-xl text-(--chrome-ink) disabled:opacity-40"
+              >
+                −
+              </button>
+              <div aria-live="polite" className="flex-1 text-center font-mono text-[19px]">
+                {slideCount}
+              </div>
+              <button
+                type="button"
+                onClick={() => setSlideCount((n) => Math.min(8, n + 1))}
+                disabled={slideCount >= 8}
+                aria-label="Mais slides"
+                className="size-11 rounded-lg border border-(--chrome-border) bg-(--chrome-surface-2) text-xl text-(--chrome-ink) disabled:opacity-40"
+              >
+                +
+              </button>
+            </div>
+          </>
+        )}
+
+        <div className={SECTION_LABEL}>cta</div>
+        <input
+          value={cta}
+          onChange={(e) => setCta(e.target.value)}
+          aria-label="CTA"
+          className="mb-6 w-full rounded-[10px] border border-(--chrome-border) bg-(--chrome-surface) px-3.5 py-3.75 text-[15px] text-(--chrome-ink)"
+        />
+
+        <fieldset className="mb-6">
+          <legend className={SECTION_LABEL}>formato</legend>
+          <div className="flex gap-2">
+            {RATIO_OPTIONS.map((option) => {
+              const inputId = `${ratioGroupName}-${option.value}`;
+              const on = ratio === option.value;
+              return (
+                <label key={option.value} htmlFor={inputId} className="flex-1 cursor-pointer">
+                  <input
+                    id={inputId}
+                    type="radio"
+                    name={ratioGroupName}
+                    value={option.value}
+                    checked={on}
+                    onChange={() => setRatio(option.value)}
+                    className="sr-only"
+                  />
+                  {/* Card de 84px com a barra proporcional ao formato —
+                      mesma linguagem dos cards de template do protótipo. */}
+                  <div
+                    className={cn(
+                      "flex h-21 items-end justify-center rounded-[9px] border bg-(--chrome-surface) p-2.25",
+                      on ? "border-(--chrome-ink)" : "border-(--chrome-border)",
+                    )}
+                  >
+                    <div className={cn("w-7 rounded-sm bg-(--chrome-border)", option.bar)} />
+                  </div>
+                  <div className="mt-1.5 text-center font-mono text-[10px] text-(--chrome-muted)">{option.label}</div>
+                </label>
+              );
+            })}
+          </div>
+        </fieldset>
+
+        <fieldset className="mb-6">
+          <legend className={SECTION_LABEL}>estilo de composição</legend>
+          <div className="grid gap-1.5 sm:grid-cols-2">
             {styles.map((style) => {
               const availability = availabilityFor(style.id);
               const blocked = availability ? !availability.available : false;
               const inputId = `${styleGroupName}-${style.id}`;
-              const selected = styleId === style.id;
+              const on = styleId === style.id;
               return (
                 <label
                   key={style.id}
                   htmlFor={inputId}
                   title={blocked ? (availability?.reason ?? undefined) : undefined}
                   className={cn(
-                    "flex flex-col gap-1 rounded-md border px-3 py-2.5 text-left text-[13px]",
-                    blocked && "cursor-not-allowed opacity-60",
-                    !blocked && "cursor-pointer",
-                    selected && !blocked
-                      ? "border-(--chrome-ink) bg-(--chrome-ink) text-white"
-                      : "border-(--chrome-border) bg-(--chrome-surface) text-(--chrome-text)",
+                    "flex min-h-12 flex-col justify-center gap-0.5 rounded-[10px] border bg-(--chrome-surface) p-3.5",
+                    blocked ? "cursor-not-allowed opacity-60" : "cursor-pointer",
+                    on && !blocked ? "border-(--chrome-ink)" : "border-(--chrome-border)",
                   )}
                 >
                   <input
@@ -209,33 +311,23 @@ export function GeradorScreen({ clients, styles, generateAction }: GeradorScreen
                     type="radio"
                     name={styleGroupName}
                     value={style.id}
-                    checked={selected}
+                    checked={on}
                     disabled={blocked}
                     onChange={() => setStyleId(style.id)}
                     className="sr-only"
                   />
-                  <span className="flex items-center gap-1.5 font-medium">
-                    {blocked ? <Lock className="size-3.5 flex-none" strokeWidth={1.75} /> : null}
+                  <span className="flex items-center gap-1.5 text-[15px] text-(--chrome-ink)">
+                    {blocked && <Lock className="size-3.5 flex-none" strokeWidth={1.4} />}
                     {style.name}
                     {style.format === "single" && (
-                      <span
-                        className={cn(
-                          "rounded-full px-1.5 py-px font-mono text-[9px] uppercase tracking-[.1em]",
-                          selected && !blocked ? "bg-white/20" : "bg-(--chrome-surface-2) text-(--chrome-muted)",
-                        )}
-                      >
+                      <span className="rounded-full bg-(--chrome-surface-2) px-1.5 py-px font-mono text-[9px] uppercase tracking-[.1em] text-(--chrome-muted)">
                         post único
                       </span>
                     )}
                   </span>
                   {/* README: estilo bloqueado "aparece desabilitado com o
                       motivo à mostra — nunca silenciosamente ausente". */}
-                  <span
-                    className={cn(
-                      "text-[11.5px] leading-snug",
-                      selected && !blocked ? "text-white/70" : "text-(--chrome-muted)",
-                    )}
-                  >
+                  <span className="font-mono text-[10px] leading-snug text-(--chrome-muted)">
                     {blocked ? availability?.reason : style.sourceRef}
                   </span>
                 </label>
@@ -244,68 +336,27 @@ export function GeradorScreen({ clients, styles, generateAction }: GeradorScreen
           </div>
         </fieldset>
 
-        {isSingle ? (
-          <p className="rounded-md border border-(--chrome-border) bg-(--chrome-surface-2) px-3 py-2 text-[12.5px] text-(--chrome-text)">
+        {isSingle && (
+          <p className="mb-6 rounded-[10px] border border-(--chrome-border) bg-(--chrome-surface-2) px-3.5 py-3 text-[13px] text-(--chrome-text)">
             Post único: 1 imagem só, e o conteúdo inteiro vai na legenda.
           </p>
-        ) : (
-          <label className="grid gap-1.5">
-            <span className="font-mono text-[10px] uppercase tracking-[.16em] text-(--chrome-muted)">
-              Quantidade de slides ({slideCount})
-            </span>
-            <input
-              type="range"
-              min={6}
-              max={8}
-              step={1}
-              value={slideCount}
-              onChange={(e) => setSlideCount(Number(e.target.value))}
-            />
-          </label>
         )}
-
-        <fieldset className="grid gap-1.5">
-          <legend className="font-mono text-[10px] uppercase tracking-[.16em] text-(--chrome-muted)">Formato</legend>
-          <div className="grid grid-cols-3 gap-2">
-            {RATIO_OPTIONS.map((option) => {
-              const Icon = option.icon;
-              const inputId = `${ratioGroupName}-${option.value}`;
-              return (
-                <label
-                  key={option.value}
-                  htmlFor={inputId}
-                  className={cn(
-                    "flex cursor-pointer flex-col items-center gap-1.5 rounded-md border px-2 py-2.5 text-center text-[12.5px]",
-                    ratio === option.value
-                      ? "border-(--chrome-ink) bg-(--chrome-ink) text-white"
-                      : "border-(--chrome-border) bg-(--chrome-surface) text-(--chrome-text)",
-                  )}
-                >
-                  <input
-                    id={inputId}
-                    type="radio"
-                    name={ratioGroupName}
-                    value={option.value}
-                    checked={ratio === option.value}
-                    onChange={() => setRatio(option.value)}
-                    className="sr-only"
-                  />
-                  <Icon className="size-4" strokeWidth={1.75} />
-                  {option.label}
-                </label>
-              );
-            })}
-          </div>
-        </fieldset>
 
         <button
           type="submit"
           disabled={isPending || clients.length === 0}
-          className="mt-2 flex items-center justify-center gap-2 rounded-md bg-(--chrome-ink) px-4 py-3 text-center font-mono text-[12px] uppercase tracking-widest text-white disabled:opacity-50"
+          className="flex min-h-13 w-full items-center justify-center gap-2.25 rounded-[10px] bg-(--chrome-terminal) p-4.25 text-[15.5px] font-semibold text-white disabled:opacity-50"
         >
-          {isPending ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
+          {isPending ? (
+            <Loader2 className="size-4.25 animate-spin" strokeWidth={1.75} />
+          ) : (
+            <Sparkles className="size-4.25" strokeWidth={1.75} />
+          )}
           {isPending ? "Gerando..." : isSingle ? "Gerar post" : "Gerar carrossel"}
         </button>
+        <div className="mt-2.25 text-center font-mono text-[10.5px] text-(--chrome-muted)">
+          ~60s · 7 etapas · custo estimado $0.00
+        </div>
       </form>
     </ScreenContainer>
   );

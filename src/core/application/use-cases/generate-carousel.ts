@@ -40,6 +40,12 @@ export class GenerateCarouselUseCase {
       format: parsed.data.format,
     });
 
+    // CTA escolhido no Gerador sobrescreve o default do Brand Kit para
+    // ESTE projeto; o CopyService ainda pode reescrever no step "copy".
+    if (parsed.data.cta) {
+      await this.projects.update(parsed.data.orgId, project.id, { cta: parsed.data.cta });
+    }
+
     const job = await this.jobs.create({ orgId: parsed.data.orgId, projectId: project.id });
 
     await this.queue.enqueue(job.id);

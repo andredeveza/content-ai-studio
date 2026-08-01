@@ -46,6 +46,19 @@ export class SupabaseJobRepository implements JobRepository {
     return data ? toDomain(data) : null;
   }
 
+  async findLatestByOrg(orgId: string): Promise<Job | null> {
+    const { data, error } = await this.db
+      .from("jobs")
+      .select("*")
+      .eq("org_id", orgId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data ? toDomain(data) : null;
+  }
+
   async update(jobId: string, patch: JobPatch): Promise<Job | null> {
     const { data, error } = await this.db
       .from("jobs")

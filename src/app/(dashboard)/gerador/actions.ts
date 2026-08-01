@@ -22,6 +22,9 @@ export async function generateCarousel(
     goal: ProjectGoal;
     slideCount: number;
     ratio: ProjectRatio;
+    styleId: string;
+    format: "carousel" | "single";
+    cta: string;
   },
 ): Promise<GenerateActionResult> {
   const session = await getCurrentSession();

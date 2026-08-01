@@ -69,6 +69,9 @@ class FakeJobRepository implements JobRepository {
   async findById(): Promise<Job | null> {
     throw new Error("não usado neste teste");
   }
+  async findLatestByOrg(): Promise<Job | null> {
+    return null;
+  }
   async update(_jobId: string, _patch: JobPatch): Promise<Job | null> {
     throw new Error("não usado neste teste");
   }

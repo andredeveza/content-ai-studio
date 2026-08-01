@@ -227,6 +227,9 @@ class FakeJobRepository implements JobRepository {
   async findById(jobId: string): Promise<Job | null> {
     return this.rows.get(jobId) ?? null;
   }
+  async findLatestByOrg(): Promise<Job | null> {
+    return null;
+  }
 
   async update(jobId: string, patch: JobPatch): Promise<Job | null> {
     const existing = this.rows.get(jobId);

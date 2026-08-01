@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Search, PenLine, ImagePlus, Sparkles, LayoutTemplate, PackageCheck, CheckCircle2, XCircle, Check } from "lucide-react";
 import { createClient } from "@/infra/db/supabase/client";
-import { JOB_STEPS, type JobState, type JobStep } from "@/core/domain/pipeline/job";
+import { JOB_STEPS, JOB_STEP_PROGRESS, type JobState, type JobStep } from "@/core/domain/pipeline/job";
 import { ScreenContainer } from "@/components/chrome/screen-container";
 import { cn } from "@/lib/utils";
 
@@ -19,36 +18,56 @@ export interface ProgressoScreenProps {
   readonly jobId: string;
   readonly initialJob: JobSnapshot;
   readonly theme: string | null;
+  readonly handle: string | null;
   readonly editorHref: string;
   readonly geradorHref: string;
 }
 
-const STEP_LABEL: Record<JobStep, string> = {
-  research: "Pesquisando o tema",
-  copy: "Escrevendo os textos",
-  prompt: "Montando os prompts de imagem",
-  image: "Gerando as imagens",
-  render: "Renderizando os slides",
-  publish: "Preparando a exportação",
-  completed: "Concluído",
+// Rótulo + serviço por step, literais do handoff (`Protótipo AD
+// Mobile.dc.html`, const STEPS). O serviço em Mono cinza embaixo do
+// rótulo é parte do design: a tela mostra a máquina trabalhando.
+const STEPS: Record<JobStep, { readonly label: string; readonly service: string }> = {
+  research: { label: "Criando estrutura", service: "ResearchService" },
+  copy: { label: "Escrevendo conteúdo", service: "CopyService" },
+  prompt: { label: "Gerando prompts", service: "PromptService" },
+  image: { label: "Criando imagens", service: "ImageService" },
+  render: { label: "Renderizando slides", service: "RenderService" },
+  publish: { label: "Publicando", service: "PublishingGateway" },
+  completed: { label: "Concluído", service: "job.completed" },
 };
 
-const STEP_ICON: Record<JobStep, typeof Search> = {
-  research: Search,
-  copy: PenLine,
-  prompt: ImagePlus,
-  image: Sparkles,
-  render: LayoutTemplate,
-  publish: PackageCheck,
-  completed: CheckCircle2,
+const STATUS_LABEL: Record<JobState, string> = {
+  pending: "na fila",
+  running: "gerando agora",
+  completed: "carrossel pronto",
+  failed: "falhou",
 };
+
+// Linhas do console preto — derivadas do estado real do job, não
+// decorativas. O protótipo mostra provedor/tempo/tokens; aqui mostramos
+// o que temos de verdade sem inventar número.
+function logsFor(job: JobSnapshot, stepIndex: number): string[] {
+  const lines = JOB_STEPS.slice(0, Math.max(0, stepIndex)).map((step) => {
+    const { service } = STEPS[step];
+    return `> ${service} · ok · ${JOB_STEP_PROGRESS[step]}%`;
+  });
+
+  if (job.state === "failed") {
+    lines.push(`> erro · ${job.error ?? "desconhecido"}`);
+  } else if (job.state === "completed") {
+    lines.push("> job.completed · custo $0.00");
+  } else {
+    lines.push(`> ${STEPS[job.step].service} · rodando…`);
+  }
+
+  return lines;
+}
 
 // Assina mudanças em `jobs` via Supabase Realtime (README, "Pipeline de
-// geração": "o cliente acompanha por Realtime") — com o adapter de fila
-// inline (único implementado), o job já costuma estar completed/failed
-// quando esta tela monta; a assinatura garante que também funcione com
-// um adapter assíncrono (trigger.dev) sem trocar nada aqui.
-export function ProgressoScreen({ jobId, initialJob, theme, editorHref, geradorHref }: ProgressoScreenProps) {
+// geração": "o cliente acompanha por Realtime"). Com o adapter `after`
+// (config/queue.ts) o pipeline roda DEPOIS da resposta HTTP, então esta
+// tela pega o job em movimento de verdade.
+export function ProgressoScreen({ jobId, initialJob, theme, handle, editorHref, geradorHref }: ProgressoScreenProps) {
   const [job, setJob] = useState<JobSnapshot>(initialJob);
 
   useEffect(() => {
@@ -78,67 +97,90 @@ export function ProgressoScreen({ jobId, initialJob, theme, editorHref, geradorH
   }, [jobId, job.state]);
 
   const stepIndex = JOB_STEPS.indexOf(job.step);
+  const logs = logsFor(job, stepIndex);
 
   return (
-    <ScreenContainer width="form" className="pt-6 pb-10">
-      <h1 className="mb-1 text-[28px] font-bold tracking-[-.03em] leading-[1.1]">Progresso</h1>
-      {theme && <p className="mb-6 text-sm text-(--chrome-muted)">{theme}</p>}
+    <ScreenContainer width="form" className="pt-7 pb-10">
+      <div className="mb-3.5 font-mono text-[10px] uppercase tracking-[.16em] text-(--chrome-muted)">
+        {`// job #${jobId.slice(0, 8)}${handle ? ` · ${handle}` : ""}`}
+      </div>
 
-      <div className="mb-6 h-2 overflow-hidden rounded-full bg-(--chrome-surface)">
+      <h1 className="mb-1.5 text-[28px] leading-[1.1] font-bold tracking-[-.03em] text-pretty">
+        {theme ?? "Geração"}
+      </h1>
+      <div className="mb-7 text-sm text-(--chrome-text)">{STATUS_LABEL[job.state]}</div>
+
+      {/* Percentual gigante em Mono 46px/700 + barra de 4px com a
+          transição exata do handoff. Antes era uma barra de 2px sem
+          percentual nenhum. */}
+      <div className="mb-3 flex items-baseline gap-3">
+        <div className="font-mono text-[46px] leading-none font-bold tracking-[-.04em]">{job.progress}%</div>
+        <div className="text-sm text-(--chrome-text)">{STEPS[job.step].label}</div>
+      </div>
+      <div className="mb-7 h-1 overflow-hidden rounded-sm bg-(--chrome-border)">
         <div
-          className={cn("h-full rounded-full transition-all", job.state === "failed" ? "bg-red-500" : "bg-(--chrome-ink)")}
-          style={{ width: `${job.progress}%` }}
+          className={cn("h-1 rounded-sm", job.state === "failed" ? "bg-red-500" : "bg-(--chrome-terminal)")}
+          style={{ width: `${job.progress}%`, transition: "width 900ms cubic-bezier(.4,0,.2,1)" }}
         />
       </div>
 
-      <div className="grid gap-2.5">
+      <div className="mb-4.5 overflow-hidden rounded-[11px] border border-(--chrome-border) bg-(--chrome-surface)">
         {JOB_STEPS.map((step, index) => {
-          const isDone = job.state === "completed" || index < stepIndex || (index === stepIndex && job.state !== "running" && job.state !== "failed");
-          const isCurrent = step === job.step && job.state === "running";
-          const isFailed = step === job.step && job.state === "failed";
-          const Icon = STEP_ICON[step];
+          const isDone = job.state === "completed" || index < stepIndex;
+          const isCurrent = index === stepIndex && job.state !== "completed";
+          const isFailed = isCurrent && job.state === "failed";
           return (
-            <div key={step} className="flex items-center gap-3 rounded-[9px] border border-(--chrome-border) bg-(--chrome-surface) px-3.5 py-2.5">
+            <div
+              key={step}
+              className="grid grid-cols-[20px_1fr_auto] items-center gap-3 border-b border-(--chrome-divider) px-3.75 py-3.5 last:border-b-0"
+            >
+              {/* ●/◐/○ — os três estados do handoff, não badges com ícone. */}
               <div
+                aria-hidden
                 className={cn(
-                  "flex size-7 flex-none items-center justify-center rounded-full",
+                  "text-xs",
                   isFailed
-                    ? "bg-red-100 text-red-600"
+                    ? "text-red-500"
                     : isDone
-                      ? "bg-(--chrome-ok)/15 text-(--chrome-ok)"
+                      ? "text-(--chrome-ok)"
                       : isCurrent
-                        ? "bg-(--chrome-ink) text-white"
-                        : "bg-(--chrome-surface-2) text-(--chrome-faint)",
+                        ? "text-(--chrome-ink)"
+                        : "text-(--chrome-line)",
                 )}
               >
-                {isFailed ? (
-                  <XCircle className="size-4" strokeWidth={2} />
-                ) : isDone ? (
-                  <Check className="size-3.5" strokeWidth={3} />
-                ) : (
-                  <Icon className={cn("size-3.5", isCurrent && "animate-pulse")} strokeWidth={2} />
-                )}
+                {isFailed ? "×" : isDone ? "●" : isCurrent ? "◐" : "○"}
               </div>
-              <span className={cn("text-sm", isDone || isCurrent || isFailed ? "text-(--chrome-ink)" : "text-(--chrome-muted)")}>
-                {STEP_LABEL[step]}
-              </span>
+              <div>
+                <div
+                  className={cn(
+                    "text-[14.5px]",
+                    isDone || isCurrent ? "text-(--chrome-ink)" : "text-(--chrome-muted)",
+                  )}
+                >
+                  {STEPS[step].label}
+                </div>
+                <div className="mt-0.5 font-mono text-[10px] text-(--chrome-muted)">{STEPS[step].service}</div>
+              </div>
+              <div className="font-mono text-[11px] text-(--chrome-muted)">{JOB_STEP_PROGRESS[step]}%</div>
             </div>
           );
         })}
       </div>
 
-      {job.state === "failed" && (
-        <div className="mt-6 rounded-md border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-700">
-          Falhou: {job.error ?? "erro desconhecido"}
-        </div>
-      )}
+      {/* Console preto: #080808, r=11px, Mono 10.5px, line-height 1.9,
+          min-height 120px, com cursor branco piscando no fim. */}
+      <div className="noscroll min-h-30 overflow-x-auto rounded-[11px] bg-(--chrome-terminal) p-4 font-mono text-[10.5px] leading-[1.9] whitespace-nowrap text-(--chrome-terminal-text)">
+        {logs.map((line, i) => (
+          <div key={i}>{line}</div>
+        ))}
+        <span aria-hidden className="inline-block h-3 w-1.5 animate-blink bg-white align-middle" />
+      </div>
 
       {job.state === "completed" && (
         <Link
           href={editorHref}
-          className="mt-6 flex items-center justify-center gap-2 rounded-md bg-(--chrome-ink) px-4 py-3 text-center font-mono text-[12px] uppercase tracking-widest text-white"
+          className="mt-4.5 flex min-h-13 w-full items-center justify-center rounded-[10px] bg-(--chrome-terminal) p-4.25 text-[15.5px] font-semibold text-white"
         >
-          <CheckCircle2 className="size-4" />
           Abrir no editor
         </Link>
       )}
@@ -146,7 +188,7 @@ export function ProgressoScreen({ jobId, initialJob, theme, editorHref, geradorH
       {job.state === "failed" && (
         <Link
           href={geradorHref}
-          className="mt-3 block rounded-md border border-(--chrome-border) px-4 py-3 text-center font-mono text-[12px] uppercase tracking-widest text-(--chrome-text)"
+          className="mt-4.5 flex min-h-13 w-full items-center justify-center rounded-[10px] border border-(--chrome-border) p-4.25 text-[15.5px] font-semibold text-(--chrome-text)"
         >
           Tentar de novo
         </Link>

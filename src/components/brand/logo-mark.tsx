@@ -1,4 +1,3 @@
-import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface LogoMarkProps {
@@ -7,20 +6,25 @@ interface LogoMarkProps {
 }
 
 // Marca do produto (não do Brand Kit do cliente — essa é sempre a
-// escolha do usuário, nunca fixa). Usada no chrome: auth, dashboard.
+// escolha do usuário, nunca fixa). Portada literalmente do handoff
+// (`design/Content AI Studio - Protótipo AD.dc.html`): dois triângulos
+// no viewBox 0 0 220 168, cinza #7A7A7A à esquerda e tinta #0A0A0A à
+// direita. Antes era um quadrado com gradiente azul e um ícone de
+// sparkles — invenção, não estava em lugar nenhum do design.
 export function LogoMark({ size = "md", className }: LogoMarkProps) {
-  const dimension = size === "sm" ? "size-7" : "size-9";
-  const icon = size === "sm" ? "size-3.5" : "size-4.5";
+  const width = size === "sm" ? "w-6" : "w-[30px]";
 
   return (
-    <div
-      className={cn(
-        dimension,
-        "flex flex-none items-center justify-center rounded-lg bg-linear-to-br from-[#0A47A8] via-[#1C7ED6] to-[#57A8FF] text-white shadow-sm",
-        className,
-      )}
-    >
-      <Sparkles className={icon} strokeWidth={2.25} />
-    </div>
+    <svg viewBox="0 0 220 168" className={cn(width, "flex-none", className)} aria-label="Content AI Studio" role="img">
+      <polygon points="12,140 106,22 106,140" fill="#7A7A7A" />
+      <polygon points="114,140 114,22 208,140" fill="#0A0A0A" />
+    </svg>
   );
+}
+
+// Cursor piscando que acompanha a marca no chrome dos protótipos.
+// Separado do logo porque nem todo uso quer o cursor (o hero do login,
+// por exemplo, é estático).
+export function BlinkingCursor({ className }: { readonly className?: string }) {
+  return <span aria-hidden className={cn("inline-block animate-blink bg-(--chrome-ink)", className)} />;
 }
