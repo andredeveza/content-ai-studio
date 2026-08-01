@@ -26,10 +26,28 @@ const PRIVATE_HOST_PATTERNS = [
 // Guarda mínima contra SSRF (README não pede explicitamente, mas
 // "cola uma URL e o servidor busca" é o vetor clássico) — recusa
 // protocolo != http(s) e hosts de rede interna óbvios.
+//
+// Lança (não devolve Result) de propósito — quem chama SEMPRE precisa
+// envolver isso num try/catch e converter pra `err(...)` (ver
+// `analyze` abaixo). Bug real de produção: usuário colou
+// "hsendoscopia.com.br" sem protocolo, `new URL(...)` lançou, e como
+// `analyze` não tinha try/catch em volta disso, a Promise inteira
+// rejeitava e derrubava a page/server action com uma tela de erro
+// genérica em vez da mensagem amigável de validação.
 export function assertPublicHttpUrl(rawUrl: string): URL {
+  // Usuário cola o domínio nu na maioria das vezes ("site.com.br", não
+  // "https://site.com.br") — completa com https:// antes de validar em
+  // vez de recusar o caso mais comum. Só quando não há esquema NENHUM
+  // (não só http/https) — "file:///etc/passwd" não deve virar
+  // "https://file:///etc/passwd" e escapar da checagem de protocolo
+  // abaixo.
+  const trimmed = rawUrl.trim();
+  const hasScheme = /^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed);
+  const withProtocol = hasScheme ? trimmed : `https://${trimmed}`;
+
   let url: URL;
   try {
-    url = new URL(rawUrl);
+    url = new URL(withProtocol);
   } catch {
     throw new ValidationError(`URL inválida: "${rawUrl}".`);
   }
@@ -69,7 +87,12 @@ function matchAttr(html: string, pattern: RegExp): string | null {
 // no PROGRESSO.md).
 export class SiteImportService {
   async analyze(rawUrl: string): Promise<Result<SiteImportResult, AppError>> {
-    const url = assertPublicHttpUrl(rawUrl);
+    let url: URL;
+    try {
+      url = assertPublicHttpUrl(rawUrl);
+    } catch (cause) {
+      return err(cause instanceof ValidationError ? cause : new ValidationError(`URL inválida: "${rawUrl}".`));
+    }
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 10_000);

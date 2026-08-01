@@ -37,6 +37,14 @@ describe("assertPublicHttpUrl (guarda de SSRF)", () => {
     expect(() => assertPublicHttpUrl("https://exemplo.com.br/pagina")).not.toThrow();
   });
 
+  // Bug real de produção: usuário colou "hsendoscopia.com.br" (sem
+  // protocolo) e a validação recusava — a maioria dos usuários não
+  // digita "https://" na frente do domínio.
+  it("completa com https:// quando falta o protocolo", () => {
+    const url = assertPublicHttpUrl("hsendoscopia.com.br");
+    expect(url.toString()).toBe("https://hsendoscopia.com.br/");
+  });
+
   it("rejeita protocolo diferente de http/https", () => {
     expect(() => assertPublicHttpUrl("file:///etc/passwd")).toThrow(/http/);
   });
@@ -48,7 +56,8 @@ describe("assertPublicHttpUrl (guarda de SSRF)", () => {
   });
 
   it("rejeita URL malformada", () => {
-    expect(() => assertPublicHttpUrl("nem-uma-url")).toThrow(/inválida/);
+    expect(() => assertPublicHttpUrl("")).toThrow(/inválida/);
+    expect(() => assertPublicHttpUrl("https://not a valid host")).toThrow(/inválida/);
   });
 });
 
@@ -119,12 +128,29 @@ describe("SiteImportService (README, 'Importar acervo a partir do site do client
     expect(result.error.message).toMatch(/404/);
   });
 
-  it("recusa URL de rede interna antes de qualquer fetch", async () => {
+  it("recusa URL de rede interna antes de qualquer fetch, sem derrubar a promise", async () => {
     const fetchMock = vi.fn();
     vi.stubGlobal("fetch", fetchMock);
 
     const service = new SiteImportService();
-    await expect(service.analyze("http://localhost/admin")).rejects.toThrow(/rede interna/);
+    const result = await service.analyze("http://localhost/admin");
+
+    // `analyze` nunca deve rejeitar — assertPublicHttpUrl lança, mas
+    // aqui dentro isso vira Result (bug real: sem esse try/catch a
+    // rejeição derrubava a server action inteira com uma tela de erro
+    // genérica em produção, em vez da mensagem de validação amigável).
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.error.message).toMatch(/rede interna/);
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("URL malformada também vira Result de erro, nunca rejeição", async () => {
+    const service = new SiteImportService();
+    const result = await service.analyze("");
+
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.error.message).toMatch(/inválida/);
   });
 });
