@@ -1,5 +1,7 @@
 import type { BrandKit } from "@/core/domain/brandkit/brand-kit";
 import type { Blueprint, Canvas } from "@/core/domain/template/blueprint";
+import type { LayoutVariant } from "@/core/domain/template/variant";
+import { contextForStyle } from "@/templates/context";
 import type { SlideContent } from "@/core/domain/template/slide-content";
 import type { Media } from "@/core/domain/media/media";
 import type { MediaRepository } from "@/core/domain/ports/media-repository";
@@ -20,6 +22,11 @@ export interface RenderSlideInput {
   readonly content: SlideContent;
   readonly brandKit: BrandKit;
   readonly isLastSlide?: boolean;
+  // Estilo de composição + variante do slide. Juntos definem margem,
+  // faixa e escala tipográfica — ou seja, a geometria. Ausentes = a
+  // geometria default (projetos anteriores à camada de estilos).
+  readonly styleId?: string | null;
+  readonly variant?: LayoutVariant | null;
 }
 
 // Só os campos que quem chama (PipelineWorker) realmente usa depois —
@@ -55,6 +62,7 @@ export class RenderSlideUseCase implements RenderSlidePort {
   async execute(input: RenderSlideInput): Promise<Result<Media, AppError>> {
     const html = this.templateEngine.render(input.blueprint, input.canvas, input.content, input.brandKit, {
       isLastSlide: input.isLastSlide ?? false,
+      context: contextForStyle(input.canvas, input.styleId, input.variant),
     });
 
     let png: Buffer;

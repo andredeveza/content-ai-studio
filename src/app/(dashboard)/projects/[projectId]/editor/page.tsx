@@ -29,12 +29,19 @@ export default async function EditorPage({ params }: EditorPageProps) {
 
   const editorSlides: EditorSlideData[] = projectSlides.map((slide) => {
     const effective = resolveEffectiveSlide(slide);
-    return { id: slide.id, index: slide.index, archetypeId: effective.archetypeId, content: effective.content };
+    return {
+      id: slide.id,
+      index: slide.index,
+      archetypeId: effective.archetypeId,
+      content: effective.content,
+      variant: slide.variant,
+    };
   });
 
   return (
     <EditorScreen
       ratio={project.ratio}
+      styleId={project.styleId}
       brandKit={brandKit}
       slides={editorSlides}
       lastIndex={project.slideCount - 1}

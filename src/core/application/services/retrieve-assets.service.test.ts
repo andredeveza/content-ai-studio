@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { RetrieveAssetsService } from "@/core/application/services/retrieve-assets.service";
+import { RETRIEVAL_SCORE_THRESHOLD } from "@/core/application/services/asset-scoring.service";
 import type { Asset, AssetAnalysisPatch, NewAsset } from "@/core/domain/asset/asset";
 import type { AssetRepository } from "@/core/domain/ports/asset-repository";
 import type { StoragePort, UploadInput } from "@/core/domain/ports/storage";
@@ -112,7 +113,12 @@ describe("RetrieveAssetsService (bloco 7) — RetrievalPort de produção", () =
     expect(result?.url).toContain("bom.jpg");
   });
 
-  it("retorna null quando nenhum candidato passa do threshold (imagem clara demais)", async () => {
+  // O corte por threshold deixou de morar aqui: `findBestAsset` devolve
+  // o melhor candidato com o score e a marca de ilegibilidade, e quem
+  // decide aceitar é o ImageService — que tem contexto do carrossel
+  // inteiro e usa piso mais baixo no passe de garantia. O que NÃO muda:
+  // imagem clara demais é marcada `illegible` e nunca é aceita.
+  it("marca como ilegível a imagem clara demais, sem esconder o candidato", async () => {
     const claraDemais = makeAsset({ luminanceBottom: 0.95, luminanceTop: 0.95, terms: [] });
     const service = new RetrieveAssetsService(new FakeAssetRepository([claraDemais]), new FakeStorage());
 
@@ -123,7 +129,9 @@ describe("RetrieveAssetsService (bloco 7) — RetrievalPort de produção", () =
       usedAssetIds: [],
     });
 
-    expect(result).toBeNull();
+    expect(result).not.toBeNull();
+    expect(result?.illegible).toBe(true);
+    expect(result!.score).toBeLessThan(RETRIEVAL_SCORE_THRESHOLD);
   });
 
   it("aplica a penalidade de reuso e devolve a luminância da faixa certa", async () => {

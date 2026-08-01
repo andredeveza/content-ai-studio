@@ -27,6 +27,8 @@ export class HttpRenderSlideClient implements RenderSlidePort {
       archetypeId: input.blueprint.id,
       canvas: input.canvas,
       isLastSlide: input.isLastSlide ?? false,
+      styleId: input.styleId ?? null,
+      variant: input.variant ?? null,
       content: input.content,
       brandKit: {
         palette: input.brandKit.palette,

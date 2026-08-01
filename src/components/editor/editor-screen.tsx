@@ -4,11 +4,12 @@ import { useMemo, useState, useTransition } from "react";
 import { CalendarPlus, Download, RefreshCw } from "lucide-react";
 import { TemplateEngineService } from "@/core/application/services/template-engine.service";
 import { ALL_ARCHETYPE_IDS, getBlueprint } from "@/templates/blueprints";
-import { blueprintContext } from "@/templates/context";
+import { blueprintContext, contextForStyle } from "@/templates/context";
 import { canvasForRatio, type ProjectRatio } from "@/core/domain/project/project";
 import type { ArchetypeId } from "@/core/domain/template/blueprint";
 import type { BrandKit } from "@/core/domain/brandkit/brand-kit";
 import type { SlideContent } from "@/core/domain/template/slide-content";
+import type { LayoutVariant } from "@/core/domain/template/variant";
 import { SlideFrame } from "@/components/editor/slide-frame";
 import { labelFor } from "@/components/editor/field-labels";
 import { cn } from "@/lib/utils";
@@ -18,10 +19,14 @@ export interface EditorSlideData {
   readonly index: number;
   readonly archetypeId: ArchetypeId;
   readonly content: SlideContent;
+  // Variante persistida do slide: o preview PRECISA usar a mesma que o
+  // Puppeteer usou, senão o que o usuário edita não é o que ele exporta.
+  readonly variant: LayoutVariant | null;
 }
 
 export interface EditorScreenProps {
   readonly ratio: ProjectRatio;
+  readonly styleId: string;
   readonly brandKit: BrandKit;
   readonly slides: readonly EditorSlideData[];
   readonly lastIndex: number;
@@ -59,6 +64,7 @@ function hasMediaSlot(archetypeId: ArchetypeId, canvas: { w: number; h: number }
 
 export function EditorScreen({
   ratio,
+  styleId,
   brandKit,
   slides: initialSlides,
   lastIndex,
@@ -106,8 +112,9 @@ export function EditorScreen({
     if (!selected) return "";
     return engine.render(getBlueprint(draftArchetypeId), canvas, draftContent, brandKit, {
       isLastSlide: selected.index === lastIndex,
+      context: contextForStyle(canvas, styleId, selected.variant),
     });
-  }, [selected, draftArchetypeId, draftContent, canvas, brandKit, lastIndex]);
+  }, [selected, draftArchetypeId, draftContent, canvas, brandKit, lastIndex, styleId]);
 
   const railHeight = Math.round((canvas.h / canvas.w) * RAIL_THUMB_WIDTH);
   const previewHeight = Math.round((canvas.h / canvas.w) * PREVIEW_WIDTH);
@@ -214,6 +221,7 @@ export function EditorScreen({
               <SlideFrame
                 html={engine.render(getBlueprint(slide.archetypeId), canvas, slide.content, brandKit, {
                   isLastSlide: slide.index === lastIndex,
+                  context: contextForStyle(canvas, styleId, slide.variant),
                 })}
                 canvasWidth={canvas.w}
                 canvasHeight={canvas.h}

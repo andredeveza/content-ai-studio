@@ -21,6 +21,11 @@ export interface AssetMatch {
   // para calcular o véu (scrim) no render, que é sempre calculado, nunca
   // fixo (README).
   readonly luminanceAtBand: number;
+  // `illegible` (0.40) disparou: a faixa onde o título ancora é clara
+  // demais. README: "legibilidade vence variedade. Não remova." Um match
+  // ilegível NUNCA é aceito, nem no passe de garantia com piso mais
+  // baixo — é melhor gerar por IA do que publicar título ilegível.
+  readonly illegible: boolean;
 }
 
 // `RetrievalService` do README ("Acervo / RAG"). O algoritmo de score

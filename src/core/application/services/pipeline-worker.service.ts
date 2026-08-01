@@ -2,7 +2,7 @@ import type { ProjectCopy } from "@/core/application/dto/copy.dto";
 import type { ImageService } from "@/core/application/services/image.service";
 import type { CopyService } from "@/core/application/services/copy.service";
 import type { PromptService } from "@/core/application/services/prompt.service";
-import { computeScrimOpacity } from "@/core/application/services/asset-scoring.service";
+import { computeScrimOpacity, FALLBACK_SCORE_FLOOR } from "@/core/application/services/asset-scoring.service";
 import type { ProjectStructure, ResearchService } from "@/core/application/services/research.service";
 import { mapGenericCopyToSlideContent } from "@/core/application/services/slide-content-mapper";
 import { planCarouselLayout } from "@/core/application/services/layout.service";
@@ -17,8 +17,8 @@ import type { PublishingGateway } from "@/core/domain/ports/publisher";
 import type { TitleBand } from "@/core/domain/ports/retrieval";
 import type { SlideRepository } from "@/core/domain/ports/slide-repository";
 import { JOB_STEPS, JOB_STEP_PROGRESS, type Job, type JobCheckpoint, type JobStep } from "@/core/domain/pipeline/job";
-import { canvasForRatio, type Project } from "@/core/domain/project/project";
-import type { ArchetypeId } from "@/core/domain/template/blueprint";
+import { canvasForRatio, type Project, type ProjectMediaSource } from "@/core/domain/project/project";
+import type { LayoutVariant } from "@/core/domain/template/variant";
 import type { NewSlide } from "@/core/domain/project/slide";
 import type { SlideContent } from "@/core/domain/template/slide-content";
 import { getBlueprint } from "@/templates/blueprints";
@@ -26,12 +26,14 @@ import { blueprintContext } from "@/templates/context";
 import { AppError, ExternalServiceError, NotFoundError } from "@/shared/errors";
 import { err, ok, type Result } from "@/shared/result";
 
-// Nenhum blueprint atual (bloco 4) ancora texto no topo sobre foto — os
-// dois com slot de mídia (foto-total, citacao) usam a faixa inferior
-// como referência de contraste. Um blueprint futuro com texto no topo
-// só precisa mudar este mapa.
-function titleBandForArchetype(_archetypeId: ArchetypeId): TitleBand {
-  return "bottom";
+// Onde o título ancora depende da VARIANTE do slide, não do arquétipo:
+// com o eixo `textBlock` o mesmo arquétipo pode ancorar em cima ou
+// embaixo. Antes isto era `return "bottom"` fixo, o que fazia o
+// `contrastFit` da recuperação medir a faixa errada sempre que o texto
+// não estava embaixo — espelha `needsDarkTop`/`needsDarkBottom` do
+// protótipo (design/Acervo Inteligente.dc.html).
+function titleBandFor(variant: LayoutVariant | null): TitleBand {
+  return variant?.textBlock === "top" ? "top" : "bottom";
 }
 
 export interface PipelineWorkerDeps {
@@ -249,7 +251,7 @@ export class PipelineWorker {
         {
           clientId: project.clientId,
           theme,
-          titleBand: titleBandForArchetype(slide.archetypeId),
+          titleBand: titleBandFor(slide.variant),
           usedAssetIds,
         },
         prompt,
@@ -265,6 +267,44 @@ export class PipelineWorker {
         }
       }
     }
+
+    // Passe de garantia (README, "Critério de pronto": "com pelo menos
+    // uma imagem vinda do acervo do cliente"). Se o carrossel inteiro
+    // fechou sem nenhum asset e o cliente TEM fotos analisadas, tenta de
+    // novo o melhor slide com piso mais baixo. Match ilegível continua
+    // barrado — legibilidade vence variedade.
+    const analyzedImages = await this.deps.assets.listAnalyzedImagesByClient(project.clientId);
+    if (usedAssetIds.length === 0 && analyzedImages.length > 0) {
+      const candidates = Object.keys(prompts).map(Number).sort((a, b) => a - b);
+      for (const index of candidates) {
+        const slide = slides.find((s) => s.index === index);
+        if (!slide) continue;
+
+        const slideCopy = projectCopy.slides.find((c) => c.index === index);
+        const theme = slideCopy?.body || slideCopy?.heading || project.theme;
+
+        const retry = await this.deps.image.resolveMedia(
+          { clientId: project.clientId, theme, titleBand: titleBandFor(slide.variant), usedAssetIds },
+          prompts[index]!,
+          { orgId: job.orgId, userId: null },
+          { minScore: FALLBACK_SCORE_FLOOR },
+        );
+        if (!retry.ok || !retry.value.assetId) continue;
+
+        mediaUrls[index] = retry.value.url;
+        usedAssetIds.push(retry.value.assetId);
+        if (retry.value.luminanceAtBand != null) {
+          scrimOpacities[index] = computeScrimOpacity(retry.value.luminanceAtBand);
+        }
+        break;
+      }
+    }
+
+    // De onde a mídia veio de verdade. `none` é o caso honesto de
+    // cliente sem acervo: vira aviso na tela, nunca falha silenciosa.
+    const mediaSource: ProjectMediaSource =
+      usedAssetIds.length > 0 ? "acervo" : Object.keys(mediaUrls).length > 0 ? "ai" : "none";
+    await this.deps.projects.update(job.orgId, project.id, { mediaSource });
 
     const canvas = canvasForRatio(project.ratio);
     for (const slide of slides) {
@@ -307,6 +347,8 @@ export class PipelineWorker {
         content: slide.content,
         brandKit,
         isLastSlide: slide.index === slides.length - 1,
+        styleId: project.styleId,
+        variant: slide.variant,
       });
       if (!result.ok) throw result.error;
 

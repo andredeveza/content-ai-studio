@@ -19,7 +19,13 @@ export type EditorActionResult = { ok: true; slide: EditorSlideData } | { ok: fa
 
 function toEditorSlideData(slide: Slide): EditorSlideData {
   const effective = resolveEffectiveSlide(slide);
-  return { id: slide.id, index: slide.index, archetypeId: effective.archetypeId, content: effective.content };
+  return {
+    id: slide.id,
+    index: slide.index,
+    archetypeId: effective.archetypeId,
+    content: effective.content,
+    variant: slide.variant,
+  };
 }
 
 // `orgId` chega pré-preenchido via `.bind(null, session.orgId)` na page

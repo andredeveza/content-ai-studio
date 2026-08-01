@@ -4,6 +4,13 @@ import type { AssetQuery, RetrievalPort } from "@/core/domain/ports/retrieval";
 import type { AppError } from "@/shared/errors";
 import { ok, type Result } from "@/shared/result";
 
+export interface ResolveMediaOptions {
+  // Piso de aceitação do acervo. O passe normal usa
+  // RETRIEVAL_SCORE_THRESHOLD (0.5); o passe de garantia (quando nenhum
+  // asset entrou no carrossel) baixa para FALLBACK_SCORE_FLOOR.
+  readonly minScore?: number;
+}
+
 export interface ResolvedMedia {
   readonly url: string;
   // null quando a imagem foi gerada por IA (não veio do acervo).
@@ -18,9 +25,17 @@ export class ImageService {
     private readonly retrieval: RetrievalPort,
   ) {}
 
-  async resolveMedia(query: AssetQuery, prompt: string, ctx: AIContext): Promise<Result<ResolvedMedia, AppError>> {
+  async resolveMedia(
+    query: AssetQuery,
+    prompt: string,
+    ctx: AIContext,
+    options: ResolveMediaOptions = {},
+  ): Promise<Result<ResolvedMedia, AppError>> {
+    const minScore = options.minScore ?? RETRIEVAL_SCORE_THRESHOLD;
     const match = await this.retrieval.findBestAsset(query);
-    if (match && match.score >= RETRIEVAL_SCORE_THRESHOLD) {
+    // `illegible` barra o match em qualquer piso: legibilidade vence
+    // variedade (README, "Não remova").
+    if (match && !match.illegible && match.score >= minScore) {
       return ok({ url: match.url, assetId: match.assetId, luminanceAtBand: match.luminanceAtBand });
     }
 

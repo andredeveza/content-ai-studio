@@ -28,6 +28,14 @@ const WEIGHT_TOPIC = 0.2;
 // escolha já feita no ImageService do bloco 6.
 export const RETRIEVAL_SCORE_THRESHOLD = 0.5;
 
+// Piso do passe de garantia: quando o carrossel inteiro terminou sem
+// NENHUM asset do acervo e o cliente tem fotos analisadas, vale a pena
+// aceitar um match mediano em vez de entregar um carrossel 100% de IA —
+// o critério de pronto do README pede "pelo menos uma imagem vinda do
+// acervo do cliente". Um match ilegível continua barrado em qualquer
+// piso; a legibilidade do match mediano fica por conta do véu calculado.
+export const FALLBACK_SCORE_FLOOR = 0.3;
+
 export interface AssetScoreInput {
   readonly aspect: number;
   // Luminância (0..1) da faixa onde o texto do slide vai ancorar — topo

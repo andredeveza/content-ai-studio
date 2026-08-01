@@ -26,6 +26,21 @@ const RenderSlideRequestSchema = z.object({
   archetypeId: z.string().min(1),
   canvas: z.object({ w: z.number().int().positive(), h: z.number().int().positive() }),
   isLastSlide: z.boolean().optional(),
+  // Estilo + variante definem margem, faixa e escala do slide. Chegam
+  // pelo HTTP porque a geometria tem que ser IDÊNTICA nos dois lados:
+  // preview no app (Vercel) e PNG final aqui (Render.com).
+  styleId: z.string().nullable().optional(),
+  variant: z
+    .object({
+      textBlock: z.enum(["top", "center", "bottom"]),
+      align: z.enum(["left", "center"]),
+      scaleStep: z.enum(["down", "base", "up"]),
+      logo: z.enum(["top", "bottom"]),
+      footer: z.enum(["pill", "clean"]),
+      mode: z.enum(["light", "dark"]),
+    })
+    .nullable()
+    .optional(),
   brandKit: UpsertBrandKitSchema,
   content: z.object({
     texts: z.record(z.string(), z.string()),
@@ -143,6 +158,8 @@ async function handleRenderSlide(req: IncomingMessage, res: ServerResponse): Pro
     content: contentParsed.data,
     brandKit: toFullBrandKit(parsed.data.brandKit),
     isLastSlide: parsed.data.isLastSlide,
+    styleId: parsed.data.styleId,
+    variant: parsed.data.variant,
   });
 
   if (!result.ok) {
