@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { ArchetypeId } from "@/core/domain/template/blueprint";
 import { getBlueprint } from "@/templates/blueprints";
+import { blueprintContext } from "@/templates/context";
 
 // Canvas de referência só para descobrir as chaves de slot — elas não
 // mudam com H (a geometria reflui, as chaves não).
@@ -11,7 +12,9 @@ const REFERENCE_CANVAS = { w: 1080, h: 1350 };
 // passa por Zod antes de tocar o domínio) — evita manter uma lista de
 // chaves duplicada e fora de sincronia com `templates/blueprints/*.ts`.
 export function buildSlideContentSchema(archetypeId: ArchetypeId) {
-  const slots = getBlueprint(archetypeId).slots(REFERENCE_CANVAS);
+  // Contexto default basta: as CHAVES de slot não mudam com estilo nem
+  // variante — só a geometria muda.
+  const slots = getBlueprint(archetypeId).slots(blueprintContext(REFERENCE_CANVAS));
 
   const textKeys = slots
     .filter((slot) => slot.kind === "text" && !slot.staticText)

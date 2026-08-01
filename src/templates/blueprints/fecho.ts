@@ -1,23 +1,24 @@
 import type { Blueprint } from "@/core/domain/template/blueprint";
-import { band, mid, MARGIN } from "@/templates/geometry";
+import { anchor } from "@/templates/geometry";
 
 export const fecho: Blueprint = {
   id: "fecho",
   name: "Fechamento",
   role: "Chamada final com ação clara e assinatura da marca.",
-  slots: (canvas) => {
-    const { top, height } = band(canvas.h);
-    const y = mid(top, height, 544);
-    const contentWidth = canvas.w - 2 * MARGIN;
+  slots: (ctx) => {
+    const { margin, scale, variant } = ctx;
+    const { top, height } = ctx.band;
+    const y = anchor(variant.textBlock, top, height, 544);
+    const contentWidth = ctx.canvas.w - 2 * margin;
 
     return [
       {
         kind: "text",
         key: "heading",
-        box: { x: MARGIN, y, w: contentWidth, h: 236 },
-        fontSize: 110,
-        lineHeight: 118,
-        tracking: "-0.03em",
+        box: { x: margin, y, w: contentWidth, h: 236 },
+        fontSize: scale.display.fontSize,
+        lineHeight: scale.display.lineHeight,
+        tracking: scale.display.tracking,
         font: "display",
         color: "title",
         align: "center",
@@ -25,9 +26,9 @@ export const fecho: Blueprint = {
       {
         kind: "text",
         key: "lead",
-        box: { x: MARGIN, y: y + 276, w: contentWidth, h: 88 },
-        fontSize: 36,
-        lineHeight: 44,
+        box: { x: margin, y: y + 276, w: contentWidth, h: 88 },
+        fontSize: scale.body.fontSize,
+        lineHeight: scale.body.lineHeight,
         weight: 400,
         font: "body",
         color: "textLight",

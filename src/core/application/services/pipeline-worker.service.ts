@@ -21,6 +21,7 @@ import type { ArchetypeId } from "@/core/domain/template/blueprint";
 import type { NewSlide } from "@/core/domain/project/slide";
 import type { SlideContent } from "@/core/domain/template/slide-content";
 import { getBlueprint } from "@/templates/blueprints";
+import { blueprintContext } from "@/templates/context";
 import { AppError, ExternalServiceError, NotFoundError } from "@/shared/errors";
 import { err, ok, type Result } from "@/shared/result";
 
@@ -194,7 +195,7 @@ export class PipelineWorker {
     const prompts: Record<number, string> = {};
     for (const slide of slides) {
       const hasMediaSlot = getBlueprint(slide.archetypeId)
-        .slots(canvas)
+        .slots(blueprintContext(canvas))
         .some((slot) => slot.kind === "media");
       if (!hasMediaSlot) continue;
 
@@ -256,7 +257,7 @@ export class PipelineWorker {
       if (!url) continue;
 
       const mediaKey = getBlueprint(slide.archetypeId)
-        .slots(canvas)
+        .slots(blueprintContext(canvas))
         .find((slot) => slot.kind === "media")?.key;
       if (!mediaKey) continue;
 

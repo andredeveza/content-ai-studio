@@ -8,7 +8,16 @@
 // chrome de propósito) vive entre `band(H).top` e `band(H).bottom` — nunca
 // posição absoluta, para o mesmo blueprint refluir em 1080 e 1350.
 
-export const MARGIN = 80;
+import type { BandRule, ContentBand } from "@/core/domain/template/blueprint";
+import type { TextBlockPosition } from "@/core/domain/template/variant";
+
+export type { BandRule, ContentBand };
+
+export const DEFAULT_MARGIN = 80;
+
+// Mantido como alias para não quebrar quem já importava `MARGIN`; o
+// valor por estilo chega via `BlueprintContext.margin`.
+export const MARGIN = DEFAULT_MARGIN;
 
 export const CHROME_TOP_BAND = { y: 80, height: 80 } as const;
 
@@ -16,15 +25,17 @@ export function chromeBottomBand(canvasHeight: number): { readonly y: number; re
   return { y: canvasHeight - 190, height: 110 };
 }
 
-export interface ContentBand {
-  readonly top: number;
-  readonly bottom: number;
-  readonly height: number;
-}
+// `ContentBand` e `BandRule` vivem no domínio (`template/blueprint.ts`)
+// porque `BlueprintContext` os referencia — reexportados acima por
+// conveniência de quem já importava daqui.
 
-export function band(canvasHeight: number): ContentBand {
-  const top = 200;
-  const bottom = canvasHeight - 230;
+// Faixa de conteúdo default (README: `band_rule`). Todo estilo que não
+// declara o seu herda este.
+export const DEFAULT_BAND_RULE: BandRule = { top: 200, bottomInset: 230 };
+
+export function band(canvasHeight: number, rule: BandRule = DEFAULT_BAND_RULE): ContentBand {
+  const top = rule.top;
+  const bottom = canvasHeight - rule.bottomInset;
   return { top, bottom, height: bottom - top };
 }
 
@@ -32,4 +43,18 @@ export function band(canvasHeight: number): ContentBand {
 // nunca deixando `top` recuar antes do início da faixa.
 export function mid(top: number, contentHeight: number, blockHeight: number): number {
   return top + Math.max(0, (contentHeight - blockHeight) / 2);
+}
+
+// Generaliza `mid()` para o eixo `textBlock` da variante. "center" é
+// exatamente o `mid()` de antes — é o que mantém o golden intacto. O
+// bloco se move DENTRO da faixa, nunca para fora dela.
+export function anchor(
+  position: TextBlockPosition,
+  top: number,
+  contentHeight: number,
+  blockHeight: number,
+): number {
+  if (position === "top") return top;
+  if (position === "bottom") return top + Math.max(0, contentHeight - blockHeight);
+  return mid(top, contentHeight, blockHeight);
 }

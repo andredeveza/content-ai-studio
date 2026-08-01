@@ -1,11 +1,16 @@
 import type { BrandKit } from "@/core/domain/brandkit/brand-kit";
-import type { Blueprint, Canvas, ColorRole, FontRole, Slot } from "@/core/domain/template/blueprint";
+import type { Blueprint, BlueprintContext, Canvas, ColorRole, FontRole, Slot } from "@/core/domain/template/blueprint";
 import type { SlideContent } from "@/core/domain/template/slide-content";
 import { CHROME_TOP_BAND, chromeBottomBand } from "@/templates/geometry";
+import { blueprintContext } from "@/templates/context";
 import { computeClamp } from "@/templates/clamp";
 
 export interface TemplateEngineOptions {
   readonly isLastSlide?: boolean;
+  // Contexto do estilo de composição (margem, faixa, escala, variante).
+  // Ausente = contexto default, que reproduz a geometria original —
+  // travada pelo golden em `blueprints/geometry-golden.test.ts`.
+  readonly context?: BlueprintContext;
 }
 
 function escapeHtml(value: string): string {
@@ -37,7 +42,7 @@ export class TemplateEngineService {
     brandKit: BrandKit,
     options: TemplateEngineOptions = {},
   ): string {
-    const slots = blueprint.slots(canvas);
+    const slots = blueprint.slots(options.context ?? blueprintContext(canvas));
     const slotsHtml = slots.map((slot) => this.renderSlot(slot, content)).join("\n");
     const chromeHtml = this.renderChrome(canvas, brandKit, options.isLastSlide ?? false);
     const rootVars = this.buildBrandKitVars(brandKit);

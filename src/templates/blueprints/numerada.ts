@@ -1,23 +1,24 @@
 import type { Blueprint } from "@/core/domain/template/blueprint";
-import { band, mid, MARGIN } from "@/templates/geometry";
+import { anchor } from "@/templates/geometry";
 
 export const numerada: Blueprint = {
   id: "numerada",
   name: "Numerada",
   role: "Item de lista com número gigante acima da manchete.",
-  slots: (canvas) => {
-    const { top, height } = band(canvas.h);
-    const y = mid(top, height, 555);
-    const contentWidth = canvas.w - 2 * MARGIN;
+  slots: (ctx) => {
+    const { margin, scale, variant } = ctx;
+    const { top, height } = ctx.band;
+    const y = anchor(variant.textBlock, top, height, 555);
+    const contentWidth = ctx.canvas.w - 2 * margin;
 
     return [
       {
         kind: "text",
         key: "number",
         box: { x: 413, y, w: 253, h: 185 },
-        fontSize: 175,
-        lineHeight: 185,
-        tracking: "-0.04em",
+        fontSize: scale.hero.fontSize,
+        lineHeight: scale.hero.lineHeight,
+        tracking: scale.hero.tracking,
         font: "display",
         color: "accent",
         align: "center",
@@ -25,10 +26,10 @@ export const numerada: Blueprint = {
       {
         kind: "text",
         key: "heading",
-        box: { x: MARGIN, y: y + 225, w: contentWidth, h: 330 },
-        fontSize: 90,
-        lineHeight: 110,
-        tracking: "-0.02em",
+        box: { x: margin, y: y + 225, w: contentWidth, h: 330 },
+        fontSize: scale.heading.fontSize,
+        lineHeight: scale.heading.lineHeight,
+        tracking: scale.heading.tracking,
         font: "display",
         color: "title",
         align: "center",

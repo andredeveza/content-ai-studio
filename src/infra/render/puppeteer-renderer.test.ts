@@ -2,6 +2,7 @@ import { afterAll, describe, expect, it } from "vitest";
 import { PuppeteerRenderer } from "@/infra/render/puppeteer-renderer";
 import { TemplateEngineService } from "@/core/application/services/template-engine.service";
 import { ALL_ARCHETYPE_IDS, getBlueprint } from "@/templates/blueprints";
+import { blueprintContext } from "@/templates/context";
 import type { BrandKit } from "@/core/domain/brandkit/brand-kit";
 import type { SlideContent } from "@/core/domain/template/slide-content";
 
@@ -48,7 +49,7 @@ const brandKit: BrandKit = {
 };
 
 function buildContent(archetypeId: (typeof ALL_ARCHETYPE_IDS)[number], canvas: { w: number; h: number }): SlideContent {
-  const slots = getBlueprint(archetypeId).slots(canvas);
+  const slots = getBlueprint(archetypeId).slots(blueprintContext(canvas));
   const texts: Record<string, string> = {};
   for (const slot of slots) {
     if (slot.kind === "text" && !slot.staticText) texts[slot.key] = `Conteúdo de teste do slot ${slot.key}`;

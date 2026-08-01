@@ -1,12 +1,13 @@
 import type { Blueprint } from "@/core/domain/template/blueprint";
-import { band, MARGIN } from "@/templates/geometry";
+import { lh } from "@/core/domain/template/type-scale";
 
 export const dado: Blueprint = {
   id: "dado",
   name: "Dado",
   role: "Manchete no topo e área de gráfico ocupando o corpo.",
-  slots: (canvas) => {
-    const { top, bottom } = band(canvas.h);
+  slots: (ctx) => {
+    const { margin, scale, canvas } = ctx;
+    const { top, bottom } = ctx.band;
     const chartTop = top + 250;
     const chartHeight = bottom - chartTop;
     const base = chartTop + chartHeight - 40;
@@ -23,10 +24,11 @@ export const dado: Blueprint = {
       {
         kind: "text",
         key: "heading",
-        box: { x: 199, y: top, w: canvas.w - 2 * MARGIN - 198, h: 210 },
-        fontSize: 90,
-        lineHeight: 100,
-        tracking: "-0.02em",
+        // Manchete fixa no topo da faixa: o corpo é do gráfico.
+        box: { x: 199, y: top, w: canvas.w - 2 * margin - 198, h: 210 },
+        fontSize: scale.heading.fontSize,
+        lineHeight: lh(scale.heading.fontSize, 100 / 90),
+        tracking: scale.heading.tracking,
         font: "display",
         color: "title",
         align: "center",

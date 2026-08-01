@@ -1,21 +1,23 @@
 import type { Blueprint } from "@/core/domain/template/blueprint";
-import { band, mid, MARGIN } from "@/templates/geometry";
+import { lh } from "@/core/domain/template/type-scale";
+import { anchor } from "@/templates/geometry";
 
 export const citacao: Blueprint = {
   id: "citacao",
   name: "Citação",
   role: "Cartão translúcido sobre foto, com marca de aspas.",
-  slots: (canvas) => {
-    const { top, bottom, height } = band(canvas.h);
-    const y = mid(top, height, 560);
-    const cardWidth = canvas.w - 2 * MARGIN - 1;
+  slots: (ctx) => {
+    const { margin, scale, variant, canvas } = ctx;
+    const { top, bottom, height } = ctx.band;
+    const y = anchor(variant.textBlock, top, height, 560);
+    const cardWidth = canvas.w - 2 * margin - 1;
 
     return [
       { kind: "media", key: "media", box: { x: 0, y: 0, w: canvas.w, h: canvas.h }, bleed: true },
       {
         kind: "shape",
         key: "card",
-        box: { x: MARGIN, y: top, w: cardWidth, h: bottom - top },
+        box: { x: margin, y: top, w: cardWidth, h: bottom - top },
         color: "bgLight",
         opacity: 0.9,
         radius: 30,
@@ -35,8 +37,8 @@ export const citacao: Blueprint = {
         kind: "text",
         key: "quote",
         box: { x: 140, y: y + 170, w: 800, h: 310 },
-        fontSize: 48,
-        lineHeight: 62,
+        fontSize: scale.lead.fontSize,
+        lineHeight: scale.lead.lineHeight,
         weight: 400,
         font: "body",
         color: "titleLight",
@@ -45,9 +47,11 @@ export const citacao: Blueprint = {
       {
         kind: "text",
         key: "author",
+        // Entrelinha própria (48), não a 40 da escala micro — proporção
+        // local preserva o literal original e continua escalando junto.
         box: { x: 140, y: y + 500, w: 800, h: 60 },
-        fontSize: 32,
-        lineHeight: 48,
+        fontSize: scale.micro.fontSize,
+        lineHeight: lh(scale.micro.fontSize, 48 / 32),
         weight: 400,
         font: "mono",
         color: "accent",

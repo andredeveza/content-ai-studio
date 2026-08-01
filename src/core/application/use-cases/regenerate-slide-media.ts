@@ -6,6 +6,7 @@ import type { SlideRepository } from "@/core/domain/ports/slide-repository";
 import { canvasForRatio } from "@/core/domain/project/project";
 import { resolveEffectiveSlide, type Slide, type SlideOverrides } from "@/core/domain/project/slide";
 import { getBlueprint } from "@/templates/blueprints";
+import { blueprintContext } from "@/templates/context";
 import { NotFoundError, ValidationError, type AppError } from "@/shared/errors";
 import { err, ok, type Result } from "@/shared/result";
 
@@ -35,7 +36,7 @@ export class RegenerateSlideMediaUseCase {
     const effective = resolveEffectiveSlide(slide);
     const canvas = canvasForRatio(project.ratio);
     const mediaKey = getBlueprint(effective.archetypeId)
-      .slots(canvas)
+      .slots(blueprintContext(canvas))
       .find((slot) => slot.kind === "media")?.key;
     if (!mediaKey) {
       return err(new ValidationError(`Arquétipo "${effective.archetypeId}" não tem slot de mídia.`));

@@ -1,0 +1,1588 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`geometria default dos 8 arquétipos (golden) > citacao @ 1:1 não muda com o contexto default 1`] = `
+[
+  {
+    "bleed": true,
+    "box": {
+      "h": 1080,
+      "w": 1080,
+      "x": 0,
+      "y": 0,
+    },
+    "key": "media",
+    "kind": "media",
+  },
+  {
+    "box": {
+      "h": 650,
+      "w": 919,
+      "x": 80,
+      "y": 200,
+    },
+    "color": "bgLight",
+    "key": "card",
+    "kind": "shape",
+    "opacity": 0.9,
+    "radius": 30,
+  },
+  {
+    "align": "center",
+    "box": {
+      "h": 130,
+      "w": 270,
+      "x": 405,
+      "y": 245,
+    },
+    "color": "accent",
+    "font": "display",
+    "fontSize": 200,
+    "key": "quoteMark",
+    "kind": "text",
+    "lineHeight": 170,
+    "staticText": "“",
+  },
+  {
+    "align": "center",
+    "box": {
+      "h": 310,
+      "w": 800,
+      "x": 140,
+      "y": 415,
+    },
+    "color": "titleLight",
+    "font": "body",
+    "fontSize": 48,
+    "key": "quote",
+    "kind": "text",
+    "lineHeight": 62,
+    "weight": 400,
+  },
+  {
+    "align": "center",
+    "box": {
+      "h": 60,
+      "w": 800,
+      "x": 140,
+      "y": 745,
+    },
+    "color": "accent",
+    "font": "mono",
+    "fontSize": 32,
+    "key": "author",
+    "kind": "text",
+    "lineHeight": 48,
+    "weight": 400,
+  },
+]
+`;
+
+exports[`geometria default dos 8 arquétipos (golden) > citacao @ 4:5 não muda com o contexto default 1`] = `
+[
+  {
+    "bleed": true,
+    "box": {
+      "h": 1350,
+      "w": 1080,
+      "x": 0,
+      "y": 0,
+    },
+    "key": "media",
+    "kind": "media",
+  },
+  {
+    "box": {
+      "h": 920,
+      "w": 919,
+      "x": 80,
+      "y": 200,
+    },
+    "color": "bgLight",
+    "key": "card",
+    "kind": "shape",
+    "opacity": 0.9,
+    "radius": 30,
+  },
+  {
+    "align": "center",
+    "box": {
+      "h": 130,
+      "w": 270,
+      "x": 405,
+      "y": 380,
+    },
+    "color": "accent",
+    "font": "display",
+    "fontSize": 200,
+    "key": "quoteMark",
+    "kind": "text",
+    "lineHeight": 170,
+    "staticText": "“",
+  },
+  {
+    "align": "center",
+    "box": {
+      "h": 310,
+      "w": 800,
+      "x": 140,
+      "y": 550,
+    },
+    "color": "titleLight",
+    "font": "body",
+    "fontSize": 48,
+    "key": "quote",
+    "kind": "text",
+    "lineHeight": 62,
+    "weight": 400,
+  },
+  {
+    "align": "center",
+    "box": {
+      "h": 60,
+      "w": 800,
+      "x": 140,
+      "y": 880,
+    },
+    "color": "accent",
+    "font": "mono",
+    "fontSize": 32,
+    "key": "author",
+    "kind": "text",
+    "lineHeight": 48,
+    "weight": 400,
+  },
+]
+`;
+
+exports[`geometria default dos 8 arquétipos (golden) > citacao @ 9:16 não muda com o contexto default 1`] = `
+[
+  {
+    "bleed": true,
+    "box": {
+      "h": 1920,
+      "w": 1080,
+      "x": 0,
+      "y": 0,
+    },
+    "key": "media",
+    "kind": "media",
+  },
+  {
+    "box": {
+      "h": 1490,
+      "w": 919,
+      "x": 80,
+      "y": 200,
+    },
+    "color": "bgLight",
+    "key": "card",
+    "kind": "shape",
+    "opacity": 0.9,
+    "radius": 30,
+  },
+  {
+    "align": "center",
+    "box": {
+      "h": 130,
+      "w": 270,
+      "x": 405,
+      "y": 665,
+    },
+    "color": "accent",
+    "font": "display",
+    "fontSize": 200,
+    "key": "quoteMark",
+    "kind": "text",
+    "lineHeight": 170,
+    "staticText": "“",
+  },
+  {
+    "align": "center",
+    "box": {
+      "h": 310,
+      "w": 800,
+      "x": 140,
+      "y": 835,
+    },
+    "color": "titleLight",
+    "font": "body",
+    "fontSize": 48,
+    "key": "quote",
+    "kind": "text",
+    "lineHeight": 62,
+    "weight": 400,
+  },
+  {
+    "align": "center",
+    "box": {
+      "h": 60,
+      "w": 800,
+      "x": 140,
+      "y": 1165,
+    },
+    "color": "accent",
+    "font": "mono",
+    "fontSize": 32,
+    "key": "author",
+    "kind": "text",
+    "lineHeight": 48,
+    "weight": 400,
+  },
+]
+`;
+
+exports[`geometria default dos 8 arquétipos (golden) > cover-centro @ 1:1 não muda com o contexto default 1`] = `
+[
+  {
+    "align": "center",
+    "box": {
+      "h": 60,
+      "w": 920,
+      "x": 80,
+      "y": 224,
+    },
+    "color": "accent",
+    "font": "mono",
+    "fontSize": 32,
+    "key": "kicker",
+    "kind": "text",
+    "lineHeight": 40,
+    "tracking": "0.14em",
+    "weight": 600,
+  },
+  {
+    "align": "center",
+    "box": {
+      "h": 354,
+      "w": 920,
+      "x": 80,
+      "y": 344,
+    },
+    "color": "title",
+    "font": "display",
+    "fontSize": 110,
+    "key": "heading",
+    "kind": "text",
+    "lineHeight": 118,
+    "tracking": "-0.03em",
+  },
+  {
+    "align": "center",
+    "box": {
+      "h": 88,
+      "w": 920,
+      "x": 80,
+      "y": 738,
+    },
+    "color": "textLight",
+    "font": "body",
+    "fontSize": 36,
+    "key": "lead",
+    "kind": "text",
+    "lineHeight": 44,
+    "weight": 400,
+  },
+]
+`;
+
+exports[`geometria default dos 8 arquétipos (golden) > cover-centro @ 4:5 não muda com o contexto default 1`] = `
+[
+  {
+    "align": "center",
+    "box": {
+      "h": 60,
+      "w": 920,
+      "x": 80,
+      "y": 359,
+    },
+    "color": "accent",
+    "font": "mono",
+    "fontSize": 32,
+    "key": "kicker",
+    "kind": "text",
+    "lineHeight": 40,
+    "tracking": "0.14em",
+    "weight": 600,
+  },
+  {
+    "align": "center",
+    "box": {
+      "h": 354,
+      "w": 920,
+      "x": 80,
+      "y": 479,
+    },
+    "color": "title",
+    "font": "display",
+    "fontSize": 110,
+    "key": "heading",
+    "kind": "text",
+    "lineHeight": 118,
+    "tracking": "-0.03em",
+  },
+  {
+    "align": "center",
+    "box": {
+      "h": 88,
+      "w": 920,
+      "x": 80,
+      "y": 873,
+    },
+    "color": "textLight",
+    "font": "body",
+    "fontSize": 36,
+    "key": "lead",
+    "kind": "text",
+    "lineHeight": 44,
+    "weight": 400,
+  },
+]
+`;
+
+exports[`geometria default dos 8 arquétipos (golden) > cover-centro @ 9:16 não muda com o contexto default 1`] = `
+[
+  {
+    "align": "center",
+    "box": {
+      "h": 60,
+      "w": 920,
+      "x": 80,
+      "y": 644,
+    },
+    "color": "accent",
+    "font": "mono",
+    "fontSize": 32,
+    "key": "kicker",
+    "kind": "text",
+    "lineHeight": 40,
+    "tracking": "0.14em",
+    "weight": 600,
+  },
+  {
+    "align": "center",
+    "box": {
+      "h": 354,
+      "w": 920,
+      "x": 80,
+      "y": 764,
+    },
+    "color": "title",
+    "font": "display",
+    "fontSize": 110,
+    "key": "heading",
+    "kind": "text",
+    "lineHeight": 118,
+    "tracking": "-0.03em",
+  },
+  {
+    "align": "center",
+    "box": {
+      "h": 88,
+      "w": 920,
+      "x": 80,
+      "y": 1158,
+    },
+    "color": "textLight",
+    "font": "body",
+    "fontSize": 36,
+    "key": "lead",
+    "kind": "text",
+    "lineHeight": 44,
+    "weight": 400,
+  },
+]
+`;
+
+exports[`geometria default dos 8 arquétipos (golden) > dado @ 1:1 não muda com o contexto default 1`] = `
+[
+  {
+    "align": "center",
+    "box": {
+      "h": 210,
+      "w": 722,
+      "x": 199,
+      "y": 200,
+    },
+    "color": "title",
+    "font": "display",
+    "fontSize": 90,
+    "key": "heading",
+    "kind": "text",
+    "lineHeight": 100,
+    "tracking": "-0.02em",
+  },
+  {
+    "box": {
+      "h": 400,
+      "w": 848,
+      "x": 116,
+      "y": 450,
+    },
+    "color": "panelLight",
+    "key": "chartCard",
+    "kind": "shape",
+    "radius": 16,
+  },
+  {
+    "box": {
+      "h": 168,
+      "w": 120,
+      "x": 160,
+      "y": 642,
+    },
+    "color": "accent",
+    "key": "bar1",
+    "kind": "chart-bar",
+    "radius": 10,
+  },
+  {
+    "box": {
+      "h": 248,
+      "w": 120,
+      "x": 310,
+      "y": 562,
+    },
+    "color": "accent",
+    "key": "bar2",
+    "kind": "chart-bar",
+    "radius": 10,
+  },
+  {
+    "box": {
+      "h": 104,
+      "w": 120,
+      "x": 460,
+      "y": 706,
+    },
+    "color": "primary",
+    "key": "bar3",
+    "kind": "chart-bar",
+    "radius": 10,
+  },
+  {
+    "box": {
+      "h": 200,
+      "w": 120,
+      "x": 610,
+      "y": 610,
+    },
+    "color": "primary",
+    "key": "bar4",
+    "kind": "chart-bar",
+    "radius": 10,
+  },
+]
+`;
+
+exports[`geometria default dos 8 arquétipos (golden) > dado @ 4:5 não muda com o contexto default 1`] = `
+[
+  {
+    "align": "center",
+    "box": {
+      "h": 210,
+      "w": 722,
+      "x": 199,
+      "y": 200,
+    },
+    "color": "title",
+    "font": "display",
+    "fontSize": 90,
+    "key": "heading",
+    "kind": "text",
+    "lineHeight": 100,
+    "tracking": "-0.02em",
+  },
+  {
+    "box": {
+      "h": 670,
+      "w": 848,
+      "x": 116,
+      "y": 450,
+    },
+    "color": "panelLight",
+    "key": "chartCard",
+    "kind": "shape",
+    "radius": 16,
+  },
+  {
+    "box": {
+      "h": 281.4,
+      "w": 120,
+      "x": 160,
+      "y": 798.6,
+    },
+    "color": "accent",
+    "key": "bar1",
+    "kind": "chart-bar",
+    "radius": 10,
+  },
+  {
+    "box": {
+      "h": 415.4,
+      "w": 120,
+      "x": 310,
+      "y": 664.6,
+    },
+    "color": "accent",
+    "key": "bar2",
+    "kind": "chart-bar",
+    "radius": 10,
+  },
+  {
+    "box": {
+      "h": 174.20000000000002,
+      "w": 120,
+      "x": 460,
+      "y": 905.8,
+    },
+    "color": "primary",
+    "key": "bar3",
+    "kind": "chart-bar",
+    "radius": 10,
+  },
+  {
+    "box": {
+      "h": 335,
+      "w": 120,
+      "x": 610,
+      "y": 745,
+    },
+    "color": "primary",
+    "key": "bar4",
+    "kind": "chart-bar",
+    "radius": 10,
+  },
+]
+`;
+
+exports[`geometria default dos 8 arquétipos (golden) > dado @ 9:16 não muda com o contexto default 1`] = `
+[
+  {
+    "align": "center",
+    "box": {
+      "h": 210,
+      "w": 722,
+      "x": 199,
+      "y": 200,
+    },
+    "color": "title",
+    "font": "display",
+    "fontSize": 90,
+    "key": "heading",
+    "kind": "text",
+    "lineHeight": 100,
+    "tracking": "-0.02em",
+  },
+  {
+    "box": {
+      "h": 1240,
+      "w": 848,
+      "x": 116,
+      "y": 450,
+    },
+    "color": "panelLight",
+    "key": "chartCard",
+    "kind": "shape",
+    "radius": 16,
+  },
+  {
+    "box": {
+      "h": 520.8,
+      "w": 120,
+      "x": 160,
+      "y": 1129.2,
+    },
+    "color": "accent",
+    "key": "bar1",
+    "kind": "chart-bar",
+    "radius": 10,
+  },
+  {
+    "box": {
+      "h": 768.8,
+      "w": 120,
+      "x": 310,
+      "y": 881.2,
+    },
+    "color": "accent",
+    "key": "bar2",
+    "kind": "chart-bar",
+    "radius": 10,
+  },
+  {
+    "box": {
+      "h": 322.40000000000003,
+      "w": 120,
+      "x": 460,
+      "y": 1327.6,
+    },
+    "color": "primary",
+    "key": "bar3",
+    "kind": "chart-bar",
+    "radius": 10,
+  },
+  {
+    "box": {
+      "h": 620,
+      "w": 120,
+      "x": 610,
+      "y": 1030,
+    },
+    "color": "primary",
+    "key": "bar4",
+    "kind": "chart-bar",
+    "radius": 10,
+  },
+]
+`;
+
+exports[`geometria default dos 8 arquétipos (golden) > evento @ 1:1 não muda com o contexto default 1`] = `
+[
+  {
+    "box": {
+      "h": 260,
+      "w": 260,
+      "x": 80,
+      "y": 203,
+    },
+    "color": "accent",
+    "key": "dateBadge",
+    "kind": "shape",
+    "radius": 30,
+  },
+  {
+    "align": "center",
+    "box": {
+      "h": 130,
+      "w": 260,
+      "x": 80,
+      "y": 245,
+    },
+    "color": "title",
+    "font": "display",
+    "fontSize": 120,
+    "key": "day",
+    "kind": "text",
+    "lineHeight": 126,
+  },
+  {
+    "align": "center",
+    "box": {
+      "h": 50,
+      "w": 260,
+      "x": 80,
+      "y": 381,
+    },
+    "color": "title",
+    "font": "mono",
+    "fontSize": 32,
+    "key": "month",
+    "kind": "text",
+    "lineHeight": 40,
+    "tracking": "0.14em",
+    "weight": 600,
+  },
+  {
+    "box": {
+      "h": 208,
+      "w": 920,
+      "x": 80,
+      "y": 513,
+    },
+    "color": "title",
+    "font": "display",
+    "fontSize": 90,
+    "key": "heading",
+    "kind": "text",
+    "lineHeight": 104,
+    "tracking": "-0.02em",
+  },
+  {
+    "box": {
+      "h": 96,
+      "w": 780,
+      "x": 80,
+      "y": 751,
+    },
+    "color": "textLight",
+    "font": "body",
+    "fontSize": 36,
+    "key": "detail",
+    "kind": "text",
+    "lineHeight": 48,
+    "weight": 400,
+  },
+]
+`;
+
+exports[`geometria default dos 8 arquétipos (golden) > evento @ 4:5 não muda com o contexto default 1`] = `
+[
+  {
+    "box": {
+      "h": 260,
+      "w": 260,
+      "x": 80,
+      "y": 338,
+    },
+    "color": "accent",
+    "key": "dateBadge",
+    "kind": "shape",
+    "radius": 30,
+  },
+  {
+    "align": "center",
+    "box": {
+      "h": 130,
+      "w": 260,
+      "x": 80,
+      "y": 380,
+    },
+    "color": "title",
+    "font": "display",
+    "fontSize": 120,
+    "key": "day",
+    "kind": "text",
+    "lineHeight": 126,
+  },
+  {
+    "align": "center",
+    "box": {
+      "h": 50,
+      "w": 260,
+      "x": 80,
+      "y": 516,
+    },
+    "color": "title",
+    "font": "mono",
+    "fontSize": 32,
+    "key": "month",
+    "kind": "text",
+    "lineHeight": 40,
+    "tracking": "0.14em",
+    "weight": 600,
+  },
+  {
+    "box": {
+      "h": 208,
+      "w": 920,
+      "x": 80,
+      "y": 648,
+    },
+    "color": "title",
+    "font": "display",
+    "fontSize": 90,
+    "key": "heading",
+    "kind": "text",
+    "lineHeight": 104,
+    "tracking": "-0.02em",
+  },
+  {
+    "box": {
+      "h": 96,
+      "w": 780,
+      "x": 80,
+      "y": 886,
+    },
+    "color": "textLight",
+    "font": "body",
+    "fontSize": 36,
+    "key": "detail",
+    "kind": "text",
+    "lineHeight": 48,
+    "weight": 400,
+  },
+]
+`;
+
+exports[`geometria default dos 8 arquétipos (golden) > evento @ 9:16 não muda com o contexto default 1`] = `
+[
+  {
+    "box": {
+      "h": 260,
+      "w": 260,
+      "x": 80,
+      "y": 623,
+    },
+    "color": "accent",
+    "key": "dateBadge",
+    "kind": "shape",
+    "radius": 30,
+  },
+  {
+    "align": "center",
+    "box": {
+      "h": 130,
+      "w": 260,
+      "x": 80,
+      "y": 665,
+    },
+    "color": "title",
+    "font": "display",
+    "fontSize": 120,
+    "key": "day",
+    "kind": "text",
+    "lineHeight": 126,
+  },
+  {
+    "align": "center",
+    "box": {
+      "h": 50,
+      "w": 260,
+      "x": 80,
+      "y": 801,
+    },
+    "color": "title",
+    "font": "mono",
+    "fontSize": 32,
+    "key": "month",
+    "kind": "text",
+    "lineHeight": 40,
+    "tracking": "0.14em",
+    "weight": 600,
+  },
+  {
+    "box": {
+      "h": 208,
+      "w": 920,
+      "x": 80,
+      "y": 933,
+    },
+    "color": "title",
+    "font": "display",
+    "fontSize": 90,
+    "key": "heading",
+    "kind": "text",
+    "lineHeight": 104,
+    "tracking": "-0.02em",
+  },
+  {
+    "box": {
+      "h": 96,
+      "w": 780,
+      "x": 80,
+      "y": 1171,
+    },
+    "color": "textLight",
+    "font": "body",
+    "fontSize": 36,
+    "key": "detail",
+    "kind": "text",
+    "lineHeight": 48,
+    "weight": 400,
+  },
+]
+`;
+
+exports[`geometria default dos 8 arquétipos (golden) > fecho @ 1:1 não muda com o contexto default 1`] = `
+[
+  {
+    "align": "center",
+    "box": {
+      "h": 236,
+      "w": 920,
+      "x": 80,
+      "y": 253,
+    },
+    "color": "title",
+    "font": "display",
+    "fontSize": 110,
+    "key": "heading",
+    "kind": "text",
+    "lineHeight": 118,
+    "tracking": "-0.03em",
+  },
+  {
+    "align": "center",
+    "box": {
+      "h": 88,
+      "w": 920,
+      "x": 80,
+      "y": 529,
+    },
+    "color": "textLight",
+    "font": "body",
+    "fontSize": 36,
+    "key": "lead",
+    "kind": "text",
+    "lineHeight": 44,
+    "weight": 400,
+  },
+  {
+    "align": "center",
+    "background": "accent",
+    "box": {
+      "h": 120,
+      "w": 500,
+      "x": 290,
+      "y": 677,
+    },
+    "color": "title",
+    "font": "mono",
+    "fontSize": 34,
+    "key": "cta",
+    "kind": "text",
+    "lineHeight": 34,
+    "radius": 60,
+    "tracking": "0.1em",
+    "weight": 700,
+  },
+]
+`;
+
+exports[`geometria default dos 8 arquétipos (golden) > fecho @ 4:5 não muda com o contexto default 1`] = `
+[
+  {
+    "align": "center",
+    "box": {
+      "h": 236,
+      "w": 920,
+      "x": 80,
+      "y": 388,
+    },
+    "color": "title",
+    "font": "display",
+    "fontSize": 110,
+    "key": "heading",
+    "kind": "text",
+    "lineHeight": 118,
+    "tracking": "-0.03em",
+  },
+  {
+    "align": "center",
+    "box": {
+      "h": 88,
+      "w": 920,
+      "x": 80,
+      "y": 664,
+    },
+    "color": "textLight",
+    "font": "body",
+    "fontSize": 36,
+    "key": "lead",
+    "kind": "text",
+    "lineHeight": 44,
+    "weight": 400,
+  },
+  {
+    "align": "center",
+    "background": "accent",
+    "box": {
+      "h": 120,
+      "w": 500,
+      "x": 290,
+      "y": 812,
+    },
+    "color": "title",
+    "font": "mono",
+    "fontSize": 34,
+    "key": "cta",
+    "kind": "text",
+    "lineHeight": 34,
+    "radius": 60,
+    "tracking": "0.1em",
+    "weight": 700,
+  },
+]
+`;
+
+exports[`geometria default dos 8 arquétipos (golden) > fecho @ 9:16 não muda com o contexto default 1`] = `
+[
+  {
+    "align": "center",
+    "box": {
+      "h": 236,
+      "w": 920,
+      "x": 80,
+      "y": 673,
+    },
+    "color": "title",
+    "font": "display",
+    "fontSize": 110,
+    "key": "heading",
+    "kind": "text",
+    "lineHeight": 118,
+    "tracking": "-0.03em",
+  },
+  {
+    "align": "center",
+    "box": {
+      "h": 88,
+      "w": 920,
+      "x": 80,
+      "y": 949,
+    },
+    "color": "textLight",
+    "font": "body",
+    "fontSize": 36,
+    "key": "lead",
+    "kind": "text",
+    "lineHeight": 44,
+    "weight": 400,
+  },
+  {
+    "align": "center",
+    "background": "accent",
+    "box": {
+      "h": 120,
+      "w": 500,
+      "x": 290,
+      "y": 1097,
+    },
+    "color": "title",
+    "font": "mono",
+    "fontSize": 34,
+    "key": "cta",
+    "kind": "text",
+    "lineHeight": 34,
+    "radius": 60,
+    "tracking": "0.1em",
+    "weight": 700,
+  },
+]
+`;
+
+exports[`geometria default dos 8 arquétipos (golden) > foto-total @ 1:1 não muda com o contexto default 1`] = `
+[
+  {
+    "bleed": true,
+    "box": {
+      "h": 1080,
+      "w": 1080,
+      "x": 0,
+      "y": 0,
+    },
+    "key": "media",
+    "kind": "media",
+  },
+  {
+    "box": {
+      "h": 594,
+      "w": 1080,
+      "x": 0,
+      "y": 486,
+    },
+    "key": "scrim",
+    "kind": "scrim",
+    "toColor": "ink",
+    "toOpacity": 0.92,
+  },
+  {
+    "align": "left",
+    "box": {
+      "h": 232,
+      "w": 780,
+      "x": 80,
+      "y": 618,
+    },
+    "color": "title",
+    "font": "display",
+    "fontSize": 110,
+    "key": "heading",
+    "kind": "text",
+    "lineHeight": 116,
+    "tracking": "-0.03em",
+  },
+]
+`;
+
+exports[`geometria default dos 8 arquétipos (golden) > foto-total @ 4:5 não muda com o contexto default 1`] = `
+[
+  {
+    "bleed": true,
+    "box": {
+      "h": 1350,
+      "w": 1080,
+      "x": 0,
+      "y": 0,
+    },
+    "key": "media",
+    "kind": "media",
+  },
+  {
+    "box": {
+      "h": 742.5000000000001,
+      "w": 1080,
+      "x": 0,
+      "y": 607.5,
+    },
+    "key": "scrim",
+    "kind": "scrim",
+    "toColor": "ink",
+    "toOpacity": 0.92,
+  },
+  {
+    "align": "left",
+    "box": {
+      "h": 232,
+      "w": 780,
+      "x": 80,
+      "y": 888,
+    },
+    "color": "title",
+    "font": "display",
+    "fontSize": 110,
+    "key": "heading",
+    "kind": "text",
+    "lineHeight": 116,
+    "tracking": "-0.03em",
+  },
+]
+`;
+
+exports[`geometria default dos 8 arquétipos (golden) > foto-total @ 9:16 não muda com o contexto default 1`] = `
+[
+  {
+    "bleed": true,
+    "box": {
+      "h": 1920,
+      "w": 1080,
+      "x": 0,
+      "y": 0,
+    },
+    "key": "media",
+    "kind": "media",
+  },
+  {
+    "box": {
+      "h": 1056,
+      "w": 1080,
+      "x": 0,
+      "y": 864,
+    },
+    "key": "scrim",
+    "kind": "scrim",
+    "toColor": "ink",
+    "toOpacity": 0.92,
+  },
+  {
+    "align": "left",
+    "box": {
+      "h": 232,
+      "w": 780,
+      "x": 80,
+      "y": 1458,
+    },
+    "color": "title",
+    "font": "display",
+    "fontSize": 110,
+    "key": "heading",
+    "kind": "text",
+    "lineHeight": 116,
+    "tracking": "-0.03em",
+  },
+]
+`;
+
+exports[`geometria default dos 8 arquétipos (golden) > lista-icone @ 1:1 não muda com o contexto default 1`] = `
+[
+  {
+    "box": {
+      "h": 200,
+      "w": 920,
+      "x": 80,
+      "y": 200,
+    },
+    "color": "title",
+    "font": "display",
+    "fontSize": 90,
+    "key": "heading",
+    "kind": "text",
+    "lineHeight": 100,
+    "tracking": "-0.02em",
+  },
+  {
+    "box": {
+      "h": 88,
+      "w": 88,
+      "x": 80,
+      "y": 440,
+    },
+    "color": "panelLight",
+    "key": "bullet1",
+    "kind": "shape",
+    "radius": 24,
+  },
+  {
+    "box": {
+      "h": 76,
+      "w": 800,
+      "x": 200,
+      "y": 446,
+    },
+    "color": "title",
+    "font": "body",
+    "fontSize": 44,
+    "key": "item1",
+    "kind": "text",
+    "lineHeight": 56,
+    "weight": 600,
+  },
+  {
+    "box": {
+      "h": 88,
+      "w": 88,
+      "x": 80,
+      "y": 590,
+    },
+    "color": "panelLight",
+    "key": "bullet2",
+    "kind": "shape",
+    "radius": 24,
+  },
+  {
+    "box": {
+      "h": 76,
+      "w": 800,
+      "x": 200,
+      "y": 596,
+    },
+    "color": "title",
+    "font": "body",
+    "fontSize": 44,
+    "key": "item2",
+    "kind": "text",
+    "lineHeight": 56,
+    "weight": 600,
+  },
+  {
+    "box": {
+      "h": 88,
+      "w": 88,
+      "x": 80,
+      "y": 740,
+    },
+    "color": "panelLight",
+    "key": "bullet3",
+    "kind": "shape",
+    "radius": 24,
+  },
+  {
+    "box": {
+      "h": 76,
+      "w": 800,
+      "x": 200,
+      "y": 746,
+    },
+    "color": "title",
+    "font": "body",
+    "fontSize": 44,
+    "key": "item3",
+    "kind": "text",
+    "lineHeight": 56,
+    "weight": 600,
+  },
+]
+`;
+
+exports[`geometria default dos 8 arquétipos (golden) > lista-icone @ 4:5 não muda com o contexto default 1`] = `
+[
+  {
+    "box": {
+      "h": 200,
+      "w": 920,
+      "x": 80,
+      "y": 200,
+    },
+    "color": "title",
+    "font": "display",
+    "fontSize": 90,
+    "key": "heading",
+    "kind": "text",
+    "lineHeight": 100,
+    "tracking": "-0.02em",
+  },
+  {
+    "box": {
+      "h": 88,
+      "w": 88,
+      "x": 80,
+      "y": 440,
+    },
+    "color": "panelLight",
+    "key": "bullet1",
+    "kind": "shape",
+    "radius": 24,
+  },
+  {
+    "box": {
+      "h": 76,
+      "w": 800,
+      "x": 200,
+      "y": 446,
+    },
+    "color": "title",
+    "font": "body",
+    "fontSize": 44,
+    "key": "item1",
+    "kind": "text",
+    "lineHeight": 56,
+    "weight": 600,
+  },
+  {
+    "box": {
+      "h": 88,
+      "w": 88,
+      "x": 80,
+      "y": 590,
+    },
+    "color": "panelLight",
+    "key": "bullet2",
+    "kind": "shape",
+    "radius": 24,
+  },
+  {
+    "box": {
+      "h": 76,
+      "w": 800,
+      "x": 200,
+      "y": 596,
+    },
+    "color": "title",
+    "font": "body",
+    "fontSize": 44,
+    "key": "item2",
+    "kind": "text",
+    "lineHeight": 56,
+    "weight": 600,
+  },
+  {
+    "box": {
+      "h": 88,
+      "w": 88,
+      "x": 80,
+      "y": 740,
+    },
+    "color": "panelLight",
+    "key": "bullet3",
+    "kind": "shape",
+    "radius": 24,
+  },
+  {
+    "box": {
+      "h": 76,
+      "w": 800,
+      "x": 200,
+      "y": 746,
+    },
+    "color": "title",
+    "font": "body",
+    "fontSize": 44,
+    "key": "item3",
+    "kind": "text",
+    "lineHeight": 56,
+    "weight": 600,
+  },
+]
+`;
+
+exports[`geometria default dos 8 arquétipos (golden) > lista-icone @ 9:16 não muda com o contexto default 1`] = `
+[
+  {
+    "box": {
+      "h": 200,
+      "w": 920,
+      "x": 80,
+      "y": 200,
+    },
+    "color": "title",
+    "font": "display",
+    "fontSize": 90,
+    "key": "heading",
+    "kind": "text",
+    "lineHeight": 100,
+    "tracking": "-0.02em",
+  },
+  {
+    "box": {
+      "h": 88,
+      "w": 88,
+      "x": 80,
+      "y": 440,
+    },
+    "color": "panelLight",
+    "key": "bullet1",
+    "kind": "shape",
+    "radius": 24,
+  },
+  {
+    "box": {
+      "h": 76,
+      "w": 800,
+      "x": 200,
+      "y": 446,
+    },
+    "color": "title",
+    "font": "body",
+    "fontSize": 44,
+    "key": "item1",
+    "kind": "text",
+    "lineHeight": 56,
+    "weight": 600,
+  },
+  {
+    "box": {
+      "h": 88,
+      "w": 88,
+      "x": 80,
+      "y": 590,
+    },
+    "color": "panelLight",
+    "key": "bullet2",
+    "kind": "shape",
+    "radius": 24,
+  },
+  {
+    "box": {
+      "h": 76,
+      "w": 800,
+      "x": 200,
+      "y": 596,
+    },
+    "color": "title",
+    "font": "body",
+    "fontSize": 44,
+    "key": "item2",
+    "kind": "text",
+    "lineHeight": 56,
+    "weight": 600,
+  },
+  {
+    "box": {
+      "h": 88,
+      "w": 88,
+      "x": 80,
+      "y": 740,
+    },
+    "color": "panelLight",
+    "key": "bullet3",
+    "kind": "shape",
+    "radius": 24,
+  },
+  {
+    "box": {
+      "h": 76,
+      "w": 800,
+      "x": 200,
+      "y": 746,
+    },
+    "color": "title",
+    "font": "body",
+    "fontSize": 44,
+    "key": "item3",
+    "kind": "text",
+    "lineHeight": 56,
+    "weight": 600,
+  },
+]
+`;
+
+exports[`geometria default dos 8 arquétipos (golden) > numerada @ 1:1 não muda com o contexto default 1`] = `
+[
+  {
+    "align": "center",
+    "box": {
+      "h": 185,
+      "w": 253,
+      "x": 413,
+      "y": 247.5,
+    },
+    "color": "accent",
+    "font": "display",
+    "fontSize": 175,
+    "key": "number",
+    "kind": "text",
+    "lineHeight": 185,
+    "tracking": "-0.04em",
+  },
+  {
+    "align": "center",
+    "box": {
+      "h": 330,
+      "w": 920,
+      "x": 80,
+      "y": 472.5,
+    },
+    "color": "title",
+    "font": "display",
+    "fontSize": 90,
+    "key": "heading",
+    "kind": "text",
+    "lineHeight": 110,
+    "tracking": "-0.02em",
+  },
+]
+`;
+
+exports[`geometria default dos 8 arquétipos (golden) > numerada @ 4:5 não muda com o contexto default 1`] = `
+[
+  {
+    "align": "center",
+    "box": {
+      "h": 185,
+      "w": 253,
+      "x": 413,
+      "y": 382.5,
+    },
+    "color": "accent",
+    "font": "display",
+    "fontSize": 175,
+    "key": "number",
+    "kind": "text",
+    "lineHeight": 185,
+    "tracking": "-0.04em",
+  },
+  {
+    "align": "center",
+    "box": {
+      "h": 330,
+      "w": 920,
+      "x": 80,
+      "y": 607.5,
+    },
+    "color": "title",
+    "font": "display",
+    "fontSize": 90,
+    "key": "heading",
+    "kind": "text",
+    "lineHeight": 110,
+    "tracking": "-0.02em",
+  },
+]
+`;
+
+exports[`geometria default dos 8 arquétipos (golden) > numerada @ 9:16 não muda com o contexto default 1`] = `
+[
+  {
+    "align": "center",
+    "box": {
+      "h": 185,
+      "w": 253,
+      "x": 413,
+      "y": 667.5,
+    },
+    "color": "accent",
+    "font": "display",
+    "fontSize": 175,
+    "key": "number",
+    "kind": "text",
+    "lineHeight": 185,
+    "tracking": "-0.04em",
+  },
+  {
+    "align": "center",
+    "box": {
+      "h": 330,
+      "w": 920,
+      "x": 80,
+      "y": 892.5,
+    },
+    "color": "title",
+    "font": "display",
+    "fontSize": 90,
+    "key": "heading",
+    "kind": "text",
+    "lineHeight": 110,
+    "tracking": "-0.02em",
+  },
+]
+`;

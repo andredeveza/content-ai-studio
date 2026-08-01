@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ALL_ARCHETYPE_IDS, getBlueprint } from "@/templates/blueprints";
+import { blueprintContext } from "@/templates/context";
 import { band, CHROME_TOP_BAND, chromeBottomBand } from "@/templates/geometry";
 
 const CANVAS_HEIGHTS = [1350, 1080];
@@ -20,7 +21,7 @@ describe("Geometria dos 8 arquétipos (bloco 4)", () => {
       for (const h of CANVAS_HEIGHTS) {
         const canvas = { w: CANVAS_WIDTH, h };
         const contentBand = band(h);
-        const slots = getBlueprint(id).slots(canvas);
+        const slots = getBlueprint(id).slots(blueprintContext(canvas));
 
         expect(slots.length).toBeGreaterThan(0);
 

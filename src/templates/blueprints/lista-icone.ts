@@ -1,24 +1,24 @@
-import type { Blueprint } from "@/core/domain/template/blueprint";
-import { band, MARGIN } from "@/templates/geometry";
-import type { Slot } from "@/core/domain/template/blueprint";
+import type { Blueprint, Slot } from "@/core/domain/template/blueprint";
+import { lh } from "@/core/domain/template/type-scale";
 
 export const listaIcone: Blueprint = {
   id: "lista-icone",
   name: "Lista com ícone",
   role: "Itens curtos, cada um com marcador à esquerda.",
-  slots: (canvas) => {
-    const { top, height } = band(canvas.h);
+  slots: (ctx) => {
+    const { margin, scale, canvas } = ctx;
+    const { top, height } = ctx.band;
     const step = Math.min(150, (height - 240 - 88) / 2);
-    const contentWidth = canvas.w - 2 * MARGIN;
+    const contentWidth = canvas.w - 2 * margin;
 
     const slots: Slot[] = [
       {
         kind: "text",
         key: "heading",
-        box: { x: MARGIN, y: top, w: contentWidth, h: 200 },
-        fontSize: 90,
-        lineHeight: 100,
-        tracking: "-0.02em",
+        box: { x: margin, y: top, w: contentWidth, h: 200 },
+        fontSize: scale.heading.fontSize,
+        lineHeight: lh(scale.heading.fontSize, 100 / 90),
+        tracking: scale.heading.tracking,
         font: "display",
         color: "title",
       },
@@ -29,7 +29,7 @@ export const listaIcone: Blueprint = {
       slots.push({
         kind: "shape",
         key: `bullet${i + 1}`,
-        box: { x: MARGIN, y, w: 88, h: 88 },
+        box: { x: margin, y, w: 88, h: 88 },
         color: "panelLight",
         radius: 24,
       });

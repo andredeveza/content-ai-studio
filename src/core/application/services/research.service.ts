@@ -3,11 +3,15 @@ import type { AIContext, AITextGenerator } from "@/core/domain/ports/ai-text-gen
 import { ValidationError, type AppError } from "@/shared/errors";
 import { err, ok, type Result } from "@/shared/result";
 
-export type SlideRole = "abertura" | "conteudo" | "fecho";
+// Papel POSICIONAL do slide dentro da estrutura — não confundir com
+// `SlideRole` (`core/domain/template/slide-role.ts`), que é o papel
+// EDITORIAL usado pelas receitas dos estilos de composição. Este aqui só
+// existe para orientar o prompt do CopyService.
+export type StructureRole = "abertura" | "conteudo" | "fecho";
 
 export interface SlideBrief {
   readonly index: number;
-  readonly role: SlideRole;
+  readonly role: StructureRole;
   readonly brief: string;
 }
 
@@ -15,7 +19,7 @@ export interface ProjectStructure {
   readonly slides: readonly SlideBrief[];
 }
 
-function roleFor(index: number, total: number): SlideRole {
+function roleFor(index: number, total: number): StructureRole {
   if (index === 0) return "abertura";
   if (index === total - 1) return "fecho";
   return "conteudo";

@@ -1,3 +1,6 @@
+import type { ResolvedScale } from "@/core/domain/template/type-scale";
+import type { LayoutVariant } from "@/core/domain/template/variant";
+
 export type ArchetypeId =
   | "cover-centro"
   | "numerada"
@@ -103,11 +106,39 @@ export interface ChartBarSlot {
 
 export type Slot = TextSlot | MediaSlot | ShapeSlot | ScrimSlot | ChartBarSlot;
 
+// Faixa de conteúdo resolvida para um canvas concreto. Mora no domínio
+// (e não em `templates/geometry.ts`) porque `BlueprintContext` a
+// referencia e `templates` depende de `core`, nunca o contrário.
+export interface ContentBand {
+  readonly top: number;
+  readonly bottom: number;
+  readonly height: number;
+}
+
+// Faixa de conteúdo por estilo de composição (README: `band_rule`).
+export interface BandRule {
+  readonly top: number;
+  readonly bottomInset: number;
+}
+
+// Tudo que um blueprint precisa para se desenhar. Antes era só o canvas,
+// com margem/faixa/escala como constantes de módulo — o que tornava
+// impossível um estilo de composição mudar a composição.
+export interface BlueprintContext {
+  readonly canvas: Canvas;
+  readonly margin: number;
+  readonly band: ContentBand;
+  readonly scale: ResolvedScale;
+  readonly variant: LayoutVariant;
+}
+
 export interface Blueprint {
   readonly id: ArchetypeId;
   readonly name: string;
   readonly role: string;
   // Geometria em função de H (README: "toda posição vertical é derivada
-  // de H — nunca absoluta").
-  readonly slots: (canvas: Canvas) => readonly Slot[];
+  // de H — nunca absoluta") e do contexto do estilo de composição
+  // (margem, faixa, escala tipográfica, variante). Ver
+  // `templates/context.ts`.
+  readonly slots: (ctx: BlueprintContext) => readonly Slot[];
 }

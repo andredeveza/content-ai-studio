@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import { CalendarPlus, Download, RefreshCw } from "lucide-react";
 import { TemplateEngineService } from "@/core/application/services/template-engine.service";
 import { ALL_ARCHETYPE_IDS, getBlueprint } from "@/templates/blueprints";
+import { blueprintContext } from "@/templates/context";
 import { canvasForRatio, type ProjectRatio } from "@/core/domain/project/project";
 import type { ArchetypeId } from "@/core/domain/template/blueprint";
 import type { BrandKit } from "@/core/domain/brandkit/brand-kit";
@@ -45,14 +46,14 @@ const RAIL_THUMB_WIDTH = 52;
 
 function textSlotKeys(archetypeId: ArchetypeId, canvas: { w: number; h: number }): string[] {
   return getBlueprint(archetypeId)
-    .slots(canvas)
+    .slots(blueprintContext(canvas))
     .filter((slot) => slot.kind === "text" && !slot.staticText)
     .map((slot) => slot.key);
 }
 
 function hasMediaSlot(archetypeId: ArchetypeId, canvas: { w: number; h: number }): boolean {
   return getBlueprint(archetypeId)
-    .slots(canvas)
+    .slots(blueprintContext(canvas))
     .some((slot) => slot.kind === "media");
 }
 

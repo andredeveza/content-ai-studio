@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { TemplateEngineService } from "@/core/application/services/template-engine.service";
 import { ALL_ARCHETYPE_IDS, getBlueprint } from "@/templates/blueprints";
+import { blueprintContext } from "@/templates/context";
 import { band } from "@/templates/geometry";
 import { computeClamp } from "@/templates/clamp";
 import type { BrandKit } from "@/core/domain/brandkit/brand-kit";
@@ -64,7 +65,7 @@ const brandKit: BrandKit = {
 };
 
 function buildAbsurdContent(archetypeId: (typeof ALL_ARCHETYPE_IDS)[number]): SlideContent {
-  const slots = getBlueprint(archetypeId).slots(CANVAS);
+  const slots = getBlueprint(archetypeId).slots(blueprintContext(CANVAS));
   const texts: Record<string, string> = {};
   const media: Record<string, string> = {};
 
@@ -85,7 +86,7 @@ describe("TemplateEngineService (bloco 4) — regra de clamp obrigatória", () =
       const html = engine.render(getBlueprint(id), CANVAS, content, brandKit, { isLastSlide: false });
 
       const slotDivs = [...html.matchAll(/<div data-slot="([^"]+)" data-max-lines="(\d+)" data-max-height="(\d+)" style="([^"]*)"/g)];
-      const textSlots = getBlueprint(id).slots(CANVAS).filter((slot) => slot.kind === "text");
+      const textSlots = getBlueprint(id).slots(blueprintContext(CANVAS)).filter((slot) => slot.kind === "text");
 
       expect(slotDivs.length).toBe(textSlots.length);
 
