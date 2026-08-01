@@ -36,6 +36,8 @@ export class GenerateCarouselUseCase {
       goal: parsed.data.goal,
       slideCount: parsed.data.slideCount,
       ratio: parsed.data.ratio,
+      styleId: parsed.data.styleId,
+      format: parsed.data.format,
     });
 
     const job = await this.jobs.create({ orgId: parsed.data.orgId, projectId: project.id });

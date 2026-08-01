@@ -1,5 +1,6 @@
 import { StructureSchema } from "@/core/application/dto/copy.dto";
 import type { SlideRole } from "@/core/domain/template/slide-role";
+import type { ProjectFormat } from "@/core/domain/project/project";
 import type { AIContext, AITextGenerator } from "@/core/domain/ports/ai-text-generator";
 import { ValidationError, type AppError } from "@/shared/errors";
 import { err, ok, type Result } from "@/shared/result";
@@ -52,14 +53,22 @@ export class ResearchService {
     goal: string,
     slideCount: number,
     ctx: AIContext,
+    format: ProjectFormat = "carousel",
   ): Promise<Result<ProjectStructure, AppError>> {
+    // README, estilo 08: post único "não é o mesmo pipeline com contagem
+    // diferente" — o corpo do conteúdo vive na legenda, então o brief
+    // pede uma imagem-manchete só, não uma sequência.
     const prompt = [
       `Tema: ${theme}`,
       `Objetivo: ${goal}`,
-      `Gere a estrutura de um carrossel de ${slideCount} slides para Instagram.`,
+      format === "single"
+        ? "Gere a estrutura de um POST ÚNICO de Instagram: exatamente 1 item, que é a arte de capa. O conteúdo desenvolvido vai na legenda, não na imagem."
+        : `Gere a estrutura de um carrossel de ${slideCount} slides para Instagram.`,
       `Responda só JSON no formato {"slides":[{"brief":"...","role":"..."}]} com exatamente ${slideCount} itens.`,
       "Cada brief é uma frase curta descrevendo o que aquele slide deve comunicar.",
-      "O primeiro slide é a abertura/gancho, o último é a chamada final.",
+      format === "single"
+        ? "O único item é a capa: manchete curta e forte, nada de corpo de texto longo."
+        : "O primeiro slide é a abertura/gancho, o último é a chamada final.",
       'O campo "role" é o papel editorial do slide, um de: capa, argumento, dado, citacao, prova, fecho.',
       '"dado" só quando houver número/percentual; "citacao" só com fala de alguém; "prova" para caso real, bastidor ou foto do cliente.',
     ].join("\n");

@@ -1,6 +1,7 @@
 import { ProjectCopySchema, type ProjectCopy } from "@/core/application/dto/copy.dto";
 import type { ProjectStructure } from "@/core/application/services/research.service";
 import type { AIContext, AITextGenerator } from "@/core/domain/ports/ai-text-generator";
+import type { ProjectFormat } from "@/core/domain/project/project";
 import { ValidationError, type AppError } from "@/shared/errors";
 import { err, ok, type Result } from "@/shared/result";
 
@@ -17,13 +18,16 @@ export class CopyService {
     persona: string | null,
     tone: readonly string[],
     ctx: AIContext,
+    format: ProjectFormat = "carousel",
   ): Promise<Result<ProjectCopy, AppError>> {
     const briefs = structure.slides.map((slide) => `${slide.index}. [${slide.role}] ${slide.brief}`).join("\n");
     const toneLine = tone.length > 0 ? `Tom de voz: ${tone.join(", ")}.` : "";
     const personaLine = persona ? `Persona da marca: ${persona}.` : "";
 
     const prompt = [
-      "Escreva o copy de um carrossel de Instagram a partir destes slides:",
+      format === "single"
+        ? "Escreva o copy de um POST ÚNICO de Instagram a partir deste item:"
+        : "Escreva o copy de um carrossel de Instagram a partir destes slides:",
       briefs,
       personaLine,
       toneLine,
@@ -31,7 +35,9 @@ export class CopyService {
       "(frase principal — usada para detectar se é citação, dado numérico, data ou lista),",
       "quote, author, number, items (3 a 5 itens curtos quando fizer sentido), day, month,",
       "detail, ctaLabel. Deixe vazio (\"\" ou []) o que não se aplicar àquele slide.",
-      "Depois preencha, para o carrossel inteiro: caption (legenda do post), hashtags",
+      format === "single"
+        ? "A LEGENDA é o conteúdo principal deste formato: desenvolva o tema inteiro nela, em 4 a 8 parágrafos curtos, terminando com a chamada para ação."
+        : "Depois preencha, para o carrossel inteiro: caption (legenda do post), hashtags",
       "(lista de palavras sem #) e cta (chamada para ação final).",
       'Responda só JSON: {"slides":[...],"caption":"...","hashtags":["..."],"cta":"..."}',
     ]

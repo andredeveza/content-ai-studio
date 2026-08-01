@@ -1,4 +1,4 @@
-import { RETRIEVAL_SCORE_THRESHOLD, scoreAsset, topicFitFromTags } from "@/core/application/services/asset-scoring.service";
+import { scoreAsset, topicFitFromTags } from "@/core/application/services/asset-scoring.service";
 import type { Asset } from "@/core/domain/asset/asset";
 import type { AssetRepository } from "@/core/domain/ports/asset-repository";
 import type { AssetMatch, AssetQuery, RetrievalPort } from "@/core/domain/ports/retrieval";

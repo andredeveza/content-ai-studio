@@ -1,5 +1,6 @@
 import type { BandRule, BlueprintContext, Canvas } from "@/core/domain/template/blueprint";
 import { getCompositionStyle } from "@/core/domain/template/composition-styles.catalog";
+import type { DecorSpec } from "@/core/domain/template/composition-style";
 import { BASE_TYPE_SCALE, resolveScale, type ResolvedScale } from "@/core/domain/template/type-scale";
 import { DEFAULT_VARIANT, type LayoutVariant } from "@/core/domain/template/variant";
 import { band, DEFAULT_BAND_RULE, DEFAULT_MARGIN } from "@/templates/geometry";
@@ -11,6 +12,8 @@ export interface BlueprintContextOptions {
   readonly bandRule?: BandRule;
   readonly scale?: ResolvedScale;
   readonly variant?: LayoutVariant;
+  readonly decor?: readonly DecorSpec[];
+  readonly badge?: string;
 }
 
 // Reconstrói o contexto a partir do que é PERSISTIDO/TRAFEGADO
@@ -42,6 +45,8 @@ export function contextForStyle(
     bandRule: style.bandRule,
     scale: resolveScale(style.typeScale, effective.scaleStep),
     variant: effective,
+    decor: style.decor,
+    ...(style.chrome.badge ? { badge: style.chrome.badge } : {}),
   });
 }
 
@@ -56,5 +61,7 @@ export function blueprintContext(canvas: Canvas, options: BlueprintContextOption
     band: band(canvas.h, options.bandRule ?? DEFAULT_BAND_RULE),
     scale: options.scale ?? resolveScale(BASE_TYPE_SCALE, variant.scaleStep),
     variant,
+    decor: options.decor ?? [],
+    ...(options.badge ? { badge: options.badge } : {}),
   };
 }

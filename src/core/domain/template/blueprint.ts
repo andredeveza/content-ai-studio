@@ -1,5 +1,6 @@
 import type { ResolvedScale } from "@/core/domain/template/type-scale";
 import type { LayoutVariant } from "@/core/domain/template/variant";
+import type { DecorSpec } from "@/core/domain/template/composition-style";
 
 export type ArchetypeId =
   | "cover-centro"
@@ -130,6 +131,11 @@ export interface BlueprintContext {
   readonly band: ContentBand;
   readonly scale: ResolvedScale;
   readonly variant: LayoutVariant;
+  // Ornamento do estilo (cartão do 04, filetes do 05, manchas do 06,
+  // guias do 07). Renderizado ANTES dos slots, por baixo do conteúdo.
+  readonly decor: readonly DecorSpec[];
+  // Selo do estilo 08 ("conteúdo na legenda").
+  readonly badge?: string;
 }
 
 export interface Blueprint {

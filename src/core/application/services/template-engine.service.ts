@@ -1,6 +1,7 @@
 import type { BrandKit } from "@/core/domain/brandkit/brand-kit";
 import type { Blueprint, BlueprintContext, Canvas, ColorRole, FontRole, Slot } from "@/core/domain/template/blueprint";
 import type { SlideContent } from "@/core/domain/template/slide-content";
+import type { DecorSpec } from "@/core/domain/template/composition-style";
 import { CHROME_TOP_BAND, chromeBottomBand } from "@/templates/geometry";
 import { blueprintContext } from "@/templates/context";
 import { computeClamp } from "@/templates/clamp";
@@ -42,8 +43,13 @@ export class TemplateEngineService {
     brandKit: BrandKit,
     options: TemplateEngineOptions = {},
   ): string {
-    const slots = blueprint.slots(options.context ?? blueprintContext(canvas));
+    const ctx = options.context ?? blueprintContext(canvas);
+    const slots = blueprint.slots(ctx);
+    // Ornamento do estilo entra ANTES dos slots: é fundo, nunca cobre o
+    // conteúdo (README, estilo 02: "glow só no fundo").
+    const decorHtml = ctx.decor.map((decor) => this.renderDecor(decor, canvas)).join("\n");
     const slotsHtml = slots.map((slot) => this.renderSlot(slot, content)).join("\n");
+    const badgeHtml = ctx.badge ? this.renderBadge(ctx.badge) : "";
     const chromeHtml = this.renderChrome(canvas, brandKit, options.isLastSlide ?? false);
     const rootVars = this.buildBrandKitVars(brandKit);
     const fontLinksHtml = this.buildFontLinks(brandKit);
@@ -55,7 +61,9 @@ export class TemplateEngineService {
       `<style>${rootVars} *{box-sizing:border-box;margin:0;padding:0} .stage{position:relative;overflow:hidden;font-family:var(--bk-font-body)}</style>`,
       "</head><body>",
       `<div class="stage" style="width:${canvas.w}px;height:${canvas.h}px;background:${colorVar("ink")}">`,
+      decorHtml,
       slotsHtml,
+      badgeHtml,
       chromeHtml,
       "</div>",
       "</body></html>",
@@ -156,6 +164,54 @@ export class TemplateEngineService {
     ].join("");
 
     return `<div data-slot="${slot.key}" data-max-lines="${maxLines}" data-max-height="${maxHeightPx}" style="${style}">${text}</div>`;
+  }
+
+  // Selo do estilo 08 ("conteúdo na legenda"): pílula no topo direito,
+  // fora da faixa de conteúdo.
+  private renderBadge(badge: string): string {
+    const style = [
+      `position:absolute;right:80px;top:${CHROME_TOP_BAND.y}px;height:${CHROME_TOP_BAND.height}px;`,
+      "display:flex;align-items:center;padding:0 22px;border-radius:999px;",
+      `background:${colorVar("accent")};color:${colorVar("title")};`,
+      "font-family:var(--bk-font-mono);font-size:19px;letter-spacing:0.14em;text-transform:uppercase;",
+    ].join("");
+    return `<div data-badge style="${style}">${escapeHtml(badge)}</div>`;
+  }
+
+  private renderDecor(decor: DecorSpec, canvas: Canvas): string {
+    switch (decor.kind) {
+      case "card": {
+        const x = Math.round((canvas.w - decor.w) / 2);
+        const y = Math.round((canvas.h - decor.h) / 2);
+        const color = colorVar(decor.color, "panelLight");
+        return `<div data-decor="card" style="position:absolute;left:${x}px;top:${y}px;width:${decor.w}px;height:${decor.h}px;background:${color};opacity:${decor.opacity ?? 1};border-radius:${decor.radius}px"></div>`;
+      }
+      case "blob": {
+        // `cyRatio` (não Y absoluto) mantém a mancha proporcional em
+        // 1080/1350/1920 — mesma regra do resto da geometria.
+        const cy = Math.round(canvas.h * decor.cyRatio);
+        const color = colorVar(decor.color, "primary");
+        return `<div data-decor="blob" style="position:absolute;left:${decor.cx - decor.r}px;top:${cy - decor.r}px;width:${decor.r * 2}px;height:${decor.r * 2}px;background:${color};opacity:${decor.opacity};border-radius:50%;filter:blur(${decor.blur}px)"></div>`;
+      }
+      case "rule": {
+        const y = decor.yFromTop ?? canvas.h - (decor.yFromBottom ?? 0);
+        const color = colorVar(decor.color, "slate");
+        return `<div data-decor="rule" style="position:absolute;left:0;top:${y}px;width:${canvas.w}px;height:1px;background:${color}"></div>`;
+      }
+      case "column-guides": {
+        const color = colorVar(decor.color, "gray");
+        return decor.xs
+          .map(
+            (x) =>
+              `<div data-decor="guide" style="position:absolute;left:${x}px;top:0;width:1px;height:${canvas.h}px;background:${color};opacity:${decor.opacity}"></div>`,
+          )
+          .join("");
+      }
+      default: {
+        const exhaustive: never = decor;
+        throw new Error(`Ornamento desconhecido: ${JSON.stringify(exhaustive)}`);
+      }
+    }
   }
 
   private renderChrome(canvas: Canvas, brandKit: BrandKit, isLastSlide: boolean): string {

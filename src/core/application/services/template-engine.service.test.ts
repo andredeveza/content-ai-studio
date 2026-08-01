@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { TemplateEngineService } from "@/core/application/services/template-engine.service";
 import { ALL_ARCHETYPE_IDS, getBlueprint } from "@/templates/blueprints";
-import { blueprintContext } from "@/templates/context";
+import { blueprintContext, contextForStyle } from "@/templates/context";
 import { band } from "@/templates/geometry";
 import { computeClamp } from "@/templates/clamp";
 import type { BrandKit } from "@/core/domain/brandkit/brand-kit";
@@ -172,5 +172,54 @@ describe("TemplateEngineService (bloco 4) — regra de clamp obrigatória", () =
     const html = engine.render(getBlueprint(id), CANVAS, content, brandKit);
     expect(html).not.toContain("<script>alert(1)</script>");
     expect(html).toContain("&lt;script&gt;");
+  });
+});
+
+// A razão de existir da camada de estilos: o MESMO conteúdo, no mesmo
+// arquétipo, tem que sair visualmente diferente conforme o estilo. Se
+// este teste passar a falhar, os estilos viraram decoração de novo.
+describe("estilos de composição afetam o HTML de verdade", () => {
+  const engine = new TemplateEngineService();
+  const canvas = { w: 1080, h: 1350 };
+  const content = { texts: { kicker: "kicker", heading: "Uma manchete de teste", lead: "apoio" }, media: {} };
+
+  function render(styleSlug: string) {
+    return engine.render(getBlueprint("cover-centro"), canvas, content, brandKit, {
+      context: contextForStyle(canvas, styleSlug, null),
+    });
+  }
+
+  it("margem e escala do estilo mudam a geometria emitida", () => {
+    // 01 "manchete sangrada": margem 36 e display 128–148, contra a
+    // margem 80 / display 110 do estilo neutro.
+    expect(render("manchete-sangrada")).not.toBe(render("nevoa-suave"));
+    expect(render("manchete-sangrada")).toContain("left:36px");
+    expect(render("grade-silenciosa")).toContain("left:96px");
+  });
+
+  it("ornamento declarativo do estilo é renderizado como fundo", () => {
+    // 06 "névoa suave": 3 manchas blur 60px.
+    const nevoa = render("nevoa-suave");
+    expect(nevoa.match(/data-decor="blob"/g)).toHaveLength(3);
+    expect(nevoa).toContain("blur(60px)");
+
+    // 07 "grade silenciosa": 4 colunas fixas.
+    expect(render("grade-silenciosa").match(/data-decor="guide"/g)).toHaveLength(4);
+
+    // 04 "fio de thread": cartão 968×1170 r=34.
+    const thread = render("fio-de-thread");
+    expect(thread).toContain('data-decor="card"');
+    expect(thread).toContain("width:968px");
+    expect(thread).toContain("border-radius:34px");
+  });
+
+  it("o selo do estilo 08 aparece só nele", () => {
+    expect(render("capa-de-campanha")).toContain("conteúdo na legenda");
+    expect(render("nevoa-suave")).not.toContain("data-badge");
+  });
+
+  it("o ornamento vem antes dos slots — é fundo, nunca cobre o conteúdo", () => {
+    const html = render("nevoa-suave");
+    expect(html.indexOf('data-decor="blob"')).toBeLessThan(html.indexOf('data-slot="heading"'));
   });
 });

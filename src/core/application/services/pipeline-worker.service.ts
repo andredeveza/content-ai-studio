@@ -125,10 +125,13 @@ export class PipelineWorker {
   // Step "research" (5%).
   private async runResearch(job: Job): Promise<Job> {
     const project = await this.requireProject(job);
-    const result = await this.deps.research.buildStructure(project.theme, project.goal, project.slideCount, {
-      orgId: job.orgId,
-      userId: null,
-    });
+    const result = await this.deps.research.buildStructure(
+      project.theme,
+      project.goal,
+      project.slideCount,
+      { orgId: job.orgId, userId: null },
+      project.format,
+    );
     if (!result.ok) throw result.error;
 
     return this.advance(job, "copy", { ...job.payload, structure: result.value });
@@ -144,10 +147,13 @@ export class PipelineWorker {
     if (!client) throw new NotFoundError(`Cliente ${project.clientId} não encontrado.`);
 
     const structure = job.payload.structure as ProjectStructure;
-    const result = await this.deps.copy.write(structure, client.persona, client.tone, {
-      orgId: job.orgId,
-      userId: null,
-    });
+    const result = await this.deps.copy.write(
+      structure,
+      client.persona,
+      client.tone,
+      { orgId: job.orgId, userId: null },
+      project.format,
+    );
     if (!result.ok) throw result.error;
 
     const projectCopy = result.value;
