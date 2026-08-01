@@ -1,6 +1,8 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { ArchetypeId } from "@/core/domain/template/blueprint";
+import type { SlideRole } from "@/core/domain/template/slide-role";
+import type { LayoutVariant } from "@/core/domain/template/variant";
 import type { NewSlide, Slide, SlideOverrides } from "@/core/domain/project/slide";
 import type { SlideContent } from "@/core/domain/template/slide-content";
 import type { SlideRepository } from "@/core/domain/ports/slide-repository";
@@ -14,6 +16,8 @@ function toDomain(row: SlideRow): Slide {
     projectId: row.project_id,
     index: row.index,
     archetypeId: row.archetype_id as ArchetypeId,
+    role: (row.role as SlideRole | null) ?? null,
+    variant: (row.variant as unknown as LayoutVariant | null) ?? null,
     content: row.content as unknown as SlideContent,
     overrides: row.overrides as unknown as SlideOverrides | null,
     mediaId: row.media_id,
@@ -33,6 +37,8 @@ export class SupabaseSlideRepository implements SlideRepository {
           project_id: projectId,
           index: slide.index,
           archetype_id: slide.archetypeId,
+          role: slide.role ?? null,
+          variant: (slide.variant ?? null) as unknown as Json,
           content: slide.content as unknown as Json,
         })),
         { onConflict: "project_id,index" },

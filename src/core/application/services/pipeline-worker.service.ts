@@ -5,7 +5,8 @@ import type { PromptService } from "@/core/application/services/prompt.service";
 import { computeScrimOpacity } from "@/core/application/services/asset-scoring.service";
 import type { ProjectStructure, ResearchService } from "@/core/application/services/research.service";
 import { mapGenericCopyToSlideContent } from "@/core/application/services/slide-content-mapper";
-import { selectLayout } from "@/core/application/services/layout.service";
+import { planCarouselLayout } from "@/core/application/services/layout.service";
+import { getCompositionStyle } from "@/core/domain/template/composition-styles.catalog";
 import type { RenderSlidePort } from "@/core/application/use-cases/render-slide";
 import type { AssetRepository } from "@/core/domain/ports/asset-repository";
 import type { BrandKitRepository } from "@/core/domain/ports/brand-kit-repository";
@@ -149,26 +150,40 @@ export class PipelineWorker {
 
     const projectCopy = result.value;
 
-    // Checado uma vez por carrossel (não por slide): bloco 7 (Acervo) já
-    // está ligado de verdade desde o ADENDO-02 — antes disso o acervo do
-    // cliente sempre estava vazio, então "foto-total" nunca era
-    // escolhido nem quando havia fotos reais no banco do cliente (bug
-    // relatado pelo usuário: carrossel só com texto mesmo após subir
-    // várias fotos para o acervo).
+    // Consultado uma vez por carrossel (não por slide). O acervo decide
+    // se algum slide precisa ser promovido a portador de foto real —
+    // README, "Critério de pronto": o carrossel sai "com pelo menos uma
+    // imagem vinda do acervo do cliente".
     const analyzedImages = await this.deps.assets.listAnalyzedImagesByClient(project.clientId);
-    const hasStrongPhoto = analyzedImages.length > 0;
 
-    const newSlides: NewSlide[] = projectCopy.slides.map((copy) => {
-      const stepNumber = copy.number ? Number.parseInt(copy.number, 10) : Number.NaN;
-      const archetypeId = selectLayout({
-        slideIndex: copy.index,
-        totalSlides: projectCopy.slides.length,
-        stepNumber: Number.isFinite(stepNumber) ? stepNumber : null,
-        body: copy.body || copy.heading,
-        items: copy.items,
-        hasStrongPhoto,
-      });
-      return { index: copy.index, archetypeId, content: mapGenericCopyToSlideContent(archetypeId, copy) };
+    const style = getCompositionStyle(project.styleId);
+    const plan = planCarouselLayout({
+      style,
+      // `project.id` como semente: regerar o mesmo projeto tem que
+      // devolver exatamente o mesmo layout.
+      seed: project.id,
+      slides: projectCopy.slides.map((copy) => {
+        const stepNumber = copy.number ? Number.parseInt(copy.number, 10) : Number.NaN;
+        return {
+          index: copy.index,
+          plannedRole: structure.slides.find((s) => s.index === copy.index)?.slideRole,
+          body: copy.body || copy.heading,
+          items: copy.items,
+          stepNumber: Number.isFinite(stepNumber) ? stepNumber : null,
+        };
+      }),
+      acervo: { analyzedImageCount: analyzedImages.length },
+    });
+
+    const newSlides: NewSlide[] = plan.map((selection) => {
+      const copy = projectCopy.slides.find((c) => c.index === selection.index)!;
+      return {
+        index: selection.index,
+        archetypeId: selection.archetypeId,
+        role: selection.role,
+        variant: selection.variant,
+        content: mapGenericCopyToSlideContent(selection.archetypeId, copy),
+      };
     });
 
     await this.deps.slides.upsertMany(project.id, newSlides);

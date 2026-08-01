@@ -288,6 +288,9 @@ export interface Database {
           progress: number;
           slide_count: number;
           ratio: "4:5" | "1:1" | "9:16";
+          style_id: string;
+          format: "carousel" | "single";
+          media_source: "acervo" | "ai" | "none" | null;
           caption: string | null;
           hashtags: string[];
           cta: string | null;
@@ -304,6 +307,9 @@ export interface Database {
           progress?: number;
           slide_count: number;
           ratio?: "4:5" | "1:1" | "9:16";
+          style_id?: string;
+          format?: "carousel" | "single";
+          media_source?: "acervo" | "ai" | "none" | null;
           caption?: string | null;
           hashtags?: string[];
           cta?: string | null;
@@ -320,6 +326,9 @@ export interface Database {
           progress?: number;
           slide_count?: number;
           ratio?: "4:5" | "1:1" | "9:16";
+          style_id?: string;
+          format?: "carousel" | "single";
+          media_source?: "acervo" | "ai" | "none" | null;
           caption?: string | null;
           hashtags?: string[];
           cta?: string | null;
@@ -349,6 +358,8 @@ export interface Database {
           project_id: string;
           index: number;
           archetype_id: string;
+          role: string | null;
+          variant: Json | null;
           content: Json;
           media_id: string | null;
           overrides: Json | null;
@@ -360,6 +371,8 @@ export interface Database {
           project_id: string;
           index: number;
           archetype_id: string;
+          role?: string | null;
+          variant?: Json | null;
           content?: Json;
           media_id?: string | null;
           overrides?: Json | null;
@@ -371,6 +384,8 @@ export interface Database {
           project_id?: string;
           index?: number;
           archetype_id?: string;
+          role?: string | null;
+          variant?: Json | null;
           content?: Json;
           media_id?: string | null;
           overrides?: Json | null;

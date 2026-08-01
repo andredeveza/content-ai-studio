@@ -3,8 +3,19 @@ import { z } from "zod";
 // Saída do ResearchService (step "research", 5%): um brief curto por
 // slide. O papel (abertura/conteúdo/fecho) é derivado do índice depois,
 // não pedido à IA — evita que o modelo erre a contagem de papéis.
+// `role` é enum FECHADO (regra não negociável nº4: toda resposta de IA
+// passa por Zod antes de tocar o domínio). A IA sugere o papel editorial
+// do miolo; posição (capa/fecho) é normalizada em código depois, porque
+// modelo erra contagem e repete "fecho" no meio.
 export const StructureSchema = z.object({
-  slides: z.array(z.object({ brief: z.string().trim().min(1) })).min(1),
+  slides: z
+    .array(
+      z.object({
+        brief: z.string().trim().min(1),
+        role: z.enum(["capa", "argumento", "dado", "citacao", "prova", "fecho"]).optional(),
+      }),
+    )
+    .min(1),
 });
 
 export type Structure = z.infer<typeof StructureSchema>;

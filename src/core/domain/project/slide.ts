@@ -1,5 +1,7 @@
 import type { ArchetypeId } from "@/core/domain/template/blueprint";
 import type { SlideContent } from "@/core/domain/template/slide-content";
+import type { SlideRole } from "@/core/domain/template/slide-role";
+import type { LayoutVariant } from "@/core/domain/template/variant";
 
 // Edição manual no Editor (bloco 8) por cima do que o pipeline gerou —
 // nunca sobrescreve `content`/`archetypeId` originais, só empilha por
@@ -18,6 +20,11 @@ export interface Slide {
   readonly projectId: string;
   readonly index: number;
   readonly archetypeId: ArchetypeId;
+  // Papel editorial e variante escolhidos pelo planejador. Persistidos
+  // porque a geometria agora depende deles: sem isso o preview do editor
+  // e o PNG do Puppeteer podem divergir.
+  readonly role: SlideRole | null;
+  readonly variant: LayoutVariant | null;
   readonly content: SlideContent;
   readonly overrides: SlideOverrides | null;
   readonly mediaId: string | null;
@@ -28,6 +35,8 @@ export interface Slide {
 export interface NewSlide {
   readonly index: number;
   readonly archetypeId: ArchetypeId;
+  readonly role?: SlideRole;
+  readonly variant?: LayoutVariant;
   readonly content: SlideContent;
 }
 

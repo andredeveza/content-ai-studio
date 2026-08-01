@@ -9,6 +9,8 @@ function baseSlide(overrides: Partial<Slide> = {}): Slide {
     projectId: "project-1",
     index: 0,
     archetypeId: "cover-centro",
+    role: null,
+    variant: null,
     content: { texts: { kicker: "DICA", heading: "Título original", lead: "Apoio original" } },
     overrides: null,
     mediaId: null,

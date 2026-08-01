@@ -3,6 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { NewProject, Project, ProjectPatch } from "@/core/domain/project/project";
 import type { ProjectRepository } from "@/core/domain/ports/project-repository";
 import type { Database } from "@/infra/db/supabase/types";
+import { DEFAULT_STYLE_SLUG } from "@/core/domain/template/composition-styles.catalog";
 
 type ProjectRow = Database["public"]["Tables"]["projects"]["Row"];
 
@@ -17,6 +18,9 @@ function toDomain(row: ProjectRow): Project {
     progress: row.progress,
     slideCount: row.slide_count,
     ratio: row.ratio,
+    styleId: row.style_id,
+    format: row.format,
+    mediaSource: row.media_source,
     caption: row.caption,
     hashtags: row.hashtags,
     cta: row.cta,
@@ -38,6 +42,8 @@ export class SupabaseProjectRepository implements ProjectRepository {
         goal: input.goal,
         slide_count: input.slideCount,
         ratio: input.ratio ?? "4:5",
+        style_id: input.styleId ?? DEFAULT_STYLE_SLUG,
+        format: input.format ?? "carousel",
       })
       .select("*")
       .single();
@@ -67,6 +73,7 @@ export class SupabaseProjectRepository implements ProjectRepository {
         ...(patch.caption !== undefined && { caption: patch.caption }),
         ...(patch.hashtags !== undefined && { hashtags: [...patch.hashtags] }),
         ...(patch.cta !== undefined && { cta: patch.cta }),
+        ...(patch.mediaSource !== undefined && { media_source: patch.mediaSource }),
       })
       .eq("org_id", orgId)
       .eq("id", projectId)

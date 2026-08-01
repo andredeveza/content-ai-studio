@@ -25,7 +25,9 @@ import type { Client, NewClient } from "@/core/domain/client/client";
 import type { BrandKit, NewBrandKit } from "@/core/domain/brandkit/brand-kit";
 import type { Job, JobPatch, NewJob } from "@/core/domain/pipeline/job";
 import type { Media, NewMedia } from "@/core/domain/media/media";
-import type { NewProject, Project, ProjectPatch } from "@/core/domain/project/project";
+import { canvasForRatio, type NewProject, type Project, type ProjectPatch } from "@/core/domain/project/project";
+import { getBlueprint } from "@/templates/blueprints";
+import { blueprintContext } from "@/templates/context";
 import type { NewSlide, Slide } from "@/core/domain/project/slide";
 import { ValidationError, type AppError } from "@/shared/errors";
 import { err, ok, type Result } from "@/shared/result";
@@ -106,6 +108,9 @@ class FakeProjectRepository implements ProjectRepository {
       progress: 0,
       slideCount: input.slideCount,
       ratio: input.ratio ?? "4:5",
+      styleId: "nevoa-suave",
+      format: "carousel" as const,
+      mediaSource: null,
       caption: null,
       hashtags: [],
       cta: null,
@@ -148,6 +153,8 @@ class FakeSlideRepository implements SlideRepository {
         projectId,
         index: input.index,
         archetypeId: input.archetypeId,
+        role: input.role ?? null,
+        variant: input.variant ?? null,
         content: input.content,
         overrides: null,
         mediaId: null,
@@ -476,7 +483,7 @@ describe("PipelineWorker (bloco 6) — 7 steps, checkpoint e retomada", () => {
   // cliente nunca eram usadas porque `hasStrongPhoto` estava hardcoded
   // em `false` no step "copy" (comentário dizia "sem RetrieveAssets
   // real" — desatualizado desde que o bloco 7 foi ligado de verdade).
-  it("com acervo analisado do cliente, um slide sem outro sinal vira foto-total", async () => {
+  it("com acervo analisado do cliente, algum slide carrega foto real (critério de pronto)", async () => {
     const noSignalCopy = {
       ...copyResponse,
       slides: copyResponse.slides.map((slide) =>
@@ -524,7 +531,20 @@ describe("PipelineWorker (bloco 6) — 7 steps, checkpoint e retomada", () => {
     expect(result.ok).toBe(true);
 
     const finalSlides = await slides.listByProject(project.id);
-    expect(finalSlides.find((slide) => slide.index === 2)?.archetypeId).toBe("foto-total");
+    // README, "Critério de pronto": o carrossel sai "com pelo menos uma
+    // imagem vinda do acervo do cliente". Antes isso podia dar zero, que
+    // foi exatamente o bug relatado (fotos no acervo, carrossel só com
+    // texto). Não fixa QUAL slide: quem decide é a receita do estilo.
+    const canvas = canvasForRatio("4:5");
+    const comMidia = finalSlides.filter((slide) =>
+      getBlueprint(slide.archetypeId)
+        .slots(blueprintContext(canvas))
+        .some((slot) => slot.kind === "media"),
+    );
+    expect(comMidia.length).toBeGreaterThanOrEqual(1);
+    // E o papel editorial foi persistido junto (a geometria depende dele).
+    expect(finalSlides.every((slide) => slide.role !== null)).toBe(true);
+    expect(finalSlides.every((slide) => slide.variant !== null)).toBe(true);
   });
 
   it("falha no meio do pipeline sem avançar o step, e retoma exatamente dali", async () => {

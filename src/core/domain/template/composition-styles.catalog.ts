@@ -50,7 +50,13 @@ const recipe = (
 // (invariante checada em teste).
 const BASE_RECIPES = {
   capa: recipe("cover-centro"),
-  argumento: recipe("lista-icone"),
+  // As especializações preservam o comportamento do SelectLayout
+  // original: passo numerado vira `numerada`, data com hora vira
+  // `evento`, lista curta vira `lista-icone`.
+  argumento: {
+    ...recipe("lista-icone"),
+    specializations: { step: "numerada", date: "evento", list: "lista-icone" },
+  } as SlideRecipe,
   dado: recipe("dado"),
   citacao: recipe("citacao", CALM_AXES, { wantsMedia: true }),
   prova: recipe("foto-total", CALM_AXES, { wantsMedia: true }),
@@ -222,7 +228,11 @@ export const COMPOSITION_STYLES: readonly CompositionStyle[] = [
 
 export const STYLE_SLUGS: readonly string[] = COMPOSITION_STYLES.map((style) => style.slug);
 
-export const DEFAULT_STYLE_SLUG = "manchete-sangrada";
+// Default deliberadamente SEM `requires`: um cliente recém-cadastrado
+// não tem acervo, e cair num estilo que exige foto deixaria o gerador
+// travado logo no primeiro uso. `nevoa-suave` usa as receitas base, que
+// são as mais próximas do comportamento anterior à camada de estilos.
+export const DEFAULT_STYLE_SLUG = "nevoa-suave";
 
 export function getCompositionStyle(slug: string): CompositionStyle {
   const found = COMPOSITION_STYLES.find((style) => style.slug === slug);

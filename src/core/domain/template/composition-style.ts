@@ -37,9 +37,19 @@ export interface StyleChrome {
   readonly badge?: string;
 }
 
+// Sinal forte detectado no corpo do slide. Não é o papel: um
+// "argumento" pode vir em forma de passo numerado, de lista curta ou de
+// data — e o estilo decide se quer compor isso de um jeito próprio.
+export type ContentSignal = "step" | "quote" | "number" | "list" | "date" | "none";
+
 export interface SlideRecipe {
   readonly archetypeId: ArchetypeId;
   readonly axes: VariantAxisConstraints;
+  // Especializações opcionais por sinal de conteúdo: preservam a
+  // expressividade dos 8 arquétipos (um slide com "passo 2" continua
+  // virando `numerada`) sem furar o modelo de papéis do README — quem
+  // decide continua sendo o estilo, como dado.
+  readonly specializations?: Readonly<Partial<Record<ContentSignal, ArchetypeId>>>;
   // Modo fixo (ex.: 02 "noite futurista" é sempre escuro). Ausente = o
   // planejador distribui claro/escuro pelo carrossel.
   readonly mode?: SlideMode;
