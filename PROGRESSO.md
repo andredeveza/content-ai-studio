@@ -29,8 +29,10 @@ ADENDO-02 (correções urgentes) completos.
 - [x] FASE A da auditoria — estilos de composição ligados na geração
       (papel do slide, variantes, distribuição de modos, garantia de
       foto real, post único). Ver "Auditoria" abaixo.
+- [x] FASE B da auditoria — chrome reconstruído a partir dos protótipos
+      (shell duplo, Gerador terminal, Progresso com console).
 
-## Auditoria contra o handoff de design (fase A)
+## Auditoria contra o handoff de design (fases A e B)
 
 O usuário reportou "o app não responde ao que criamos". A auditoria
 confirmou, e achou duas causas independentes:
@@ -39,8 +41,8 @@ confirmou, e achou duas causas independentes:
    tem 9 arquivos `.dc.html` (~300KB) que o README declara
    **especificação executável**, mais o README real de 28KB. O
    `README.md` na raiz é o boilerplate intocado do create-next-app —
-   ou seja, a spec de verdade nunca foi a fonte da implementação. **Isso
-   é a FASE B, ainda não feita** (ver "Pendências").
+   ou seja, a spec de verdade nunca foi a fonte da implementação.
+   Corrigido na FASE B (ver abaixo).
 2. **A camada de estilos de composição era decorativa.**
    `COMPOSITION_STYLES` era importado por exatamente 1 arquivo
    (`style-coverage.service.ts`, a barra de cobertura da tela Marca) e
@@ -249,6 +251,51 @@ teste de regressão.
   dar um slot de mídia opcional pro `cover-centro`), mas isso não foi
   decidido/feito aqui — fica como pendência a validar com o usuário.
 
+### Fase B — o chrome, agora vindo dos protótipos
+
+Os valores abaixo são literais do handoff, não aproximações.
+
+- **Shell duplo.** Desktop ganhou a sidebar sticky de **236px**
+  (`grid-template-columns:236px 1fr`) com marca + cursor piscando,
+  navegação e rodapé "provedores" mostrando o estado REAL das
+  capabilities de `config/ai.ts`. Mobile ganhou a top bar sticky
+  (blur 8px) com botão de pasta 44×44 para Projetos. Antes existia só a
+  tab bar mobile, esticada em qualquer largura.
+- **Tab bar com os 5 itens certos**: `gerador`(terminal) ·
+  `geração`(workflow) · `editor`(shapes) · `agenda`(calendar-days) ·
+  `marca`(palette), rótulos **minúsculos** em Mono 9.5px, inativo
+  `--chrome-faint`, `backdrop-blur(10px)`. Antes: 4 itens capitalizados,
+  ícone de sparkles no Gerador e uma aba "Projetos" que não existe em
+  protótipo nenhum (Projetos é o botão de pasta do topo).
+- **Rotas-índice `/progresso` e `/editor`** resolvem para o trabalho
+  mais recente da org — no protótipo, que é demo de cliente único, essas
+  telas sempre existem; aqui precisavam de um alvo.
+- **LogoMark** virou o triângulo do handoff (viewBox 0 0 220 168,
+  `#7A7A7A` + `#0A0A0A`). O quadrado com gradiente azul e ícone de
+  sparkles não estava em lugar nenhum do design.
+- **Gerador virou o terminal do protótipo**: `>` verde `#3A9A48` Mono
+  17px com cursor piscando, chips de sugestão em carrossel horizontal,
+  objetivo como lista de rádio com bolinha desenhada (anel 15px, miolo
+  8px), **stepper 44×44** no lugar do `<input type=range>`, **campo CTA**
+  (que simplesmente não existia), cards de formato de 84px e botão de
+  52px.
+- **Progresso** ganhou o percentual **Mono 46px/700**, barra de **4px**
+  com `cubic-bezier(.4,0,.2,1)`, os 7 steps com `●`/`◐`/`○` + nome do
+  serviço + porcentagem, e o **console preto** `#080808` r=11px Mono
+  10.5px com cursor branco piscando — alimentado pelo estado real do
+  job, sem número inventado.
+- **`globals.css`** ganhou o keyframe `blink` e a classe **`noscroll`**,
+  que já era aplicada em `agenda-screen` e `editor-screen` mas **nunca
+  tinha sido definida** — ou seja, a barra de rolagem aparecia.
+- **Marca**: dropzone com os três estados do protótipo (ocioso ·
+  analisando com barra e passo · concluído — o terceiro faltava, então
+  não havia confirmação de sucesso) e tipografia renderizando cada linha
+  na própria fonte.
+- Alvo de toque mínimo de 44px aplicado nos controles interativos.
+
+Conferido em navegador real a 430px e a 1280px contra os protótipos
+abertos lado a lado.
+
 - **Catálogo de estilos ficou em TypeScript, não em tabela** — desvio
   deliberado da spec, que pede `composition_styles` no banco.
   `slideRecipes` referencia `ArchetypeId` e uniões de eixo que só
@@ -270,24 +317,11 @@ teste de regressão.
 
 ## Pendências conhecidas
 
-- **FASE B da auditoria: o chrome do produto ainda não bate com os
-  protótipos.** É a metade visível da queixa original e continua aberta.
-  Concretamente, comparando com `design_handoff_content_ai_studio/design/`:
-  - **Tab bar**: o protótipo mobile tem `repeat(5,1fr)` com rótulos
-    minúsculos `gerador`(terminal) · `geração`(workflow) ·
-    `editor`(shapes) · `agenda`(calendar-days) · `marca`(palette). O app
-    tem 4 itens capitalizados, ícones diferentes, e um "Projetos" que
-    não existe no protótipo.
-  - **Desktop**: o protótipo é `grid-template-columns:236px 1fr` — uma
-    sidebar. O app mostra as tabs mobile em qualquer largura.
-  - **Gerador**: o protótipo é um terminal — `>` verde `#3A9A48` Mono
-    17px com cursor piscando, chips de sugestão, stepper 44×44, campo
-    CTA e 3 cards de template. O app tem `<select>` + textarea + slider.
-  - **Progresso**: o protótipo tem percentual Mono 46px/700, barra de
-    4px com `cubic-bezier(.2,.6,.2,1)`, os 7 steps com `●`/`◐`/`○` e um
-    **terminal preto** `#080808` r=11px com log Mono 10.5px. O app tem
-    um checklist com badges circulares.
-  - Alvo de toque mínimo de 44px "sem exceção" não está garantido.
+- **Fidelidade que a Fase B NÃO cobriu.** O shell, o Gerador e o
+  Progresso vieram dos protótipos; Editor, Agenda e Projetos ainda usam
+  a linguagem visual anterior (funcionam, mas não foram remontados a
+  partir do handoff). O Editor em particular continua sem o rail de
+  52×65 e o inspector na proporção do protótipo.
 - **Tabelas da spec ainda ausentes** (não bloqueiam o que está no ar):
   `templates`, `captions`, `hashtags`, `publications`, `uploads`,
   `prompt_history`, `post_metrics`, `blueprints`, `layout_variants`.
