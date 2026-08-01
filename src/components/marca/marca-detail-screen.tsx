@@ -143,6 +143,11 @@ export function MarcaDetailScreen({
   // cada arquivo ingerido.
   const [assets, setAssets] = useState(initialAssets);
   const [uploadingCount, setUploadingCount] = useState(0);
+  // ADENDO-01 / protótipo: o dropzone tem TRÊS estados (ocioso ·
+  // analisando, com barra e passo · concluído). Faltava o terceiro — o
+  // usuário não tinha confirmação de que a ingestão deu certo.
+  const [uploadTotal, setUploadTotal] = useState(0);
+  const [uploadDone, setUploadDone] = useState(0);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [siteUrl, setSiteUrl] = useState(site || "");
   const [siteConfirmed, setSiteConfirmed] = useState(false);
@@ -220,12 +225,15 @@ export function MarcaDetailScreen({
     if (list.length === 0) return;
     setError(null);
     setUploadingCount((n) => n + list.length);
+    setUploadTotal((n) => (n === uploadDone ? list.length : n + list.length));
+    if (uploadingCount === 0) setUploadDone(0);
     for (const file of list) {
       const formData = new FormData();
       formData.set("file", file);
       startAction(async () => {
         const result = await ingestAssetAction(formData);
         setUploadingCount((n) => Math.max(0, n - 1));
+        setUploadDone((n) => n + 1);
         if (!result.ok) {
           setError(`"${file.name}": ${result.error}`);
           return;
@@ -324,9 +332,32 @@ export function MarcaDetailScreen({
         </div>
 
         {uploadingCount > 0 && (
-          <div className="flex items-center gap-2 text-sm text-(--chrome-muted)">
-            <Loader2 className="size-4 animate-spin" />
-            Analisando {uploadingCount} arquivo{uploadingCount > 1 ? "s" : ""}...
+          <div className="grid gap-2 rounded-[10px] border border-(--chrome-border) bg-(--chrome-surface) px-3.5 py-3">
+            <div className="flex items-center gap-2 text-sm text-(--chrome-ink)">
+              <Loader2 className="size-4 animate-spin" strokeWidth={1.75} />
+              Analisando {uploadingCount} arquivo{uploadingCount > 1 ? "s" : ""}…
+            </div>
+            {/* Barra + passo: o protótipo mostra o progresso, não só um
+                spinner sem fim. */}
+            <div className="h-1 overflow-hidden rounded-sm bg-(--chrome-border)">
+              <div
+                className="h-1 rounded-sm bg-(--chrome-terminal)"
+                style={{
+                  width: `${uploadTotal > 0 ? Math.round((uploadDone / uploadTotal) * 100) : 0}%`,
+                  transition: "width 400ms cubic-bezier(.2,.6,.2,1)",
+                }}
+              />
+            </div>
+            <div className="font-mono text-[10px] text-(--chrome-muted)">
+              {uploadDone}/{uploadTotal} · extraindo cor, dimensão e termos
+            </div>
+          </div>
+        )}
+
+        {uploadingCount === 0 && uploadDone > 0 && (
+          <div className="flex items-center gap-2 rounded-[10px] border border-(--chrome-ok)/30 bg-(--chrome-ok)/10 px-3.5 py-3 text-sm text-(--chrome-ok)">
+            <Check className="size-4" strokeWidth={2.25} />
+            {uploadDone} arquivo{uploadDone > 1 ? "s" : ""} no acervo.
           </div>
         )}
 
@@ -655,6 +686,16 @@ function FontFields({
 }) {
   return (
     <div className="grid gap-2">
+      {/* README, tela "Marca": "tipografia (cada linha renderiza na
+          própria fonte)". A amostra usa a família digitada e a URL do
+          CSS informada logo abaixo — se a fonte não carregar, o próprio
+          usuário vê na hora, em vez de descobrir só no PNG final. */}
+      <div
+        className="rounded-[9px] border border-(--chrome-border) bg-(--chrome-surface-2) px-3 py-2.5 text-[19px] leading-tight"
+        style={{ fontFamily: `'${family}', system-ui, sans-serif` }}
+      >
+        {family || "—"}
+      </div>
       <label className="grid gap-1">
         <span className="font-mono text-[9.5px] uppercase tracking-[.1em] text-(--chrome-muted)">{label} — família</span>
         <input value={family} onChange={(e) => setFamily(e.target.value)} className={inputClass} />
