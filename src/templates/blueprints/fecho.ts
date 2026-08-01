@@ -1,5 +1,9 @@
 import type { Blueprint } from "@/core/domain/template/blueprint";
-import { anchor } from "@/templates/geometry";
+import { anchor, shrinkToBand } from "@/templates/geometry";
+
+const GAP_AFTER_HEADING = 40;
+const GAP_AFTER_LEAD = 60;
+const CTA_H = 120;
 
 export const fecho: Blueprint = {
   id: "fecho",
@@ -8,14 +12,27 @@ export const fecho: Blueprint = {
   slots: (ctx) => {
     const { margin, scale, variant } = ctx;
     const { top, height } = ctx.band;
-    const y = anchor(variant.textBlock, top, height, 544);
     const contentWidth = ctx.canvas.w - 2 * margin;
+
+    const [headingH, leadH] = shrinkToBand(
+      GAP_AFTER_HEADING + GAP_AFTER_LEAD + CTA_H,
+      [
+        { lines: 2, lineHeight: scale.display.lineHeight },
+        { lines: 2, lineHeight: scale.body.lineHeight },
+      ],
+      height,
+    ) as [number, number];
+    const leadY = headingH + GAP_AFTER_HEADING;
+    const ctaY = leadY + leadH + GAP_AFTER_LEAD;
+    const blockH = ctaY + CTA_H;
+
+    const y = anchor(variant.textBlock, top, height, blockH);
 
     return [
       {
         kind: "text",
         key: "heading",
-        box: { x: margin, y, w: contentWidth, h: 236 },
+        box: { x: margin, y, w: contentWidth, h: headingH },
         fontSize: scale.display.fontSize,
         lineHeight: scale.display.lineHeight,
         tracking: scale.display.tracking,
@@ -26,7 +43,7 @@ export const fecho: Blueprint = {
       {
         kind: "text",
         key: "lead",
-        box: { x: margin, y: y + 276, w: contentWidth, h: 88 },
+        box: { x: margin, y: y + leadY, w: contentWidth, h: leadH },
         fontSize: scale.body.fontSize,
         lineHeight: scale.body.lineHeight,
         weight: 400,
@@ -37,7 +54,8 @@ export const fecho: Blueprint = {
       {
         kind: "text",
         key: "cta",
-        box: { x: 290, y: y + 424, w: 500, h: 120 },
+        // Pílula de CTA: altura fixa de propósito, é um botão.
+        box: { x: 290, y: y + ctaY, w: 500, h: CTA_H },
         fontSize: 34,
         lineHeight: 34,
         tracking: "0.1em",

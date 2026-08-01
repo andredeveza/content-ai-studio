@@ -1,6 +1,10 @@
 import type { Blueprint } from "@/core/domain/template/blueprint";
 import { lh } from "@/core/domain/template/type-scale";
-import { anchor } from "@/templates/geometry";
+import { anchor, shrinkToBand } from "@/templates/geometry";
+
+const BADGE = 260;
+const GAP_AFTER_BADGE = 50;
+const GAP_AFTER_HEADING = 30;
 
 export const evento: Blueprint = {
   id: "evento",
@@ -9,21 +13,36 @@ export const evento: Blueprint = {
   slots: (ctx) => {
     const { margin, scale, variant, canvas } = ctx;
     const { top, height } = ctx.band;
-    const y = anchor(variant.textBlock, top, height, 644);
     const contentWidth = canvas.w - 2 * margin;
+
+    const headingLh = lh(scale.heading.fontSize, 104 / 90);
+    const detailLh = lh(scale.body.fontSize, 48 / 36);
+    const [headingH, detailH] = shrinkToBand(
+      BADGE + GAP_AFTER_BADGE + GAP_AFTER_HEADING,
+      [
+        { lines: 2, lineHeight: headingLh },
+        { lines: 2, lineHeight: detailLh },
+      ],
+      height,
+    ) as [number, number];
+    const headingY = BADGE + GAP_AFTER_BADGE;
+    const detailY = headingY + headingH + GAP_AFTER_HEADING;
+    const blockH = detailY + detailH;
+
+    const y = anchor(variant.textBlock, top, height, blockH);
 
     return [
       {
         kind: "shape",
         key: "dateBadge",
-        box: { x: margin, y, w: 260, h: 260 },
+        box: { x: margin, y, w: BADGE, h: BADGE },
         color: "accent",
         radius: 30,
       },
       {
         kind: "text",
         key: "day",
-        box: { x: margin, y: y + 42, w: 260, h: 130 },
+        box: { x: margin, y: y + 42, w: BADGE, h: 130 },
         fontSize: 120,
         lineHeight: 126,
         font: "display",
@@ -33,7 +52,7 @@ export const evento: Blueprint = {
       {
         kind: "text",
         key: "month",
-        box: { x: margin, y: y + 178, w: 260, h: 50 },
+        box: { x: margin, y: y + 178, w: BADGE, h: 50 },
         fontSize: scale.micro.fontSize,
         lineHeight: scale.micro.lineHeight,
         tracking: scale.micro.tracking,
@@ -45,9 +64,9 @@ export const evento: Blueprint = {
       {
         kind: "text",
         key: "heading",
-        box: { x: margin, y: y + 310, w: contentWidth, h: 208 },
+        box: { x: margin, y: y + headingY, w: contentWidth, h: headingH },
         fontSize: scale.heading.fontSize,
-        lineHeight: lh(scale.heading.fontSize, 104 / 90),
+        lineHeight: headingLh,
         tracking: scale.heading.tracking,
         font: "display",
         color: "title",
@@ -55,9 +74,9 @@ export const evento: Blueprint = {
       {
         kind: "text",
         key: "detail",
-        box: { x: margin, y: y + 548, w: 780, h: 96 },
+        box: { x: margin, y: y + detailY, w: 780, h: detailH },
         fontSize: scale.body.fontSize,
-        lineHeight: lh(scale.body.fontSize, 48 / 36),
+        lineHeight: detailLh,
         weight: 400,
         font: "body",
         color: "textLight",

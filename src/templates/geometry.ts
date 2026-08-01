@@ -45,6 +45,44 @@ export function mid(top: number, contentHeight: number, blockHeight: number): nu
   return top + Math.max(0, (contentHeight - blockHeight) / 2);
 }
 
+export interface FlexibleBlock {
+  // Quantas linhas o slot quer ter quando há espaço sobrando.
+  readonly lines: number;
+  readonly lineHeight: number;
+}
+
+// README, "Regra de clamp obrigatória": "Restrinja o container — não
+// confie no prompt para limitar palavras." Aqui isso vale também para a
+// COMPOSIÇÃO: se a escala de um estilo (ex.: 03 "revista autoral" no
+// degrau `up`, num canvas 1:1) faz o bloco ficar mais alto que a faixa
+// de conteúdo, corta linha dos slots flexíveis em vez de deixar o texto
+// invadir o rodapé. Nunca desce abaixo de 1 linha.
+//
+// Devolve a altura final de cada bloco flexível, na ordem recebida.
+export function shrinkToBand(fixedHeight: number, flexible: readonly FlexibleBlock[], bandHeight: number): number[] {
+  const lines = flexible.map((block) => block.lines);
+  const total = () => fixedHeight + lines.reduce((sum, n, i) => sum + n * flexible[i]!.lineHeight, 0);
+
+  while (total() > bandHeight) {
+    // Corta do bloco que hoje ocupa mais altura — mantém a hierarquia
+    // tipográfica proporcional em vez de zerar o menor primeiro.
+    let target = -1;
+    let tallest = 0;
+    for (let i = 0; i < lines.length; i += 1) {
+      if (lines[i]! <= 1) continue;
+      const heightOf = lines[i]! * flexible[i]!.lineHeight;
+      if (heightOf > tallest) {
+        tallest = heightOf;
+        target = i;
+      }
+    }
+    if (target === -1) break; // todos já em 1 linha: a faixa é pequena demais
+    lines[target] = lines[target]! - 1;
+  }
+
+  return lines.map((n, i) => n * flexible[i]!.lineHeight);
+}
+
 // Generaliza `mid()` para o eixo `textBlock` da variante. "center" é
 // exatamente o `mid()` de antes — é o que mantém o golden intacto. O
 // bloco se move DENTRO da faixa, nunca para fora dela.

@@ -15,6 +15,8 @@ const DARK_BAND_THRESHOLD = 0.4;
 const PORTRAIT_ASPECT_MAX = 0.95;
 
 export interface StyleAvailability {
+  // Slug, não o ordinal `id` ("01") — é o que `projects.style_id`
+  // guarda e o que o Gerador manda de volta na hora de gerar.
   readonly id: string;
   readonly name: string;
   readonly available: boolean;
@@ -69,9 +71,9 @@ export class StyleCoverageService {
     const styles = COMPOSITION_STYLES.map((style): StyleAvailability => {
       for (const need of style.requires) {
         const failure = this.checkNeed(need, images, pdfsWithExcerpts, brandKit);
-        if (failure) return { id: style.id, name: style.name, available: false, reason: failure };
+        if (failure) return { id: style.slug, name: style.name, available: false, reason: failure };
       }
-      return { id: style.id, name: style.name, available: true, reason: null };
+      return { id: style.slug, name: style.name, available: true, reason: null };
     });
 
     return { available: styles.filter((s) => s.available).length, total: styles.length, styles };

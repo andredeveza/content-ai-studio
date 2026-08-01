@@ -12,6 +12,8 @@ export const dado: Blueprint = {
     const chartHeight = bottom - chartTop;
     const base = chartTop + chartHeight - 40;
 
+    const headingLh = lh(scale.heading.fontSize, 100 / 90);
+
     const bar = (key: string, x: number, fraction: number, color: "accent" | "primary") => ({
       kind: "chart-bar" as const,
       key,
@@ -25,9 +27,9 @@ export const dado: Blueprint = {
         kind: "text",
         key: "heading",
         // Manchete fixa no topo da faixa: o corpo é do gráfico.
-        box: { x: 199, y: top, w: canvas.w - 2 * margin - 198, h: 210 },
+        box: { x: 199, y: top, w: canvas.w - 2 * margin - 198, h: Math.max(210, 2 * headingLh) },
         fontSize: scale.heading.fontSize,
-        lineHeight: lh(scale.heading.fontSize, 100 / 90),
+        lineHeight: headingLh,
         tracking: scale.heading.tracking,
         font: "display",
         color: "title",

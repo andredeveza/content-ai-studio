@@ -10,14 +10,16 @@ export const listaIcone: Blueprint = {
     const { top, height } = ctx.band;
     const step = Math.min(150, (height - 240 - 88) / 2);
     const contentWidth = canvas.w - 2 * margin;
+    const headingLh = lh(scale.heading.fontSize, 100 / 90);
+    const headingH = 2 * headingLh;
 
     const slots: Slot[] = [
       {
         kind: "text",
         key: "heading",
-        box: { x: margin, y: top, w: contentWidth, h: 200 },
+        box: { x: margin, y: top, w: contentWidth, h: headingH },
         fontSize: scale.heading.fontSize,
-        lineHeight: lh(scale.heading.fontSize, 100 / 90),
+        lineHeight: headingLh,
         tracking: scale.heading.tracking,
         font: "display",
         color: "title",
