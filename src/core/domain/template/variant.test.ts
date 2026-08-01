@@ -82,3 +82,29 @@ describe("distributeModes — distribui, não sorteia", () => {
     expect(distributeModes(7, none(7), "projeto-y")).toEqual(distributeModes(7, none(7), "projeto-y"));
   });
 });
+
+// Bug real, pego numa geração ponta a ponta com o estilo "canto escuro"
+// (que fixa dark em capa e prova): a versão anterior do reparo só tentava
+// virar o slide do MEIO da corrida; vendo que ele era fixo, desistia — e
+// o feed saía com três escuros seguidos.
+describe("distributeModes — corridas criadas por modos fixos", () => {
+  it("quebra a corrida virando um vizinho quando o do meio é fixo", () => {
+    const fixed: (SlideMode | undefined)[] = [
+      "dark", undefined, undefined, undefined, "dark", undefined, undefined,
+    ];
+    for (let s = 0; s < 30; s += 1) {
+      const modes = distributeModes(7, fixed, `projeto-${s}`);
+      expect(modes[0]).toBe("dark");
+      expect(modes[4]).toBe("dark");
+      for (let i = 2; i < modes.length; i += 1) {
+        const run = modes[i] === modes[i - 1] && modes[i - 1] === modes[i - 2];
+        expect(run, `corrida de 3 em ${modes.join(",")}`).toBe(false);
+      }
+    }
+  });
+
+  it("respeita o estilo quando os três da corrida são fixos de propósito", () => {
+    const fixed: (SlideMode | undefined)[] = Array.from({ length: 5 }, () => "dark");
+    expect(distributeModes(5, fixed, "x")).toEqual(["dark", "dark", "dark", "dark", "dark"]);
+  });
+});

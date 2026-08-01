@@ -132,12 +132,19 @@ export function distributeModes(
   }
 
   // Um modo fixado pela receita do estilo pode criar uma corrida de 3+.
-  // Conserta virando o do meio, desde que ele próprio não seja fixo.
+  // Conserta virando UM dos três — preferindo o do meio, mas caindo para
+  // os vizinhos quando o meio é fixo. Bug real pego em geração de
+  // verdade: no estilo "canto escuro" (que fixa dark em capa e prova) a
+  // versão anterior só tentava o meio, via que ele era fixo e desistia,
+  // deixando três slides escuros seguidos no feed.
   for (let index = 1; index < modes.length - 1; index += 1) {
     const isRun = modes[index - 1] === modes[index] && modes[index] === modes[index + 1];
-    if (isRun && fixed[index] === undefined) {
-      modes[index] = modes[index] === "light" ? "dark" : "light";
-    }
+    if (!isRun) continue;
+
+    const candidate = [index, index + 1, index - 1].find((i) => fixed[i] === undefined);
+    if (candidate === undefined) continue; // os três são fixos: escolha explícita do estilo
+
+    modes[candidate] = modes[candidate] === "light" ? "dark" : "light";
   }
 
   return modes;

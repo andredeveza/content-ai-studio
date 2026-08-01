@@ -26,6 +26,105 @@ ADENDO-02 (correções urgentes) completos.
       Marca, seletor de Formato)
 - [x] Correção pós-ADENDO-02 — Progresso em tempo real + acervo
       realmente usado na geração (ver decisões abaixo)
+- [x] FASE A da auditoria — estilos de composição ligados na geração
+      (papel do slide, variantes, distribuição de modos, garantia de
+      foto real, post único). Ver "Auditoria" abaixo.
+
+## Auditoria contra o handoff de design (fase A)
+
+O usuário reportou "o app não responde ao que criamos". A auditoria
+confirmou, e achou duas causas independentes:
+
+1. **Os protótipos nunca foram usados.** `design_handoff_content_ai_studio/`
+   tem 9 arquivos `.dc.html` (~300KB) que o README declara
+   **especificação executável**, mais o README real de 28KB. O
+   `README.md` na raiz é o boilerplate intocado do create-next-app —
+   ou seja, a spec de verdade nunca foi a fonte da implementação. **Isso
+   é a FASE B, ainda não feita** (ver "Pendências").
+2. **A camada de estilos de composição era decorativa.**
+   `COMPOSITION_STYLES` era importado por exatamente 1 arquivo
+   (`style-coverage.service.ts`, a barra de cobertura da tela Marca) e
+   nunca tocava o pipeline. O README é explícito: *"Sem essa camada,
+   todo carrossel sai com o mesmo esqueleto... é exatamente o que mata o
+   potencial viral."* Corrigido nesta fase.
+
+Consequência objetiva que a fase A fechou: o app **falhava o próprio
+critério de pronto do README** — "com pelo menos uma imagem vinda do
+acervo do cliente". Só 2 dos 8 blueprints têm slot de mídia e
+`foto-total` era o último critério do `selectLayout`, então o carrossel
+podia terminar com zero fotos do cliente mesmo com o acervo cheio. Foi
+exatamente o caso da HS Endoscopia.
+
+### O que mudou
+
+- **`Blueprint.slots(canvas)` virou `slots(ctx: BlueprintContext)`** —
+  margem, faixa de conteúdo, escala tipográfica e variante deixam de ser
+  constantes de módulo. Golden test dos 8 arquétipos × 3 formatos
+  escrito ANTES do refactor (24 snapshots) prova que a geometria default
+  não mudou nada.
+- **Alturas de caixa derivam da escala**, não são mais literais: um
+  estilo que sobe a display (01: 128–148px) precisa da caixa crescendo
+  junto, senão o clamp corta a manchete no meio.
+- **`shrinkToBand`** — quando a escala do estilo faz o bloco passar da
+  faixa, corta LINHA do bloco mais alto em vez de deixar o texto invadir
+  o rodapé. Mesma filosofia da regra de clamp obrigatória ("restrinja o
+  container"). Pego pelo teste de blindagem, não por revisão.
+- **`selectLayout` virou `planCarouselLayout`**, com entrada no nível do
+  carrossel: distribuição de modo claro/escuro e garantia de foto não
+  são decisões que se possam tomar slide a slide. As regexes de sinal do
+  SelectLayout original ficaram verbatim, mas devolvem PAPEL; o estilo
+  resolve a composição daquele papel.
+- **Especializações por sinal** (`SlideRecipe.specializations`) mantêm a
+  expressividade dos 8 arquétipos — "passo 2" continua virando
+  `numerada`, data com hora continua virando `evento` — só que como DADO
+  do estilo, não `if` hardcoded.
+- **Garantia de foto real em 3 camadas**: viés no planejamento (promove
+  um slide do miolo, nunca capa/fecho), piso de recuperação 0.30 no
+  `runImage` quando o carrossel fecharia sem nenhum asset, e
+  `projects.media_source` (`acervo`/`ai`/`none`) para o caso "cliente
+  sem acervo" virar aviso honesto. `illegible` barra o match em QUALQUER
+  piso — legibilidade vence variedade, como o README manda.
+- **`titleBandForArchetype`** (hardcoded `"bottom"`, com comentário
+  admitindo) virou `titleBandFor(variant)`: o contraste passa a ser
+  medido na faixa onde o título realmente cai.
+- **Ornamento declarativo (`DecorSpec`)** resolve a geometria que nenhum
+  arquétipo expressa (cartão do 04, filetes do 05, manchas do 06, guias
+  do 07, selo do 08), mantendo a promessa de "acrescentar o oitavo é
+  inserir uma linha".
+- **Gerador com seletor de estilo**: estilo sem foto no acervo aparece
+  desabilitado **com o motivo à mostra**, nunca silenciosamente ausente.
+- **Post único (estilo 08)** é caminho distinto, não contagem diferente:
+  some o slider, o botão muda, e os prompts de research/copy passam a
+  tratar a legenda como o conteúdo principal.
+
+### Verificado contra infraestrutura real (não só vitest)
+
+Geração ponta a ponta com usuário/cliente descartáveis e uma foto real
+ingerida no acervo, estilo "canto escuro", 7 slides:
+
+| idx | papel | arquétipo | modo | mídia |
+|---|---|---|---|---|
+| 0 | capa | foto-total | dark | **acervo** |
+| 1 | argumento | numerada | light | — |
+| 2 | argumento | numerada | dark | — |
+| 3 | dado | dado | light | — |
+| 4 | citacao | citacao | dark | **acervo** |
+| 5 | prova | foto-total | dark | **acervo** |
+| 6 | fecho | fecho | light | — |
+
+`media_source = 'acervo'`, duração real **56,6s**. Compare com o bug
+relatado: 7 slides, todos `cover-centro`, zero fotos.
+
+Cobertura de estilos conferida na tela com dois clientes: sem acervo, os
+estilos 01/03/05 aparecem bloqueados com o motivo literal ("precisa de
+uma foto vertical com faixa inferior escura no acervo"); com uma foto
+vertical escura ingerida, os 8 liberam.
+
+**Bug real pego só nessa validação** (não pelos testes): o estilo "canto
+escuro" fixa `dark` em capa e prova, e o reparo de corrida de modos só
+tentava virar o slide do MEIO — vendo que era fixo, desistia, e o feed
+saía com três escuros seguidos. Corrigido para cair nos vizinhos, com
+teste de regressão.
 
 ## Decisões tomadas durante a construção
 
@@ -150,8 +249,51 @@ ADENDO-02 (correções urgentes) completos.
   dar um slot de mídia opcional pro `cover-centro`), mas isso não foi
   decidido/feito aqui — fica como pendência a validar com o usuário.
 
+- **Catálogo de estilos ficou em TypeScript, não em tabela** — desvio
+  deliberado da spec, que pede `composition_styles` no banco.
+  `slideRecipes` referencia `ArchetypeId` e uniões de eixo que só
+  existem em código: no catálogo um typo é erro de compilação com
+  exaustividade `never`; numa tabela seria falha Zod em runtime dentro
+  do worker, descoberta pelo cliente. Estilos são produto versionado,
+  não dado de tenant — uma linha antiga apontando para um arquétipo
+  removido quebraria produção com CI verde. O requisito real do README
+  ("acrescentar o oitavo é inserir uma linha, nenhum componente muda") é
+  satisfeito literalmente por um array congelado, e há teste de
+  invariantes fazendo o papel das constraints do banco. O que varia por
+  projeto (`projects.style_id`, `slides.role`, `slides.variant`) esse
+  sim está persistido (migration 0010). Escape futuro, se aparecer
+  customização por org: `composition_style_overrides (org_id, style_id,
+  patch jsonb)`.
+- **Estilo default é `nevoa-suave`, não o 01** — o 01 exige foto, e
+  cliente recém-cadastrado não tem acervo; cair num estilo bloqueado
+  travaria o gerador logo no primeiro uso.
+
 ## Pendências conhecidas
 
+- **FASE B da auditoria: o chrome do produto ainda não bate com os
+  protótipos.** É a metade visível da queixa original e continua aberta.
+  Concretamente, comparando com `design_handoff_content_ai_studio/design/`:
+  - **Tab bar**: o protótipo mobile tem `repeat(5,1fr)` com rótulos
+    minúsculos `gerador`(terminal) · `geração`(workflow) ·
+    `editor`(shapes) · `agenda`(calendar-days) · `marca`(palette). O app
+    tem 4 itens capitalizados, ícones diferentes, e um "Projetos" que
+    não existe no protótipo.
+  - **Desktop**: o protótipo é `grid-template-columns:236px 1fr` — uma
+    sidebar. O app mostra as tabs mobile em qualquer largura.
+  - **Gerador**: o protótipo é um terminal — `>` verde `#3A9A48` Mono
+    17px com cursor piscando, chips de sugestão, stepper 44×44, campo
+    CTA e 3 cards de template. O app tem `<select>` + textarea + slider.
+  - **Progresso**: o protótipo tem percentual Mono 46px/700, barra de
+    4px com `cubic-bezier(.2,.6,.2,1)`, os 7 steps com `●`/`◐`/`○` e um
+    **terminal preto** `#080808` r=11px com log Mono 10.5px. O app tem
+    um checklist com badges circulares.
+  - Alvo de toque mínimo de 44px "sem exceção" não está garantido.
+- **Tabelas da spec ainda ausentes** (não bloqueiam o que está no ar):
+  `templates`, `captions`, `hashtags`, `publications`, `uploads`,
+  `prompt_history`, `post_metrics`, `blueprints`, `layout_variants`.
+  Também falta `assets.status = 'review'` com aprovação do usuário antes
+  de uma foto importada entrar em carrossel — hoje o site importer já
+  ingere direto.
 - **Flakiness do `sharp` no dev server Windows, fora do Next.** Rodando
   `next dev` neste Windows, `sharp` às vezes falha com
   `ERR_DLOPEN_FAILED` especificamente quando carregado a partir de uma
