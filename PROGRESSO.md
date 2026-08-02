@@ -215,7 +215,7 @@ teste de regressão.
   `app/(dashboard)/gerador/page.tsx` (Route Segment Config vale pras
   server actions vinculadas à page) — 300s é o teto do plano Pro; no
   Hobby a Vercel limita a execução real a 60s independente deste valor
-  (não confirmado ainda qual plano está ativo). Verificado com geração
+  (confirmado em produção: 124s rodaram sem corte). Verificado com geração
   real ponta a ponta: a tela de Progresso capturou o job no meio do
   pipeline (step "prompt") antes de completar — antes da correção isso
   era estruturalmente impossível de acontecer. Duração real medida de
@@ -295,6 +295,33 @@ Os valores abaixo são literais do handoff, não aproximações.
 
 Conferido em navegador real a 430px e a 1280px contra os protótipos
 abertos lado a lado.
+
+### Verificado em PRODUÇÃO depois do deploy
+
+URL pública: **`https://content-ai-studio-chi.vercel.app`**. Atenção: a
+URL org-scoped (`content-ai-studio-criadoresambiciosos-7112s-projects
+.vercel.app`) está atrás do Deployment Protection da Vercel e devolve a
+parede de login SSO — não serve para teste automatizado. E
+`content-ai-studio.vercel.app` (citada no User-Agent do site importer)
+**não existe**: dá 404.
+
+Medido no ar, com usuário e cliente descartáveis: sidebar renderizando
+em **236px** exatos, prompt do Gerador em `rgb(58,154,72)` = `#3A9A48`,
+campo CTA e stepper presentes.
+
+Geração real em produção (estilo "canto escuro", 7 slides): concluiu com
+`media_source = 'acervo'`, 4 slides carregando foto do cliente, papéis
+variados e modos distribuídos sem três iguais seguidos.
+
+- **Redirect para o Progresso em 1,9s** — o `after()` está funcionando:
+  a tela abre com o job ainda em movimento, que era o ponto.
+- **Duração total: 124s**, contra 56s local. A diferença é o serviço de
+  render no Render.com acordando do sono do plano gratuito (~40s, o
+  README já prevê e aceita isso justamente porque a geração é assíncrona).
+- **Resolve a dúvida em aberto sobre o plano da Vercel**: o pipeline
+  rodou 124s dentro do `after()` e terminou sem ser cortado, ou seja, o
+  teto real é maior que os 60s do plano Hobby — o `maxDuration = 300`
+  declarado em `gerador/page.tsx` está sendo respeitado.
 
 - **Catálogo de estilos ficou em TypeScript, não em tabela** — desvio
   deliberado da spec, que pede `composition_styles` no banco.

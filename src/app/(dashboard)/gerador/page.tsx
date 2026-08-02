@@ -12,10 +12,9 @@ import { generateCarousel } from "./actions";
 // background depois do redirect pra Progresso — a function instance
 // continua viva até o callback terminar ou até `maxDuration` estourar,
 // o que for primeiro. Route Segment Config de uma page vale pras server
-// actions vinculadas a ela (doc do Next). 300s é o teto do plano Pro;
-// no plano Hobby a Vercel limita a execução real a 60s independente
-// deste valor — só confirmável rodando uma geração real em produção e
-// medindo (pendência: qual plano está ativo).
+// actions vinculadas a ela (doc do Next). CONFIRMADO em produção: uma
+// geração de 124s rodou inteira sem ser cortada, então o teto real aqui
+// é maior que os 60s do plano Hobby.
 export const maxDuration = 300;
 
 export default async function GeradorPage() {
